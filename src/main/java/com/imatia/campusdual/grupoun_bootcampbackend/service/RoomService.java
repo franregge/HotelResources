@@ -10,7 +10,6 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidAssignedHotelException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidRoomNumberException;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.SimpleRoomDTO;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -34,23 +33,22 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public int insertRoom(RoomDTO simpleRoomDTO) throws InvalidAssignedHotelException, InvalidRoomNumberException {
-        int assignedHotelId = simpleRoomDTO.getHotelId();
+    public int insertRoom(RoomDTO roomDTO) throws InvalidAssignedHotelException, InvalidRoomNumberException {
+        int assignedHotelId = roomDTO.getHotelId();
 
         if (assignedHotelId == 0 || hotelService.queryAll().stream().noneMatch(hotel -> hotel.getId() == assignedHotelId)) {
             throw new InvalidAssignedHotelException("The assigned hotel does not exist");
         }
 
         // TODO: Hotels have 9 floors at most, hotel creation validation needed (?)
-        int floorNumber = simpleRoomDTO.getFloorNumber();
+        int floorNumber = roomDTO.getFloorNumber();
         HotelDTO assignedHotelDTO = new HotelDTO();
         assignedHotelDTO.setId(assignedHotelId);
         assignedHotelDTO = hotelService.queryHotel(assignedHotelDTO);
-        if (simpleRoomDTO.getRoomNumber() < FIRST_ROOM_NUMBER || floorNumber > assignedHotelDTO.getNumberOfFloors()) {
+        if (roomDTO.getRoomNumber() < FIRST_ROOM_NUMBER || floorNumber > assignedHotelDTO.getNumberOfFloors()) {
             throw new InvalidRoomNumberException("Cannot create room with this number");
         }
 
-        RoomDTO roomDTO = roomMapper.toDTO(simpleRoomDTO);
         Hotel assignedHotel = hotelMapper.toEntity(hotelService.queryHotel(assignedHotelDTO));
        // roomDTO.setHotel(assignedHotel); TODO: toEntity ignores hotel attribute
         Room room = roomMapper.toEntity(roomDTO);
