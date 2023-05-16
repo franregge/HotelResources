@@ -7,7 +7,6 @@ import javax.persistence.*;
 public class Hotel {
 
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
