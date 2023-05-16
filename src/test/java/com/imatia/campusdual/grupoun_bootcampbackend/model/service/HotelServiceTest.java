@@ -4,6 +4,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.HotelDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelDoesNotExistException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,14 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HotelServiceTest {
+
 
     @MockBean
     HotelDAO hotelDAO;
@@ -48,20 +54,41 @@ public class HotelServiceTest {
     }
 
     @Test
-    public void deleteHotel_hotelIsDeleted(){
+    public void deleteHotel_hotelIsDeleted()throws HotelDoesNotExistException {
 
         HotelDTO hotelDTO = new HotelDTO();
-        Hotel hotel = new Hotel();
-
         int id = 1;
         String name= "Overlook Hotel";
+        hotelDTO.setId(id);
+        hotelDTO.setName(name);
 
-        hotel.setId(id);
-        hotel.setName(name);
+        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name));
 
-// TODO       when(hotelDAO.getReferenceById(id))
+        int deletedId = hotelService.deleteHotel(hotelDTO);
+
+        verify(hotelDAO, times(1)).getReferenceById(id);
+        verify(hotelDAO,times(1)).deleteById(hotelDTO.getId());
+        assertEquals(hotelDTO.getId(),deletedId);
+
+    }
+    @Test
+    void getAllHotelsTest() throws  Exception{
+
+        List<Hotel> hotelList = new ArrayList<>();
+
+        Hotel hotel1 = new Hotel();
+        Hotel hotel2 = new Hotel();
+        Hotel hotel3 = new Hotel();
+
+        hotelList.add(hotel1);
+        hotelList.add(hotel2);
+        hotelList.add(hotel3);
+        when(hotelDAO.findAll()).thenReturn(hotelList);
+        List<HotelDTO> empList = this.hotelService.queryAll();
+
+        verify(this.hotelDAO,times(1)).findAll();
+        assertEquals(3, empList.size());
 
 
     }
-
 }
