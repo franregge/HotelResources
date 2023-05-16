@@ -1,20 +1,18 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.SimpleRoomDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface RoomMapper {
 
+    @Mapping(source = "hotel", target = "hotelId", qualifiedByName = "idFromHotel")
     RoomDTO toDTO(Room room);
 
     @Mapping(source = "hotelId", target = "hotel", qualifiedByName = "hotelFromId")
@@ -30,4 +28,10 @@ public interface RoomMapper {
         result.setId(id);
         return result;
     }
+
+    @Named("idFromHotel")
+    default int idFromHotel(Hotel hotel) {
+        return hotel.getId();
+    }
+
 }

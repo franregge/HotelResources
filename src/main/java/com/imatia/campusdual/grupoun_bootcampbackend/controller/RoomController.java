@@ -1,7 +1,6 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.SimpleRoomDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +19,10 @@ public class RoomController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Map<String, ?>> addRoom(@RequestBody SimpleRoomDTO simpleRoomDTO) {
+    public ResponseEntity<Map<String, ?>> addRoom(@RequestBody RoomDTO roomDTO) {
         try {
             HashMap<String, Integer> responseBody = new HashMap<>();
-            responseBody.put("insertedId", roomService.insertRoom(simpleRoomDTO));
+            responseBody.put("insertedId", roomService.insertRoom(roomDTO));
 
             return new ResponseEntity<>(responseBody, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -35,9 +34,11 @@ public class RoomController {
     }
 
 @DeleteMapping("/delete")
-    public ResponseEntity<Integer> deleteRoom(RoomDTO roomDTO) {
+    public ResponseEntity<Map<String, ?>> deleteRoom(@RequestBody RoomDTO roomDTO) {
         try {
-            return new ResponseEntity<>(roomService.deleteRoom(roomDTO), HttpStatus.OK);
+            Map<String, Integer> responseBody = new HashMap<>();
+            responseBody.put("deletedId", roomService.deleteRoom(roomDTO));
+            return new ResponseEntity<>(responseBody, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
