@@ -1,22 +1,22 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.RoomDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.RoomService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
 
@@ -30,16 +30,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RoomControllerTest {
 
     private MockMvc mockMvc;
-    @InjectMocks
-    RoomController roomController;
-    @Mock
+    @MockBean
     RoomService roomService;
+    RoomController roomController;
     @Autowired
-    private RoomDAO roomDAO;
+    WebApplicationContext context;
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(roomController).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+        roomController = context.getBean(RoomController.class);
     }
 
     @Test
@@ -51,7 +51,7 @@ public class RoomControllerTest {
                         )
         ).andReturn();
 
-        assertEquals(201, mvcResult.getResponse().getStatus());
+        assertEquals(HttpStatus.CREATED.value(), mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -62,6 +62,8 @@ public class RoomControllerTest {
 
         when(roomService.deleteRoom(any())).thenReturn(id);
 
+        RoomDTO roomDTO = new RoomDTO(id, roomNumber);
+
         MvcResult mvcResult = mockMvc
                 .perform(
                         MockMvcRequestBuilders
@@ -69,14 +71,17 @@ public class RoomControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                                new RoomDTO(id, roomNumber)
+                                                roomDTO
                                         )
                                 )
                 )
                 .andExpect(status().isOk())
                 .andReturn();
+
+        verify(roomService, times(1)).deleteRoom(any());
+
         HashMap<String, Integer> expectedResult = new HashMap<>();
-        expectedResult.put("id", id);
+        expectedResult.put("deletedId", id);
 
         assertEquals(objectMapper.writeValueAsString(expectedResult), mvcResult.getResponse().getContentAsString());
     }
