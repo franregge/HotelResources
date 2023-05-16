@@ -22,10 +22,11 @@ public class Room {
         this.id = id;
         this.roomNumber = roomNumber;
     }
-    public Room(Integer id, Integer roomNumber,Hotel hotel) {
+
+    public Room(Integer id, Integer roomNumber, Hotel hotel) {
         this.id = id;
         this.roomNumber = roomNumber;
-        this.hotel=hotel;
+        this.hotel = hotel;
     }
 
     public Integer getId() {

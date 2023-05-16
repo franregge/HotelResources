@@ -38,7 +38,7 @@ public class HotelControllerTest {
     private HotelDAO hotelDAO;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(hotelController).build();
     }
 
@@ -70,17 +70,17 @@ public class HotelControllerTest {
         MvcResult mvcResult = mockMvc
 
                 .perform(
-                    MockMvcRequestBuilders.post("/hotels/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                        new ObjectMapper().writeValueAsString(
-                                new HotelDTO(18,"Knarias", 0)
-                        )
-                    )
+                        MockMvcRequestBuilders.post("/hotels/add")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        new ObjectMapper().writeValueAsString(
+                                                new HotelDTO(18, "Knarias", 0)
+                                        )
+                                )
                 )
                 .andReturn();
 
-        assertEquals(201,mvcResult.getResponse().getStatus());
+        assertEquals(201, mvcResult.getResponse().getStatus());
     }
 
     @Test

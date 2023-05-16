@@ -24,7 +24,7 @@ public class Hotel {
     public Hotel(Integer id, String name, Integer numberOfFloors) {
         this.id = id;
         this.name = name;
-        this.numberOfFloors= numberOfFloors;
+        this.numberOfFloors = numberOfFloors;
         rooms = new ArrayList<>();
     }
 

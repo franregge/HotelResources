@@ -45,36 +45,37 @@ public class HotelServiceTest {
     public void insertHotel_hotelIsSaved() {
         int id = 1;
         String name = "Overlook Hotel";
-        Integer numberOfFloors=6;
-        Hotel hotel = new Hotel(id, name,numberOfFloors);
+        Integer numberOfFloors = 6;
+        Hotel hotel = new Hotel(id, name, numberOfFloors);
 
-        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name,numberOfFloors));
+        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name, numberOfFloors));
 
         assertEquals(hotelMapper.toDTO(hotel), hotelService.queryHotel(hotelMapper.toDTO(hotel)));
     }
 
     @Test
-    public void deleteHotel_hotelIsDeleted()throws HotelDoesNotExistException {
+    public void deleteHotel_hotelIsDeleted() throws HotelDoesNotExistException {
 
         HotelDTO hotelDTO = new HotelDTO();
         int id = 1;
-        String name= "Overlook Hotel";
-        Integer numberOfFloors=6;
+        String name = "Overlook Hotel";
+        Integer numberOfFloors = 6;
 
         hotelDTO.setId(id);
         hotelDTO.setName(name);
 
-        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name,numberOfFloors));
+        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name, numberOfFloors));
 
         int deletedId = hotelService.deleteHotel(hotelDTO);
 
         verify(hotelDAO, times(1)).getReferenceById(id);
-        verify(hotelDAO,times(1)).deleteById(hotelDTO.getId());
-        assertEquals(hotelDTO.getId(),deletedId);
+        verify(hotelDAO, times(1)).deleteById(hotelDTO.getId());
+        assertEquals(hotelDTO.getId(), deletedId);
 
     }
+
     @Test
-    void getAllHotelsTest() throws  Exception{
+    void getAllHotelsTest() throws Exception {
 
         List<Hotel> hotelList = new ArrayList<>();
 
@@ -88,9 +89,8 @@ public class HotelServiceTest {
         when(hotelDAO.findAll()).thenReturn(hotelList);
         List<HotelDTO> empList = this.hotelService.queryAll();
 
-        verify(this.hotelDAO,times(1)).findAll();
+        verify(this.hotelDAO, times(1)).findAll();
         assertEquals(3, empList.size());
-
 
     }
 }

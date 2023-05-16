@@ -9,8 +9,11 @@ import java.util.List;
 
 @Mapper(componentModel = "spring") // Create managed bean
 public interface HotelMapper {
-    HotelDTO toDTO (Hotel hotel);
+    HotelDTO toDTO(Hotel hotel);
+
     Hotel toEntity(HotelDTO hotelDTO);
-    List<HotelDTO> toDTOList(List<Hotel>hotels);
-    List<Hotel>toEntityList(List<HotelDTO>hotelDTOs);
+
+    List<HotelDTO> toDTOList(List<Hotel> hotels);
+
+    List<Hotel> toEntityList(List<HotelDTO> hotelDTOs);
 }

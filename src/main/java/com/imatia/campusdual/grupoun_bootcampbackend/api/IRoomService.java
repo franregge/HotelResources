@@ -10,7 +10,7 @@ public interface IRoomService {
 
     RoomDTO queryRoom(RoomDTO roomDTO);
 
-    List<RoomDTO>queryAll();
+    List<RoomDTO> queryAll();
 
     int insertRoom(RoomDTO roomDTO) throws InvalidAssignedHotelException, InvalidRoomNumberException;
 

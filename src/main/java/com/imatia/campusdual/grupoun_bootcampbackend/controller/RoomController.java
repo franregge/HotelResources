@@ -33,7 +33,7 @@ public class RoomController {
         }
     }
 
-@DeleteMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<Map<String, ?>> deleteRoom(@RequestBody RoomDTO roomDTO) {
         try {
             Map<String, Integer> responseBody = new HashMap<>();

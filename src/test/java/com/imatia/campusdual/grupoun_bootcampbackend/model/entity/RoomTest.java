@@ -18,6 +18,4 @@ public class RoomTest {
         assertEquals(floorNumber, room.getRoomNumber());
     }
 
-
-
 }

@@ -10,28 +10,29 @@ public class RoomDTO {
     private int roomNumber;
     private int hotelId;
 
-    public RoomDTO(){
+    public RoomDTO() {
 
     }
-    public RoomDTO(int id, int roomNumber){
-        this.id=id;
-        this.roomNumber=roomNumber;
+
+    public RoomDTO(int id, int roomNumber) {
+        this.id = id;
+        this.roomNumber = roomNumber;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
-        this.id=id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getRoomNumber(){
+    public int getRoomNumber() {
         return roomNumber;
     }
 
-    public void setRoomNumber(int roomNumber){
-        this.roomNumber=roomNumber;
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
     public int getHotelId() {
