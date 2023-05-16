@@ -45,12 +45,20 @@ public class RoomService implements IRoomService {
         HotelDTO assignedHotelDTO = new HotelDTO();
         assignedHotelDTO.setId(assignedHotelId);
         assignedHotelDTO = hotelService.queryHotel(assignedHotelDTO);
-        if (roomDTO.getRoomNumber() < FIRST_ROOM_NUMBER || floorNumber > assignedHotelDTO.getNumberOfFloors()) {
+        if (
+                roomDTO.getRoomNumber() < FIRST_ROOM_NUMBER ||
+                        floorNumber > assignedHotelDTO.getNumberOfFloors() ||
+                        queryAll()
+                                .stream()
+                                .anyMatch(
+                                        room -> room.getRoomNumber() == roomDTO.getRoomNumber() &&
+                                                room.getHotelId() == roomDTO.getHotelId()
+                                )
+        ) {
             throw new InvalidRoomNumberException("Cannot create room with this number");
         }
 
         Hotel assignedHotel = hotelMapper.toEntity(hotelService.queryHotel(assignedHotelDTO));
-       // roomDTO.setHotel(assignedHotel); TODO: toEntity ignores hotel attribute
         Room room = roomMapper.toEntity(roomDTO);
         room.setHotel(assignedHotel);
         room = roomDAO.saveAndFlush(room);
@@ -66,13 +74,17 @@ public class RoomService implements IRoomService {
         roomDAO.delete(room);
         return roomDTO.getId();
     }
+
     @Override
-    public RoomDTO queryRoom(RoomDTO roomDTO){
+    public RoomDTO queryRoom(RoomDTO roomDTO) {
         Room room = roomDAO.getReferenceById(roomDTO.getId());
 
         return roomMapper.toDTO(room);
     }
+
     @Override
-    public List<RoomDTO>queryAll(){return roomMapper.toDTOList(roomDAO.findAll());}
+    public List<RoomDTO> queryAll() {
+        return roomMapper.toDTOList(roomDAO.findAll());
+    }
 
 }
