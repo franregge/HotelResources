@@ -1,29 +1,33 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.api.IHotelService;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelAlreadyExistsException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/hotels")
 public class HotelController {
     @Autowired
-    private IHotelService iHotelService;
+    private IHotelService hotelService;
 
     @PostMapping(value = "/add")
     public ResponseEntity<Map<String, ?>> addHotel(@RequestBody HotelDTO hotelDTO) {
         int insertedId;
 
         try {
-            insertedId = iHotelService.insertHotel(hotelDTO);
+            insertedId = hotelService.insertHotel(hotelDTO);
         } catch (HotelAlreadyExistsException e) {
             HashMap<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
@@ -40,7 +44,7 @@ public class HotelController {
         int insertedId = 0;
 
         try {
-            insertedId = iHotelService.deleteHotel(hotelDTO);
+            insertedId = hotelService.deleteHotel(hotelDTO);
         } catch (HotelDoesNotExistException e) {
             HashMap<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
@@ -53,5 +57,7 @@ public class HotelController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
 }

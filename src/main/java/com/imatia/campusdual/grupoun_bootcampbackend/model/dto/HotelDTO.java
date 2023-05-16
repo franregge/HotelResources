@@ -1,14 +1,19 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.model.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.Objects;
 
 public class HotelDTO {
 
     private int id;
     private String name;
+
+    public HotelDTO() {
+    }
+
+    public HotelDTO(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public int getId() {
         return id;
