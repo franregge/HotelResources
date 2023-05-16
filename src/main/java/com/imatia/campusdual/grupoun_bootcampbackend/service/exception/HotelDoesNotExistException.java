@@ -1,4 +1,4 @@
-package com.imatia.campusdual.grupoun_bootcampbackend.service;
+package com.imatia.campusdual.grupoun_bootcampbackend.service.exception;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 

@@ -1,4 +1,4 @@
-package com.imatia.campusdual.grupoun_bootcampbackend.service;
+package com.imatia.campusdual.grupoun_bootcampbackend.service.exception;
 
 
 public class HotelAlreadyExistsException extends Exception {
