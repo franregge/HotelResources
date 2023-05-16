@@ -4,7 +4,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.HotelDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelDoesNotExistException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelDoesNotExistException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +45,10 @@ public class HotelServiceTest {
     public void insertHotel_hotelIsSaved() {
         int id = 1;
         String name = "Overlook Hotel";
-        Hotel hotel = new Hotel(id, name);
+        Integer numberOfFloors=6;
+        Hotel hotel = new Hotel(id, name,numberOfFloors);
 
-        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name));
+        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name,numberOfFloors));
 
         assertEquals(hotelMapper.toDTO(hotel), hotelService.queryHotel(hotelMapper.toDTO(hotel)));
     }
@@ -59,10 +59,12 @@ public class HotelServiceTest {
         HotelDTO hotelDTO = new HotelDTO();
         int id = 1;
         String name= "Overlook Hotel";
+        Integer numberOfFloors=6;
+
         hotelDTO.setId(id);
         hotelDTO.setName(name);
 
-        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name));
+        when(hotelDAO.getReferenceById(id)).thenReturn(new Hotel(id, name,numberOfFloors));
 
         int deletedId = hotelService.deleteHotel(hotelDTO);
 
