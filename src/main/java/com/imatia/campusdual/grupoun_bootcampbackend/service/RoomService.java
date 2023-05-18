@@ -63,12 +63,6 @@ public class RoomService implements IRoomService {
         Room room = roomMapper.toEntity(roomDTO);
         room.setHotel(assignedHotel);
         room = roomDAO.saveAndFlush(room);
-        assignedHotel.getRooms().add(room);
-        try {
-            hotelService.updateHotel(hotelMapper.toDTO(assignedHotel));
-        } catch (HotelDoesNotExistException e) {
-            throw new RuntimeException(e);
-        }
         return room.getId();
     }
 
