@@ -5,6 +5,8 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.HotelDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelAlreadyExistsException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -46,8 +48,14 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public int updateHotel(HotelDTO hotelDTO) {
-        return 0;
+    public int updateHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException {
+    List<HotelDTO> allHotelDTOs = queryAll();
+
+        if(allHotelDTOs.stream().noneMatch(dto -> dto.getId()==hotelDTO.getId())){
+
+            throw new HotelDoesNotExistException("The hotel does not exist");
+        }
+        return hotelDAO.saveAndFlush(hotelMapper.toEntity(hotelDTO)).getId();
     }
 
     @Override

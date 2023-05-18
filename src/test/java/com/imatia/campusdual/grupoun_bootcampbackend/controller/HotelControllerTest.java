@@ -3,7 +3,6 @@ package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.HotelDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,14 +18,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +38,7 @@ public class HotelControllerTest {
     private HotelDAO hotelDAO;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(hotelController).build();
     }
 
@@ -73,17 +70,17 @@ public class HotelControllerTest {
         MvcResult mvcResult = mockMvc
 
                 .perform(
-                    MockMvcRequestBuilders.post("/hotels/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                        new ObjectMapper().writeValueAsString(
-                                new HotelDTO(18,"Knarias")
-                        )
-                    )
+                        MockMvcRequestBuilders.post("/hotels/add")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        new ObjectMapper().writeValueAsString(
+                                                new HotelDTO(18, "Knarias", 0)
+                                        )
+                                )
                 )
                 .andReturn();
 
-        assertEquals(201,mvcResult.getResponse().getStatus());
+        assertEquals(201, mvcResult.getResponse().getStatus());
     }
 
     @Test
@@ -91,6 +88,7 @@ public class HotelControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         int id = 1;
         String name = "Overlook Hotel";
+        Integer numberOfFloors = 8;
 
         when(hotelService.deleteHotel(any())).thenReturn(id);
 
@@ -102,7 +100,7 @@ public class HotelControllerTest {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .content(
                                         objectMapper.writeValueAsString(
-                                                new HotelDTO(id, name)
+                                                new HotelDTO(id, name, numberOfFloors)
                                         )
                                 )
                 )
