@@ -48,8 +48,13 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public int updateHotel(HotelDTO hotelDTO) {
-//        TODO: validate existence
+    public int updateHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException {
+    List<HotelDTO> allHotelDTOs = queryAll();
+
+        if(allHotelDTOs.stream().noneMatch(dto -> dto.getId()==hotelDTO.getId())){
+
+            throw new HotelDoesNotExistException("The hotel does not exist");
+        }
         return hotelDAO.saveAndFlush(hotelMapper.toEntity(hotelDTO)).getId();
     }
 

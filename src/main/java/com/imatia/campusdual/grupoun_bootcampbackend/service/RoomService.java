@@ -8,6 +8,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMa
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.RoomMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelDoesNotExistException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidAssignedHotelException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidRoomNumberException;
 import org.springframework.context.annotation.Lazy;
@@ -63,7 +64,11 @@ public class RoomService implements IRoomService {
         room.setHotel(assignedHotel);
         room = roomDAO.saveAndFlush(room);
         assignedHotel.getRooms().add(room);
-        hotelService.updateHotel(hotelMapper.toDTO(assignedHotel));
+        try {
+            hotelService.updateHotel(hotelMapper.toDTO(assignedHotel));
+        } catch (HotelDoesNotExistException e) {
+            throw new RuntimeException(e);
+        }
         return room.getId();
     }
 

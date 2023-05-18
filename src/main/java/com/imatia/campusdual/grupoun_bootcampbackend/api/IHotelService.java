@@ -14,7 +14,7 @@ public interface IHotelService {
 
     int insertHotel(HotelDTO hotelDTO) throws HotelAlreadyExistsException;
 
-    int updateHotel(HotelDTO hotelDTO);
+    int updateHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException;
 
     int deleteHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException;
 
