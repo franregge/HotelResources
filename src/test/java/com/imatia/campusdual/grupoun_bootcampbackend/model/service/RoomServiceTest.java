@@ -7,7 +7,6 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.RoomMap
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.RoomService;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.RoomDoesNotExistException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -42,55 +40,52 @@ public class RoomServiceTest {
     RoomService roomService;
     @Autowired
     private HotelDAO hotelDAO;
+    Hotel hotel;
 
     @BeforeAll
     public void init() {
         roomService = context.getBean(RoomService.class);
+        String name = "Overlook Hotel";
+        Integer numberOfFloors = 6;
+        Integer idHotel = 1;
+        hotel = new Hotel(idHotel, name, numberOfFloors);
+
     }
 
     @Test
     public void insertRoom_roomIsSaved() {
-        String name = "Overlook Hotel";
-        Integer numberOfFloors = 6;
-        Integer idHotel = 1;
-        Hotel hotel = new Hotel(idHotel, name, numberOfFloors);
         int id = 1;
         int roomNumber = 101;
-        Room room = new Room(id, roomNumber);
+        Room room = new Room(id, roomNumber, hotel);
 
-        Mockito.when(roomDAO.getReferenceById(id)).thenReturn(new Room(id, roomNumber));
+        Mockito.when(roomDAO.getReferenceById(id)).thenReturn(new Room(id, roomNumber, hotel));
 
         assertEquals(roomMapper.toDTO(room), roomService.queryRoom(roomMapper.toDTO(room)));
     }
 
     @Test
-    public void deleteRoom_roomIsDeleted() throws RoomDoesNotExistException {
-        RoomDTO roomDTO = new RoomDTO();
-        String name = "Overlook Hotel";
-        Integer numberOfFloors = 6;
-        Integer idHotel = 1;
-        Hotel hotel = new Hotel(idHotel, name, numberOfFloors);
+    public void deleteRoom_roomIsDeleted() {
         int id = 1;
         int roomNumber = 101;
+        RoomDTO roomDTO = new RoomDTO(id, roomNumber);
         Room room = new Room(id, roomNumber, hotel);
 
         when(roomDAO.getReferenceById(id)).thenReturn(room);
 
         int deletedId = roomService.deleteRoom(roomDTO);
 
-        verify(roomDAO, times(1)).getReferenceById(id);
-        verify(roomDAO, times(1)).deleteById(roomDTO.getId());
+        verify(roomDAO, times(1)).delete(any(Room.class));
         assertEquals(roomDTO.getId(), deletedId);
 
     }
 
     @Test
-    public void getAllRoomsTest() throws Exception {
+    public void getAllRoomsTest() {
         List<Room> roomList = new ArrayList<>();
 
-        Room room1 = new Room();
-        Room room2 = new Room();
-        Room room3 = new Room();
+        Room room1 = new Room(1, 101, hotel);
+        Room room2 = new Room(2, 102, hotel);
+        Room room3 = new Room(3, 103, hotel);
 
         roomList.add(room1);
         roomList.add(room2);
@@ -105,8 +100,7 @@ public class RoomServiceTest {
 
     @Test
     public void getRoomByIdTest() {
-        Room room = new Room();
-        room.setId(1);
+        Room room = new Room(1, 101, hotel);
 
         when(this.roomDAO.getReferenceById(1)).thenReturn(room);
 

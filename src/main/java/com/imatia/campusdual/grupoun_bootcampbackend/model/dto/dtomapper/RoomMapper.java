@@ -31,6 +31,7 @@ public interface RoomMapper {
 
     @Named("idFromHotel")
     default int idFromHotel(Hotel hotel) {
+        assert hotel != null;
         return hotel.getId();
     }
 
