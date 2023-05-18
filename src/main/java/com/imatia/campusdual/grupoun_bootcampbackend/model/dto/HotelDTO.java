@@ -11,17 +11,17 @@ public class HotelDTO {
     private int id;
     private String name;
     private int numberOfFloors;
-    private List<Room> rooms;
+    private List<Integer> roomIds;
 
     public HotelDTO() {
-        rooms = new ArrayList<>();
+        roomIds = new ArrayList<>();
     }
 
     public HotelDTO(int id, String name, int numberOfFloors) {
         this.id = id;
         this.name = name;
         this.numberOfFloors = numberOfFloors;
-        this.rooms = new ArrayList<>();
+        this.roomIds = new ArrayList<>();
     }
 
     public int getId() {
@@ -48,12 +48,12 @@ public class HotelDTO {
         this.numberOfFloors = numberOfFloors;
     }
 
-    public List<Room> getRooms() {
-        return rooms;
+    public List<Integer> getRoomIds() {
+        return roomIds;
     }
 
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
+    public void setIntegerIds(List<Integer> roomIds) {
+        this.roomIds = roomIds;
     }
 
     @Override
