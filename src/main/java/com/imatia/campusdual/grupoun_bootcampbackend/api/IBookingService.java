@@ -9,8 +9,11 @@ import java.util.List;
 public interface IBookingService {
 
     BookingDTO queryBooking(BookingDTO bookingDTO);
-    List<BookingDTO>queryAll();
+
+    List<BookingDTO> queryAll();
+
     int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException;
+
     int deleteBooking(BookingDTO bookingDTO) throws BookingDoesNotExistsException;
-   /* int updateBooking(BookingDTO bookingDTO) throws  BookingDoesNotExistsException;*/
+    /* int updateBooking(BookingDTO bookingDTO) throws  BookingDoesNotExistsException;*/
 }

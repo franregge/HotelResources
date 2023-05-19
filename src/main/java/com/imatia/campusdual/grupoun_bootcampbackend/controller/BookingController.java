@@ -16,39 +16,37 @@ import java.util.Map;
 public class BookingController {
     @Autowired
     private IBookingService bookingService;
+
     @PostMapping(value = "/add")
-    public ResponseEntity<Map<String,?>>addBooking(@RequestBody BookingDTO bookingDTO) throws RoomDoesNotExistException, RoomNotAvailableException, InvalidBookingDNIException {
+    public ResponseEntity<Map<String, ?>> addBooking(@RequestBody BookingDTO bookingDTO) throws RoomDoesNotExistException, RoomNotAvailableException, InvalidBookingDNIException {
         int insertedId;
         try {
-            insertedId= bookingService.insertBooking(bookingDTO);
-        }catch (BookingAlreadyExistsException e) {
-            HashMap<String, String>response = new HashMap<>();
-            response.put("error",e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        }catch (InvalidBookingDateException e){
-            HashMap<String, String>response = new HashMap<>();
+            insertedId = bookingService.insertBooking(bookingDTO);
+        } catch (BookingAlreadyExistsException | InvalidBookingDateException e) {
+            HashMap<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
-        HashMap<String,Integer>response = new HashMap<>();
-        response.put("id",insertedId);
-        return new ResponseEntity<>(response,HttpStatus.CREATED);
+        HashMap<String, Integer> response = new HashMap<>();
+        response.put("id", insertedId);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
     @DeleteMapping(value = "/delete")
-    public ResponseEntity<Map<String,?>>deleteBooking (@RequestBody BookingDTO bookingDTO){
-        int insertedId =0;
+    public ResponseEntity<Map<String, ?>> deleteBooking(@RequestBody BookingDTO bookingDTO) {
+        int insertedId = 0;
         try {
             insertedId = bookingService.deleteBooking(bookingDTO);
-        }catch (BookingDoesNotExistsException e){
-        HashMap<String,String>response= new HashMap<>();
-        response.put("error",e.getMessage());
+        } catch (BookingDoesNotExistsException e) {
+            HashMap<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
 
-        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
         }
-        HashMap<String,Integer>response = new HashMap<>();
-        response.put("id",insertedId);
+        HashMap<String, Integer> response = new HashMap<>();
+        response.put("id", insertedId);
 
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

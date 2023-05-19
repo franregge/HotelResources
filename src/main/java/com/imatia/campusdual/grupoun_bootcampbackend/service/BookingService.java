@@ -29,7 +29,7 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingDTO queryBooking(BookingDTO bookingDTO) {
-        Booking booking= bookingDAO.getReferenceById(bookingDTO.getId());
+        Booking booking = bookingDAO.getReferenceById(bookingDTO.getId());
         return bookingMapper.toDTO(booking);
     }
 
@@ -41,12 +41,12 @@ public class BookingService implements IBookingService {
     @Override
     public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException {
         //validación fecha
-        if (bookingDTO.getCheckInDate().isBefore(LocalDateTime.now()) || bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate().toLocalDate())){
+        if (bookingDTO.getCheckInDate().isBefore(LocalDateTime.now()) || bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate().toLocalDate())) {
             throw new InvalidBookingDateException("This date is not valid");
         }
-        //Validación DNI
-        String dni= bookingDTO.getClientDNI();
-        String dniNumber=dni.substring(0,8);
+        //Validación DNI TODO: extract method
+        String dni = bookingDTO.getClientDNI();
+        String dniNumber = dni.substring(0, 8);
         char dniLetter = dni.charAt(8);
         final String dniLetterTable = "TRWAGMYFPDXBNJZSQVHLCKE";
 
@@ -55,37 +55,37 @@ public class BookingService implements IBookingService {
 
         char dniRightLetter = dniLetterTable.charAt(index);
 
-        if(dni.length()!=9 || dniLetter!=dniRightLetter ){
-            throw new InvalidBookingDNIException ("Invalid DNI");
+        if (dni.length() != 9 || dniLetter != dniRightLetter) {
+            throw new InvalidBookingDNIException("Invalid DNI");
         }
 
         //validación existencia Room
-        List<RoomDTO>allRoomDTOs = roomService.queryAll();
+        List<RoomDTO> allRoomDTOs = roomService.queryAll();
 
-        if (allRoomDTOs.stream().noneMatch(dto->dto.getId()==bookingDTO.getRoomId())){
+        if (allRoomDTOs.stream().noneMatch(dto -> dto.getId() == bookingDTO.getRoomId())) {
             throw new RoomDoesNotExistException("Room does not exist");
         }
-        
 
-        List<BookingDTO>allBookingDTOs = queryAll();
+
+        List<BookingDTO> allBookingDTOs = queryAll();
         if (allBookingDTOs.stream().anyMatch(dto ->
                 (bookingDTO.getRoomId() == dto.getRoomId()) &&
                         ((bookingDTO.getCheckInDate().isAfter(dto.getCheckInDate()) || bookingDTO.getCheckInDate().toLocalDate().isEqual(dto.getCheckInDate().toLocalDate())) &&
-                        (bookingDTO.getCheckOutDate().isBefore(dto.getCheckOutDate()) || bookingDTO.getCheckOutDate().isEqual(dto.getCheckOutDate())))
-        )){
+                                (bookingDTO.getCheckOutDate().isBefore(dto.getCheckOutDate()) || bookingDTO.getCheckOutDate().isEqual(dto.getCheckOutDate())))
+        )) {
             throw new RoomNotAvailableException("This date is already taken");
         }
 
 
-        Booking booking= bookingMapper.toEntity(bookingDTO);
+        Booking booking = bookingMapper.toEntity(bookingDTO);
 
-        booking=bookingDAO.saveAndFlush(booking);
+        booking = bookingDAO.saveAndFlush(booking);
         return booking.getId();
     }
 
     @Override
     public int deleteBooking(BookingDTO bookingDTO) throws BookingDoesNotExistsException {
-        if(queryBooking(bookingDTO)==null){
+        if (queryBooking(bookingDTO) == null) {
             throw new BookingDoesNotExistsException("Hotel not found");
         }
         bookingDAO.deleteById(bookingDTO.getId());

@@ -35,7 +35,9 @@ public class BookingDTO {
         this.clientName = clientName;
         this.clientSurname1 = clientSurname1;
     }
-    public BookingDTO(){}
+
+    public BookingDTO() {
+    }
 
     public int getId() {
         return bookingId;

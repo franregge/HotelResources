@@ -13,15 +13,18 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring") //Create managed bean
 public interface BookingMapper {
-    @Mapping(source = "room",target = "roomId",qualifiedByName = "roomIdFromRoom")
+    @Mapping(source = "room", target = "roomId", qualifiedByName = "roomIdFromRoom")
     BookingDTO toDTO(Booking booking);
-    @Mapping(source = "roomId",target ="room",qualifiedByName = "roomFromId")
+
+    @Mapping(source = "roomId", target = "room", qualifiedByName = "roomFromId")
     Booking toEntity(BookingDTO bookingDTO);
-    List<BookingDTO>toDTOList(List<Booking>bookings);
-    List<Booking>toEntityList(List<BookingDTO>bookingDTOs);
+
+    List<BookingDTO> toDTOList(List<Booking> bookings);
+
+    List<Booking> toEntityList(List<BookingDTO> bookingDTOs);
 
     @Named("roomFromId")
-    default Room roomFromId(int bookingIds){
+    default Room roomFromId(int bookingIds) {
 
         Room room = new Room();
         room.setId(bookingIds);

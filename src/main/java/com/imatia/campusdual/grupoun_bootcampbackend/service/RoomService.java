@@ -66,7 +66,6 @@ public class RoomService implements IRoomService {
         return room.getId();
     }
 
-
     @Override
     public int deleteRoom(RoomDTO roomDTO) {
         Room room = roomMapper.toEntity(roomDTO);

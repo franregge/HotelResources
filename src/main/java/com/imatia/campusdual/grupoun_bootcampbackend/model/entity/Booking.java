@@ -6,32 +6,26 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name= "bookings")
+@Table(name = "bookings")
 public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Integer id;
-    @JoinColumn(name="room_id")
+    private Integer id;
+    @JoinColumn(name = "room_id")
     @OneToOne
     private Room room;
-    @Column(name="check_in_date")
-
+    @Column(name = "check_in_date")
     private LocalDateTime checkInDate;
-    @Column(name="check_out_date")
-
+    @Column(name = "check_out_date")
     private LocalDate checkOutDate;
     @Column(name = "dni")
-
     private String clientDNI;
     @Column(name = "name")
-
     private String clientName;
     @Column(name = "surname1")
-
     private String clientSurname1;
     @Column(name = "surname2")
-
     private String clientSurname2;
 
     public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String name, String surname1, String surname2) {
