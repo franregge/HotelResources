@@ -2,8 +2,7 @@ package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.api.IBookingService;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.BookingDTO;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Booking;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExsistsException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExistsException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingDoesNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class BookingController {
         int insertedId;
         try {
             insertedId= bookingService.insertBooking(bookingDTO);
-        }catch (BookingAlreadyExsistsException e) {
+        }catch (BookingAlreadyExistsException e) {
             HashMap<String, String>response = new HashMap<>();
             response.put("error",e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);

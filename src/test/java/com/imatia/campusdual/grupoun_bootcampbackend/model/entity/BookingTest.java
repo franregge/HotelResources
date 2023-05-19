@@ -4,6 +4,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ public class BookingTest {
         int roomNumber=101;
         Room room = new Room(roomId,roomNumber,hotel);
         LocalDateTime checkInDate = LocalDateTime.from(LocalDateTime.now().plusMonths(2));
-        LocalDateTime checkOutDate = LocalDateTime.from(LocalDateTime.now().plusMonths(2).plusDays(3));
+        LocalDate checkOutDate = LocalDate.from(LocalDate.now().plusMonths(2).plusDays(3));
         String DNI= "12345678C";
         String userName="Juan";
         String userSurname1="Lopez";

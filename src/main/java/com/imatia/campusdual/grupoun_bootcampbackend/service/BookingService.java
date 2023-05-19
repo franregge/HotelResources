@@ -6,7 +6,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.BookingDAO;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.BookingMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Booking;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExsistsException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExistsException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingDoesNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -35,13 +35,14 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExsistsException {
+    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException {
         //TODO: HOTEL AVALIABLE, ROOM AVALIABLE , DATE AVALIABLE.
         List<BookingDTO>allBookingDTOs = queryAll();
         if (allBookingDTOs.stream().anyMatch((dto->dto.getId()==(bookingDTO.getId())))){
-            throw new BookingAlreadyExsistsException("This booking already exists");
+            throw new BookingAlreadyExistsException("This booking already exists");
         }
         Booking booking= bookingMapper.toEntity(bookingDTO);
+
         booking=bookingDAO.saveAndFlush(booking);
         return booking.getId();
     }

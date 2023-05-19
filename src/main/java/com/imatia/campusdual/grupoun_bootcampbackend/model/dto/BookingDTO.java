@@ -8,19 +8,11 @@ import java.time.LocalDateTime;
 public class BookingDTO {
     private int bookingId;
     private int roomId;
-
-
     private LocalDateTime checkInDate;
-
-
     private LocalDate checkOutDate;
-
     private String clientDNI;
-
     private String clientName;
-
     private String clientSurname1;
-
     private String clientSurname2;
 
     public BookingDTO(Integer bookingId, int roomId, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String clientName, String clientSurname1, String clientSurname2) {
@@ -53,12 +45,12 @@ public class BookingDTO {
         this.bookingId = bookingId;
     }
 
-    public int getRoom() {
+    public int getRoomId() {
         return roomId;
     }
 
-    public void setRoom(Room room) {
-        this.roomId = roomId;
+    public void setRoomId(int room) {
+        this.roomId = room;
     }
 
     public LocalDateTime getCheckInDate() {

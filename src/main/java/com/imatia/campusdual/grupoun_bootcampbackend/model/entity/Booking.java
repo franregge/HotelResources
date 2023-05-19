@@ -20,21 +20,21 @@ public class Booking {
     private LocalDateTime checkInDate;
     @Column(name="check_out_date")
 
-    private LocalDateTime checkOutDate;
-    @Column
+    private LocalDate checkOutDate;
+    @Column(name = "dni")
 
     private String clientDNI;
-    @Column
+    @Column(name = "name")
 
     private String clientName;
-    @Column
+    @Column(name = "surname1")
 
     private String clientSurname1;
-    @Column
+    @Column(name = "surname2")
 
     private String clientSurname2;
 
-    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDateTime checkOutDate, String DNI, String name, String surname1, String surname2) {
+    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String name, String surname1, String surname2) {
         this.id = id;
         this.room = room;
         this.checkInDate = checkInDate;
@@ -45,7 +45,7 @@ public class Booking {
         this.clientSurname2 = surname2;
     }
 
-    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDateTime checkOutDate, String DNI, String name, String surname1) {
+    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String name, String surname1) {
         this.id = id;
         this.room = room;
         this.checkInDate = checkInDate;
@@ -82,19 +82,17 @@ public class Booking {
         this.checkInDate = checkInDate;
     }
 
-    public LocalDateTime getCheckOutDate() {
+    public LocalDate getCheckOutDate() {
         return checkOutDate;
     }
 
-    public void setCheckOutDate(LocalDateTime checkOutDate) {
+    public void setCheckOutDate(LocalDate checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
 
     public String getDNI() {
         return clientDNI;
     }
-
-
 
     public String getClientDNI() {
         return clientDNI;
