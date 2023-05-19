@@ -2,9 +2,7 @@ package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.api.IBookingService;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.BookingDTO;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExistsException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingDoesNotExistsException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidBookingDateException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,7 @@ public class BookingController {
     @Autowired
     private IBookingService bookingService;
     @PostMapping(value = "/add")
-    public ResponseEntity<Map<String,?>>addBooking(@RequestBody BookingDTO bookingDTO){
+    public ResponseEntity<Map<String,?>>addBooking(@RequestBody BookingDTO bookingDTO) throws RoomDoesNotExistException, RoomNotAvailableException, InvalidBookingDNIException {
         int insertedId;
         try {
             insertedId= bookingService.insertBooking(bookingDTO);

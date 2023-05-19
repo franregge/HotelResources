@@ -9,10 +9,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.Booking
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Booking;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExistsException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingDoesNotExistsException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidBookingDateException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.RoomNotAvailableException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -42,14 +39,32 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException {
-        //TODO: HOTEL AVALIABLE, ROOM AVALIABLE , DATE AVALIABLE.
+    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException {
+        //validación fecha
         if (bookingDTO.getCheckInDate().isBefore(LocalDateTime.now()) || bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate().toLocalDate())){
             throw new InvalidBookingDateException("This date is not valid");
         }
+        //Validación DNI
+        String dni= bookingDTO.getClientDNI();
+        String dniNumber=dni.substring(0,8);
+        char dniLetter = dni.charAt(8);
+        final String dniLetterTable = "TRWAGMYFPDXBNJZSQVHLCKE";
 
+        int dniValue = Integer.parseInt(dniNumber);
+        int index = dniValue % 23;
+
+        char dniRightLetter = dniLetterTable.charAt(index);
+
+        if(dni.length()!=9 || dniLetter!=dniRightLetter ){
+            throw new InvalidBookingDNIException ("Invalid DNI");
+        }
+
+        //validación existencia Room
         List<RoomDTO>allRoomDTOs = roomService.queryAll();
 
+        if (allRoomDTOs.stream().noneMatch(dto->dto.getId()==bookingDTO.getRoomId())){
+            throw new RoomDoesNotExistException("Room does not exist");
+        }
         
 
         List<BookingDTO>allBookingDTOs = queryAll();
@@ -61,9 +76,7 @@ public class BookingService implements IBookingService {
             throw new RoomNotAvailableException("This date is already taken");
         }
 
-        if (allBookingDTOs.stream().anyMatch((dto->dto.getId()==(bookingDTO.getId())))){
-            throw new BookingAlreadyExistsException("This booking already exists");
-        }
+
         Booking booking= bookingMapper.toEntity(bookingDTO);
 
         booking=bookingDAO.saveAndFlush(booking);
