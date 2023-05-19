@@ -12,46 +12,50 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  Integer id;
-    @Column(name="room_id")
+    @JoinColumn(name="room_id")
+    @OneToOne
     private Room room;
     @Column(name="check_in_date")
 
     private LocalDateTime checkInDate;
     @Column(name="check_out_date")
 
-    private LocalDate checkOutDate;
+    private LocalDateTime checkOutDate;
     @Column
 
-    private String DNI;
+    private String clientDNI;
     @Column
 
-    private String name;
+    private String clientName;
     @Column
 
-    private String surname1;
+    private String clientSurname1;
     @Column
 
-    private String surname2;
+    private String clientSurname2;
 
-    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String name, String surname1, String surname2) {
+    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDateTime checkOutDate, String DNI, String name, String surname1, String surname2) {
         this.id = id;
         this.room = room;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.DNI = DNI;
-        this.name = name;
-        this.surname1 = surname1;
-        this.surname2 = surname2;
+        this.clientDNI = DNI;
+        this.clientName = name;
+        this.clientSurname1 = surname1;
+        this.clientSurname2 = surname2;
     }
 
-    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String name, String surname1) {
+    public Booking(Integer id, Room room, LocalDateTime checkInDate, LocalDateTime checkOutDate, String DNI, String name, String surname1) {
         this.id = id;
         this.room = room;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        this.DNI = DNI;
-        this.name = name;
-        this.surname1 = surname1;
+        this.clientDNI = DNI;
+        this.clientName = name;
+        this.clientSurname1 = surname1;
+    }
+
+    public Booking() {
     }
 
     public Integer getId() {
@@ -78,44 +82,50 @@ public class Booking {
         this.checkInDate = checkInDate;
     }
 
-    public LocalDate getCheckOutDate() {
+    public LocalDateTime getCheckOutDate() {
         return checkOutDate;
     }
 
-    public void setCheckOutDate(LocalDate checkOutDate) {
+    public void setCheckOutDate(LocalDateTime checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
 
     public String getDNI() {
-        return DNI;
+        return clientDNI;
     }
 
-    public void setDNI(String DNI) {
-        this.DNI = DNI;
+
+
+    public String getClientDNI() {
+        return clientDNI;
     }
 
-    public String getName() {
-        return name;
+    public void setClientDNI(String clientDNI) {
+        this.clientDNI = clientDNI;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getClientName() {
+        return clientName;
     }
 
-    public String getSurname1() {
-        return surname1;
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
-    public void setSurname1(String surname1) {
-        this.surname1 = surname1;
+    public String getClientSurname1() {
+        return clientSurname1;
     }
 
-    public String getSurname2() {
-        return surname2;
+    public void setClientSurname1(String clientSurname1) {
+        this.clientSurname1 = clientSurname1;
     }
 
-    public void setSurname2(String surname2) {
-        this.surname2 = surname2;
+    public String getClientSurname2() {
+        return clientSurname2;
+    }
+
+    public void setClientSurname2(String clientSurname2) {
+        this.clientSurname2 = clientSurname2;
     }
 
     @Override
@@ -123,11 +133,16 @@ public class Booking {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id) && Objects.equals(room, booking.room) && Objects.equals(checkInDate, booking.checkInDate) && Objects.equals(checkOutDate, booking.checkOutDate) && Objects.equals(DNI, booking.DNI) && Objects.equals(name, booking.name) && Objects.equals(surname1, booking.surname1) && Objects.equals(surname2, booking.surname2);
+        return Objects.equals(id, booking.id) && Objects.equals(room, booking.room) && Objects.equals(checkInDate, booking.checkInDate)
+                && Objects.equals(checkOutDate, booking.checkOutDate)
+                && Objects.equals(clientDNI, booking.clientDNI)
+                && Objects.equals(clientName, booking.clientName)
+                && Objects.equals(clientSurname1, booking.clientSurname1)
+                && Objects.equals(clientSurname2, booking.clientSurname2);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, room, checkInDate, checkOutDate, DNI, name, surname1, surname2);
+        return Objects.hash(id, room, checkInDate, checkOutDate, clientDNI, clientName, clientSurname1, clientSurname2);
     }
 }
