@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 @Service("BookingService")
 @Lazy
@@ -26,6 +28,33 @@ public class BookingService implements IBookingService {
     BookingMapper bookingMapper;
     @Autowired
     RoomService roomService;
+    Predicate<BookingDTO> datesAreImpossible = (bookingDTO) ->
+            bookingDTO
+                    .getCheckInDate()
+                    .isBefore(LocalDateTime.now()) ||
+                    bookingDTO
+                            .getCheckOutDate()
+                            .isBefore(bookingDTO.getCheckInDate().toLocalDate());
+    BiPredicate<BookingDTO, BookingDTO> datesOverlapForRoom = (bookingDTO, bookingDTOToCheck) ->
+            bookingDTO.getRoomId() == bookingDTOToCheck.getRoomId() &&
+                    (
+                            bookingDTO
+                                    .getCheckInDate()
+                                    .isAfter(bookingDTOToCheck.getCheckInDate()) ||
+                                    bookingDTO
+                                            .getCheckInDate()
+                                            .toLocalDate()
+                                            .isEqual(bookingDTOToCheck.getCheckInDate().toLocalDate())
+                    ) &&
+                    (
+                            bookingDTO
+                                    .getCheckOutDate()
+                                    .isBefore(bookingDTOToCheck.getCheckOutDate()) ||
+                                    bookingDTO
+                                            .getCheckOutDate()
+                                            .isEqual(bookingDTOToCheck.getCheckOutDate())
+                    );
+
 
     @Override
     public BookingDTO queryBooking(BookingDTO bookingDTO) {
@@ -39,9 +68,9 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public int insertBooking(BookingDTO bookingDTO) throws InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException {
-        //validación fecha
-        if (bookingDTO.getCheckInDate().isBefore(LocalDateTime.now()) || bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate().toLocalDate())) {
+    public int insertBooking(BookingDTO bookingDTO) throws
+            InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException {
+        if (datesAreImpossible.test(bookingDTO)) {
             throw new InvalidBookingDateException("This date is not valid");
         }
 
@@ -58,11 +87,7 @@ public class BookingService implements IBookingService {
 
 
         List<BookingDTO> allBookingDTOs = queryAll();
-        if (allBookingDTOs.stream().anyMatch(dto ->
-                (bookingDTO.getRoomId() == dto.getRoomId()) &&
-                        ((bookingDTO.getCheckInDate().isAfter(dto.getCheckInDate()) || bookingDTO.getCheckInDate().toLocalDate().isEqual(dto.getCheckInDate().toLocalDate())) &&
-                                (bookingDTO.getCheckOutDate().isBefore(dto.getCheckOutDate()) || bookingDTO.getCheckOutDate().isEqual(dto.getCheckOutDate())))
-        )) {
+        if (allBookingDTOs.stream().anyMatch(dto -> datesOverlapForRoom.test(bookingDTO, dto))) {
             throw new RoomNotAvailableException("This date is already taken");
         }
 
