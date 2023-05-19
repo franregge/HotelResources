@@ -39,24 +39,14 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException {
+    public int insertBooking(BookingDTO bookingDTO) throws InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException {
         //validación fecha
         if (bookingDTO.getCheckInDate().isBefore(LocalDateTime.now()) || bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate().toLocalDate())) {
             throw new InvalidBookingDateException("This date is not valid");
         }
-        //Validación DNI TODO: extract method
-        String dni = bookingDTO.getClientDNI();
-        String dniNumber = dni.substring(0, 8);
-        char dniLetter = dni.charAt(8);
-        final String dniLetterTable = "TRWAGMYFPDXBNJZSQVHLCKE";
 
-        int dniValue = Integer.parseInt(dniNumber);
-        int index = dniValue % 23;
-
-        char dniRightLetter = dniLetterTable.charAt(index);
-
-        if (dni.length() != 9 || dniLetter != dniRightLetter) {
-            throw new InvalidBookingDNIException("Invalid DNI");
+        if (!validateDNI(bookingDTO.getClientDNI())) {
+            throw new InvalidBookingDNIException("The DNI format is not correct");
         }
 
         //validación existencia Room
@@ -91,6 +81,28 @@ public class BookingService implements IBookingService {
         bookingDAO.deleteById(bookingDTO.getId());
 
         return bookingDTO.getId();
+    }
+
+    public boolean validateDNI(String dni) {
+        List<Character> letters = List.of(
+                'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H',
+                'L', 'C', 'K', 'E'
+        );
+
+        if (dni.length() != 9) {
+            return false;
+        }
+
+        dni = dni.toUpperCase();
+
+        if (!dni.matches("[0-9]{8}[A-HJ-NP-TV-Z]")) {
+            return false;
+        }
+
+        int numberSegment = Integer.parseInt(dni.substring(0, 7));
+        char letter = dni.charAt(8);
+
+        return letters.get(numberSegment % 23) != letter;
     }
 
    /* @Override
