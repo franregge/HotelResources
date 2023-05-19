@@ -4,14 +4,20 @@ import com.imatia.campusdual.grupoun_bootcampbackend.api.IBookingService;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.BookingDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.BookingDAO;
 
+import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.BookingMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Booking;
+import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
+import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingAlreadyExistsException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.BookingDoesNotExistsException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidBookingDateException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.RoomNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service("BookingService")
@@ -21,7 +27,8 @@ public class BookingService implements IBookingService {
     BookingDAO bookingDAO;
     @Autowired
     BookingMapper bookingMapper;
-
+    @Autowired
+    RoomService roomService;
 
     @Override
     public BookingDTO queryBooking(BookingDTO bookingDTO) {
@@ -35,9 +42,25 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException {
+    public int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException {
         //TODO: HOTEL AVALIABLE, ROOM AVALIABLE , DATE AVALIABLE.
+        if (bookingDTO.getCheckInDate().isBefore(LocalDateTime.now()) || bookingDTO.getCheckOutDate().isBefore(bookingDTO.getCheckInDate().toLocalDate())){
+            throw new InvalidBookingDateException("This date is not valid");
+        }
+
+        List<RoomDTO>allRoomDTOs = roomService.queryAll();
+
+        
+
         List<BookingDTO>allBookingDTOs = queryAll();
+        if (allBookingDTOs.stream().anyMatch(dto ->
+                (bookingDTO.getRoomId() == dto.getRoomId()) &&
+                        ((bookingDTO.getCheckInDate().isAfter(dto.getCheckInDate()) || bookingDTO.getCheckInDate().toLocalDate().isEqual(dto.getCheckInDate().toLocalDate())) &&
+                        (bookingDTO.getCheckOutDate().isBefore(dto.getCheckOutDate()) || bookingDTO.getCheckOutDate().isEqual(dto.getCheckOutDate())))
+        )){
+            throw new RoomNotAvailableException("This date is already taken");
+        }
+
         if (allBookingDTOs.stream().anyMatch((dto->dto.getId()==(bookingDTO.getId())))){
             throw new BookingAlreadyExistsException("This booking already exists");
         }
