@@ -75,10 +75,7 @@ public class BookingService implements IBookingService {
             throw new InvalidBookingDNIException("The DNI format is not correct");
         }
 
-        //validación existencia Room
-        List<RoomDTO> allRoomDTOs = roomService.queryAll();
-
-        if (allRoomDTOs.stream().noneMatch(dto -> dto.getId() == bookingDTO.getRoomId())) {
+        if (!roomService.roomExistsById(new RoomDTO(bookingDTO.getRoomId()))) {
             throw new RoomDoesNotExistException("Room does not exist");
         }
 

@@ -16,4 +16,5 @@ public interface IRoomService {
 
     int deleteRoom(RoomDTO roomDTO);
 
+    boolean roomExistsById(RoomDTO roomDTO);
 }
