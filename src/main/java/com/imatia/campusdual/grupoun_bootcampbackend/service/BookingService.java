@@ -1,14 +1,11 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.service;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.api.IBookingService;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.BookingDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.BookingDAO;
-
+import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.BookingDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.BookingMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Booking;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
-import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -31,7 +28,7 @@ public class BookingService implements IBookingService {
     Predicate<BookingDTO> datesAreImpossible = (bookingDTO) ->
             bookingDTO
                     .getCheckInDate()
-                    .isBefore(LocalDateTime.now()) ||
+                    .isBefore(LocalDateTime.now()) || // TODO: incluír intervalo de tolerancia?
                     bookingDTO
                             .getCheckOutDate()
                             .isBefore(bookingDTO.getCheckInDate().toLocalDate());
@@ -124,10 +121,10 @@ public class BookingService implements IBookingService {
             return false;
         }
 
-        int numberSegment = Integer.parseInt(dni.substring(0, 7));
+        int numberSegment = Integer.parseInt(dni.substring(0, 8));
         char letter = dni.charAt(8);
 
-        return letters.get(numberSegment % 23) != letter;
+        return letters.get(numberSegment % 23) == letter;
     }
 
    /* @Override

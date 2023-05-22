@@ -1,12 +1,11 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.model.dto;
 
-import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class BookingDTO {
-    private int bookingId;
+    private int id;
     private int roomId;
     private LocalDateTime checkInDate;
     private LocalDate checkOutDate;
@@ -15,8 +14,8 @@ public class BookingDTO {
     private String clientSurname1;
     private String clientSurname2;
 
-    public BookingDTO(Integer bookingId, int roomId, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String clientName, String clientSurname1, String clientSurname2) {
-        this.bookingId = bookingId;
+    public BookingDTO(Integer id, int roomId, LocalDateTime checkInDate, LocalDate checkOutDate, String DNI, String clientName, String clientSurname1, String clientSurname2) {
+        this.id = id;
         this.roomId = roomId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
@@ -27,7 +26,7 @@ public class BookingDTO {
     }
 
     public BookingDTO(int id, int roomId, LocalDateTime checkInDate, LocalDate checkOutDate, String clientDNI, String clientName, String clientSurname1) {
-        this.bookingId = id;
+        this.id = id;
         this.roomId = roomId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
@@ -40,11 +39,11 @@ public class BookingDTO {
     }
 
     public int getId() {
-        return bookingId;
+        return id;
     }
 
     public void setId(int id) {
-        this.bookingId = bookingId;
+        this.id = id;
     }
 
     public int getRoomId() {
@@ -103,4 +102,16 @@ public class BookingDTO {
         this.clientSurname2 = surname2;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookingDTO that = (BookingDTO) o;
+        return id == that.id && roomId == that.roomId && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate) && Objects.equals(clientDNI, that.clientDNI) && Objects.equals(clientName, that.clientName) && Objects.equals(clientSurname1, that.clientSurname1) && Objects.equals(clientSurname2, that.clientSurname2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, roomId, checkInDate, checkOutDate, clientDNI, clientName, clientSurname1, clientSurname2);
+    }
 }
