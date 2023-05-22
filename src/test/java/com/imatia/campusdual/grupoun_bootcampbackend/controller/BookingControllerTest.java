@@ -35,6 +35,9 @@ public class BookingControllerTest {
     BookingService bookingService;
     @Autowired
     BookingDAO bookingDAO;
+    @Autowired
+    ObjectMapper objectMapper;
+
     @BeforeEach
     public void setUp() throws Exception { mockMvc = MockMvcBuilders.standaloneSetup(bookingController).build();}
     @Test
@@ -43,7 +46,7 @@ public class BookingControllerTest {
                 .perform(
                         MockMvcRequestBuilders.post("/bookings/add")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(new ObjectMapper().writeValueAsString(
+                                .content(objectMapper.writeValueAsString(
                                                 new BookingDTO(1,2, LocalDateTime.now().plusMonths(1), LocalDate.now().plusMonths(2).plusDays(2),"12345678A","Paco","Perez")
                                         )
                                 )
