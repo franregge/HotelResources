@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public interface HotelMapper {
     @Mapping(source = "rooms", target = "roomIds", qualifiedByName = "roomIdsFromEntityList")
     HotelDTO toDTO(Hotel hotel);
+
     @Mapping(source = "roomIds", target = "rooms", qualifiedByName = "roomListFromIds")
     Hotel toEntity(HotelDTO hotelDTO);
 

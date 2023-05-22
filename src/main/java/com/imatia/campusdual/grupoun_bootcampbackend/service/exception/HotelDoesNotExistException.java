@@ -6,4 +6,5 @@ public class HotelDoesNotExistException extends Exception {
     public HotelDoesNotExistException(String message) {
         super(message);
     }
+
 }

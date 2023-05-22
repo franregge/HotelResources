@@ -19,6 +19,10 @@ public class RoomDTO {
         this.roomNumber = roomNumber;
     }
 
+    public RoomDTO(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

@@ -3,10 +3,14 @@ package com.imatia.campusdual.grupoun_bootcampbackend.model.service;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.HotelDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.RoomDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
+import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.RoomMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelService;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.RoomService;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidAssignedHotelException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidRoomNumberException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,6 +37,10 @@ public class RoomServiceTest {
 
     @MockBean
     RoomDAO roomDAO;
+    @MockBean
+    HotelService hotelService;
+    @Autowired
+    HotelMapper hotelMapper;
     @Autowired
     ApplicationContext context;
     @Autowired
@@ -53,13 +61,18 @@ public class RoomServiceTest {
     }
 
     @Test
-    public void insertRoom_roomIsSaved() {
+    public void insertRoom_roomIsSaved() throws InvalidRoomNumberException, InvalidAssignedHotelException {
         int id = 1;
         int roomNumber = 101;
         Room room = new Room(id, roomNumber, hotel);
 
-        Mockito.when(roomDAO.getReferenceById(id)).thenReturn(new Room(id, roomNumber, hotel));
+        when(roomDAO.getReferenceById(id)).thenReturn(new Room(id, roomNumber, hotel));
+        when(hotelService.queryAll()).thenReturn(List.of(hotelMapper.toDTO(hotel)));
+        when(hotelService.queryHotel(any())).thenReturn(hotelMapper.toDTO(hotel));
+        when(roomDAO.saveAndFlush(any())).thenReturn(room);
+        when(roomDAO.findAll()).thenReturn(new ArrayList<>());
 
+        assertEquals(room.getId(), roomService.insertRoom(roomMapper.toDTO(room)));
         assertEquals(roomMapper.toDTO(room), roomService.queryRoom(roomMapper.toDTO(room)));
     }
 
