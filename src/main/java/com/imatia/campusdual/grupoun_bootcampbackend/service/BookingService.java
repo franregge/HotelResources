@@ -95,7 +95,7 @@ public class BookingService implements IBookingService {
     @Override
     public int deleteBooking(BookingDTO bookingDTO) throws BookingDoesNotExistsException {
         if (queryBooking(bookingDTO) == null) {
-            throw new BookingDoesNotExistsException("Hotel not found");
+            throw new BookingDoesNotExistsException("Booking not found");
         }
         bookingDAO.deleteById(bookingDTO.getId());
 
