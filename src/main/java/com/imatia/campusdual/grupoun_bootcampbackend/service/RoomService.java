@@ -67,7 +67,7 @@ public class RoomService implements IRoomService {
         assignedHotelDTO = hotelService.queryHotel(assignedHotelDTO);
         if (
                 !validateRoomNumber(roomDTO, assignedHotelDTO.getNumberOfFloors()) ||
-                        roomDAO.existsByRoomNumberAndHotel_Id(roomDTO.getRoomNumber(),assignedHotelId)
+                        roomDAO.existsByRoomNumberAndHotel(roomDTO.getRoomNumber(),assignedHotelId)
         ) {
             throw new InvalidRoomNumberException("Cannot create room with this number");
         }
