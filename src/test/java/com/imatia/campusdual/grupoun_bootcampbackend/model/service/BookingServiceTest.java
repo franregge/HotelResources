@@ -124,7 +124,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void deleteBooking_existingBooking_bookingIdIsReturned() throws BookingDoesNotExistsException {
+    public void deleteBooking_existingBooking_bookingIdIsReturned() throws BookingDoesNotExistException {
         int id = 1;
         when(bookingDAO.getReferenceById(id)).thenReturn(booking);
 
