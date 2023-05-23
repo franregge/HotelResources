@@ -10,9 +10,11 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidAssignedHotelException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidRoomNumberException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.RoomDoesNotExistException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service("RoomService")
@@ -47,6 +49,7 @@ public class RoomService implements IRoomService {
         assignedHotelDTO = hotelService.queryHotel(assignedHotelDTO);
         if (
                 roomDTO.getRoomNumber() < FIRST_ROOM_NUMBER ||
+                        floorNumber > 999 ||
                         floorNumber > assignedHotelDTO.getNumberOfFloors() ||
                         queryAll()
                                 .stream()
@@ -87,6 +90,21 @@ public class RoomService implements IRoomService {
     @Override
     public boolean roomExistsById(RoomDTO roomDTO) {
         return roomDAO.existsById(roomDTO.getId());
+    }
+
+    @Override
+    public int updateRoom(RoomDTO roomDTO) throws InvalidRoomNumberException, InvalidAssignedHotelException, RoomDoesNotExistException {
+
+        Room room;
+        try {
+            room = roomDAO.getReferenceById(roomDTO.getId());
+            room.setRoomNumber(roomDTO.getRoomNumber());
+        } catch (EntityNotFoundException e) {
+            throw new RoomDoesNotExistException("This room does not exist");
+        }
+
+        return insertRoom(roomMapper.toDTO(room));
+
     }
 
 }
