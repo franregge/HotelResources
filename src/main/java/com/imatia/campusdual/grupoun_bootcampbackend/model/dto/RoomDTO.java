@@ -47,15 +47,7 @@ public class RoomDTO {
         this.hotelId = hotelId;
     }
 
-    public int getFloorNumber() {
-        int floorNumber = roomNumber;
 
-        while (floorNumber > 9) {
-            floorNumber /= 10;
-        }
-
-        return floorNumber;
-    }
 
     @Override
     public boolean equals(Object o) {

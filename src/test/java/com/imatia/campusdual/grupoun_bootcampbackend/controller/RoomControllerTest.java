@@ -1,5 +1,6 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.RoomDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.RoomService;
@@ -35,6 +36,9 @@ public class RoomControllerTest {
     RoomController roomController;
     @Autowired
     WebApplicationContext context;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @BeforeEach
     public void setUp() {
@@ -86,5 +90,23 @@ public class RoomControllerTest {
         assertEquals(objectMapper.writeValueAsString(expectedResult), mvcResult.getResponse().getContentAsString());
     }
 
+    @Test
+    public void updateRoom_validRoom_returnStatusOkandId() throws Exception {
 
+        RoomDTO roomDTO = new RoomDTO(12, 101);
+        when(roomService.updateRoom(any())).thenReturn(roomDTO.getId());
+        MvcResult mvcResult = mockMvc.perform(
+                MockMvcRequestBuilders.put("/rooms/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(roomDTO)
+                        )
+        ).andReturn();
+
+        assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
+
+        objectMapper.readValue(mvcResult.getResponse().getContentAsString(), HashMap.class);
+        HashMap hashMap =  objectMapper.readValue(mvcResult.getResponse().getContentAsString(), HashMap.class);
+
+        assertEquals(roomDTO.getId(),hashMap.get("updatedId"));
+    }
 }

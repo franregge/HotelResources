@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoomDAO extends JpaRepository<Room, Integer> {
+
+    boolean existsByRoomNumberAndHotel(Integer roomNumber, Integer id);
+
 }

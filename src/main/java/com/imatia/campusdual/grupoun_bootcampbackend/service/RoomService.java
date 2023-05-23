@@ -10,9 +10,11 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Room;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidAssignedHotelException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidRoomNumberException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.RoomDoesNotExistException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service("RoomService")
@@ -32,6 +34,25 @@ public class RoomService implements IRoomService {
         this.hotelMapper = hotelMapper;
     }
 
+    public int getFloorNumber(int roomNumber) {
+        int floorNumber = roomNumber;
+
+        while (floorNumber > 9) {
+            floorNumber /= 10;
+        }
+
+        return floorNumber;
+    }
+
+    public boolean validateRoomNumber(RoomDTO roomDTO, int numberFloor){
+
+        return roomDTO.getRoomNumber() < FIRST_ROOM_NUMBER ||
+                roomDTO.getRoomNumber() > 999 ||
+                getFloorNumber(roomDTO.getRoomNumber()) > numberFloor;
+
+    }
+
+
     @Override
     public int insertRoom(RoomDTO roomDTO) throws InvalidAssignedHotelException, InvalidRoomNumberException {
         int assignedHotelId = roomDTO.getHotelId();
@@ -41,19 +62,12 @@ public class RoomService implements IRoomService {
         }
 
         // TODO: Hotels have 9 floors at most, hotel creation validation needed (?)
-        int floorNumber = roomDTO.getFloorNumber();
         HotelDTO assignedHotelDTO = new HotelDTO();
         assignedHotelDTO.setId(assignedHotelId);
         assignedHotelDTO = hotelService.queryHotel(assignedHotelDTO);
         if (
-                roomDTO.getRoomNumber() < FIRST_ROOM_NUMBER ||
-                        floorNumber > assignedHotelDTO.getNumberOfFloors() ||
-                        queryAll()
-                                .stream()
-                                .anyMatch(
-                                        room -> room.getRoomNumber() == roomDTO.getRoomNumber() &&
-                                                room.getHotelId() == roomDTO.getHotelId()
-                                )
+                !validateRoomNumber(roomDTO, assignedHotelDTO.getNumberOfFloors()) ||
+                        roomDAO.existsByRoomNumberAndHotel(roomDTO.getRoomNumber(),assignedHotelId)
         ) {
             throw new InvalidRoomNumberException("Cannot create room with this number");
         }
@@ -87,6 +101,24 @@ public class RoomService implements IRoomService {
     @Override
     public boolean roomExistsById(RoomDTO roomDTO) {
         return roomDAO.existsById(roomDTO.getId());
+    }
+
+    @Override
+    public int updateRoom(RoomDTO roomDTO) throws InvalidRoomNumberException, InvalidAssignedHotelException, RoomDoesNotExistException {
+
+        Room room;
+        try {
+            room = roomDAO.getReferenceById(roomDTO.getId());
+            if (validateRoomNumber(roomDTO,room.getHotel().getNumberOfFloors())){
+                throw new InvalidRoomNumberException("Cannot update room with this number");
+            }
+            room.setRoomNumber(roomDTO.getRoomNumber());
+        } catch (EntityNotFoundException e) {
+            throw new RoomDoesNotExistException("This room does not exist");
+        }
+
+        return room.getId();
+
     }
 
 }
