@@ -11,6 +11,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.service.HotelService;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.RoomService;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidAssignedHotelException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidRoomNumberException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.RoomDoesNotExistException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -125,4 +126,18 @@ public class RoomServiceTest {
         assertNotNull(roomResult);
     }
 
+    @Test
+    public void updatedRoom_returnId() throws RoomDoesNotExistException, InvalidRoomNumberException, InvalidAssignedHotelException {
+        int id = 1;
+        int roomNumber = 101;
+        RoomDTO roomDTO = new RoomDTO(id, roomNumber);
+        Room room = new Room(id, roomNumber, hotel);
+
+        when(roomDAO.getReferenceById(id)).thenReturn(room);
+
+        int updatedId = roomService.updateRoom(roomDTO);
+
+        verify(roomDAO, times(1)).saveAndFlush(any(Room.class));
+        assertEquals(roomDTO.getId(), updatedId);
+    }
 }
