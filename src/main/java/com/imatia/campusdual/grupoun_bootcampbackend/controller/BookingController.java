@@ -37,7 +37,7 @@ public class BookingController {
         int insertedId = 0;
         try {
             insertedId = bookingService.deleteBooking(bookingDTO);
-        } catch (BookingDoesNotExistsException e) {
+        } catch (BookingDoesNotExistException e) {
             HashMap<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
 

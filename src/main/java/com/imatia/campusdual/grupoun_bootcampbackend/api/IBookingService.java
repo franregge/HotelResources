@@ -14,6 +14,6 @@ public interface IBookingService {
 
     int insertBooking(BookingDTO bookingDTO) throws BookingAlreadyExistsException, InvalidBookingDateException, RoomNotAvailableException, RoomDoesNotExistException, InvalidBookingDNIException;
 
-    int deleteBooking(BookingDTO bookingDTO) throws BookingDoesNotExistsException;
+    int deleteBooking(BookingDTO bookingDTO) throws BookingDoesNotExistException;
     /* int updateBooking(BookingDTO bookingDTO) throws  BookingDoesNotExistsException;*/
 }
