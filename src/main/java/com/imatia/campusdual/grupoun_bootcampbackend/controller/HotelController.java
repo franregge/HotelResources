@@ -53,6 +53,21 @@ public class HotelController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @PutMapping(value="/update")
+    public
+    ResponseEntity<Map<String,?>>updateHotel(@RequestBody HotelDTO hotelDTO){
+        int updatedHotelId;
+        try {
+            updatedHotelId = hotelService.updateHotel(hotelDTO);
+        } catch (HotelDoesNotExistException e) {
+            HashMap<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
 
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+        HashMap<String,Integer>response = new HashMap<>();
+        response.put("updatedHotelId",updatedHotelId);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

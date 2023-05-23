@@ -7,10 +7,12 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMa
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelAlreadyExistsException;
 import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelDoesNotExistException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidFloorNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import javax.management.InvalidAttributeValueException;
 import java.util.List;
 
 @Service("HotelService")
@@ -20,6 +22,8 @@ public class HotelService implements IHotelService {
     HotelDAO hotelDAO;
     @Autowired
     HotelMapper hotelMapper;
+    @Autowired
+    RoomService roomService;
 
     @Override
     public HotelDTO queryHotel(HotelDTO hotelDTO) {
@@ -48,12 +52,33 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public int updateHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException {
-        List<HotelDTO> allHotelDTOs = queryAll();
+    public int updateHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException, InvalidAttributeValueException, InvalidFloorNumber {
 
-        if (allHotelDTOs.stream().noneMatch(dto -> dto.getId() == hotelDTO.getId())) {
+        if (hotelDAO.existsById(hotelDTO.getId())) {
 
             throw new HotelDoesNotExistException("The hotel does not exist");
+        }
+        //Validación nombre no nulo ni vacío
+        if(hotelDTO.getName()!=null && hotelDTO.getName().isEmpty()){
+            throw  new IllegalStateException ("Empty name");
+        }
+        //El número de plantas modificado debe estar entre 0 y 10
+        if(hotelDTO.getNumberOfFloors()<0 && hotelDTO.getNumberOfFloors()>10){
+            throw new IllegalStateException("Number of floors must be between 0-10");
+        }
+        Hotel hotel= hotelDAO.getReferenceById(hotelDTO.getId());
+        if(hotelDTO.getNumberOfFloors()>0){
+            hotel.setNumberOfFloors(hotelDTO.getNumberOfFloors());
+        }
+        //Si el nombre del Hotel es nulo, no actualizamos ese dato
+        if (hotelDTO.getName()!=null){
+           hotel.setName(hotelDTO.getName());
+        }
+        //Validación de habitaciones al borrar unha planta
+        if(hotelDTO.getNumberOfFloors()<hotel.getNumberOfFloors()){
+           if (hotel.getRooms().stream().anyMatch(room -> roomService.getFloorNumber(room.getRoomNumber())>hotelDTO.getNumberOfFloors())){
+               throw new InvalidFloorNumber("Invalid number of floors");
+            }
         }
         return hotelDAO.saveAndFlush(hotelMapper.toEntity(hotelDTO)).getId();
     }

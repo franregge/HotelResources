@@ -22,4 +22,5 @@ public class HotelTest {
         assertEquals(numberOfFloors, hotel.getNumberOfFloors());
     }
 
+
 }
