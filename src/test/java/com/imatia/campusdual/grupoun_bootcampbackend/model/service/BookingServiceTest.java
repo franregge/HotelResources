@@ -1,6 +1,7 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.model.service;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.BookingDAO;
+import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.RoomDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.BookingDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.BookingMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.RoomMapper;
@@ -118,6 +119,7 @@ public class BookingServiceTest {
         when(bookingDAO.getReferenceById(id)).thenReturn(booking);
         when(bookingDAO.saveAndFlush(any())).thenReturn(booking);
         when(roomService.queryAll()).thenReturn(List.of(roomMapper.toDTO(booking.getRoom())));
+        when(roomService.roomExistsById(any())).thenReturn(true);
 
         assertEquals(bookingMapper.toDTO(booking), bookingService.queryBooking(bookingMapper.toDTO(booking)));
         assertEquals(booking.getId(), bookingService.insertBooking(bookingMapper.toDTO(booking)));

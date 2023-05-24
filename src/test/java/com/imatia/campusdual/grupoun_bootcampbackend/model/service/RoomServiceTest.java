@@ -130,14 +130,13 @@ public class RoomServiceTest {
     public void updatedRoom_returnId() throws RoomDoesNotExistException, InvalidRoomNumberException, InvalidAssignedHotelException {
         int id = 1;
         int roomNumber = 101;
-        RoomDTO roomDTO = new RoomDTO(id, roomNumber);
         Room room = new Room(id, roomNumber, hotel);
 
         when(roomDAO.getReferenceById(id)).thenReturn(room);
 
-        int updatedId = roomService.updateRoom(roomDTO);
+        int updatedId = roomService.updateRoom(roomMapper.toDTO(room));
 
         verify(roomDAO, times(1)).saveAndFlush(any(Room.class));
-        assertEquals(roomDTO.getId(), updatedId);
+        assertEquals(room.getId(), updatedId);
     }
 }
