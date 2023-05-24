@@ -1,7 +1,7 @@
 package com.imatia.campusdual.grupoun_bootcampbackend.service.exception;
 
-public class InvalidFloorNumber extends Exception{
-    public InvalidFloorNumber (String message){
+public class InvalidFloorNumberException extends Exception{
+    public InvalidFloorNumberException(String message){
         super(message);
     }
 }
