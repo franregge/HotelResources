@@ -13,6 +13,8 @@ spring:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  jackson:
+    time-zone: Europe/Madrid
 server:
   port: 30030
 logging:

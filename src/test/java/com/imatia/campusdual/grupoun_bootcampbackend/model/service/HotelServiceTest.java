@@ -36,6 +36,7 @@ public class HotelServiceTest {
     HotelMapper hotelMapper;
     HotelService hotelService;
 
+
     @BeforeAll
     public void init() {
         hotelService = context.getBean(HotelService.class);
@@ -92,5 +93,21 @@ public class HotelServiceTest {
         verify(this.hotelDAO, times(1)).findAll();
         assertEquals(3, empList.size());
 
+    }
+    @Test
+    void updateHotelTest_ValidHotelDTO_hotelIsUpdated(){
+        HotelDTO hotelDTO = new HotelDTO();
+        Hotel hotel = hotelMapper.toEntity(hotelDTO);
+        int id = 1;
+        String name = "Overlook Hotel";
+        Integer numberOfFloors = 6;
+        hotel.setId(id);
+        hotel.setName(name);
+        hotel.setNumberOfFloors(numberOfFloors);
+
+        when(hotelDAO.getReferenceById(id)).thenReturn(hotel);
+        when(hotelDAO.saveAndFlush(hotel)).thenReturn(hotel);
+
+        assertEquals(hotelMapper.toDTO(hotel), hotelService.queryHotel(hotelMapper.toDTO(hotel)));
     }
 }
