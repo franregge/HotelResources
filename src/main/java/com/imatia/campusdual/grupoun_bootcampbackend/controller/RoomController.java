@@ -42,7 +42,9 @@ public class RoomController {
             Map<String, Integer> responseBody = new HashMap<>();
             responseBody.put("deletedId", roomService.deleteRoom(roomDTO));
             return new ResponseEntity<>(responseBody, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (RoomDoesNotExistException e) {
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("error", e.getMessage());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

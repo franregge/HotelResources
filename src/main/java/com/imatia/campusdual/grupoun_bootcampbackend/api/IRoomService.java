@@ -15,7 +15,7 @@ public interface IRoomService {
 
     int insertRoom(RoomDTO roomDTO) throws InvalidAssignedHotelException, InvalidRoomNumberException;
 
-    int deleteRoom(RoomDTO roomDTO);
+    int deleteRoom(RoomDTO roomDTO) throws RoomDoesNotExistException;
 
     boolean roomExistsById(RoomDTO roomDTO);
 

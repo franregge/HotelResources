@@ -72,9 +72,12 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public int deleteRoom(RoomDTO roomDTO) {
-        Room room = roomMapper.toEntity(roomDTO);
-        roomDAO.delete(room);
+    public int deleteRoom(RoomDTO roomDTO) throws RoomDoesNotExistException {
+        if (!roomDAO.existsById(roomDTO.getId())) {
+            throw new RoomDoesNotExistException("A room with this id could not be found");
+        }
+
+        roomDAO.deleteById(roomDTO.getId());
         return roomDTO.getId();
     }
 
