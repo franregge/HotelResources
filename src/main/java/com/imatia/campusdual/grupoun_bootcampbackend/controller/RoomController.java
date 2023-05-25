@@ -45,7 +45,7 @@ public class RoomController {
         } catch (RoomDoesNotExistException e) {
             Map<String, String> responseBody = new HashMap<>();
             responseBody.put("error", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
         }
     }
 
