@@ -1,4 +1,4 @@
-package com.ontimize.hr.model.core.service.exception;
+package com.ontimize.hr.api.core.service.exception;
 
 public class InvalidBookingDNIException extends Exception {
 
