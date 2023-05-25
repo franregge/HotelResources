@@ -37,7 +37,7 @@ public class RoomService implements IRoomService {
         this.roomUtils = roomUtils;
     }
 
-    public boolean validateRoomNumber(RoomDTO roomDTO, int numberOfFloors){
+    public boolean validateRoomNumber(RoomDTO roomDTO, int numberOfFloors) {
 
         return roomDTO.getRoomNumber() >= FIRST_ROOM_NUMBER &&
                 roomDTO.getRoomNumber() <= 999 &&
@@ -59,7 +59,7 @@ public class RoomService implements IRoomService {
         assignedHotelDTO = hotelService.queryHotel(assignedHotelDTO);
         if (
                 !validateRoomNumber(roomDTO, assignedHotelDTO.getNumberOfFloors()) ||
-                        roomDAO.existsByRoomNumberAndHotel_Id(roomDTO.getRoomNumber(),assignedHotelId)
+                        roomDAO.existsByRoomNumberAndHotel_Id(roomDTO.getRoomNumber(), assignedHotelId)
         ) {
             throw new InvalidRoomNumberException("Cannot create room with this number");
         }
@@ -97,22 +97,15 @@ public class RoomService implements IRoomService {
 
     @Override
     public int updateRoom(RoomDTO roomDTO) throws InvalidRoomNumberException, InvalidAssignedHotelException, RoomDoesNotExistException {
+        Room room = roomDAO
+                .findById(roomDTO.getId()).orElseThrow(() -> new RoomDoesNotExistException("This room does not exist"));
 
-        Room room;
-        try {
-            room = roomDAO.getReferenceById(roomDTO.getId());
-            if (!validateRoomNumber(roomDTO,room.getHotel().getNumberOfFloors())){
-                throw new InvalidRoomNumberException("Cannot update room with this number");
-            }
-            room.setRoomNumber(roomDTO.getRoomNumber());
-        } catch (EntityNotFoundException e) {
-            throw new RoomDoesNotExistException("This room does not exist");
+        if (!validateRoomNumber(roomDTO, room.getHotel().getNumberOfFloors())) {
+            throw new InvalidRoomNumberException("Cannot update room with this number");
         }
+        room.setRoomNumber(roomDTO.getRoomNumber());
 
-        roomDAO.saveAndFlush(room);
-
-        return room.getId();
-
+        return roomDAO.saveAndFlush(room).getId();
     }
 
 }
