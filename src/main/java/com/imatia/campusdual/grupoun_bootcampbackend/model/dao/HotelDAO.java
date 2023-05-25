@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HotelDAO extends JpaRepository<Hotel, Integer> {
+    boolean existsByNameIgnoreCase(String name);
 }

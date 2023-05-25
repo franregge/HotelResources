@@ -2,10 +2,7 @@ package com.imatia.campusdual.grupoun_bootcampbackend.controller;
 
 import com.imatia.campusdual.grupoun_bootcampbackend.api.IHotelService;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelAlreadyExistsException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelDoesNotExistException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidFloorNumberException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidNumberOfFloorsException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +23,7 @@ public class HotelController {
 
         try {
             insertedId = hotelService.insertHotel(hotelDTO);
-        } catch (HotelAlreadyExistsException | InvalidNumberOfFloorsException e) {
+        } catch (HotelAlreadyExistsException | InvalidNumberOfFloorsException | InvalidHotelNameException e) {
             HashMap<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
@@ -55,6 +52,7 @@ public class HotelController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PutMapping(value="/update")
     public
     ResponseEntity<Map<String,?>>updateHotel(@RequestBody HotelDTO hotelDTO){

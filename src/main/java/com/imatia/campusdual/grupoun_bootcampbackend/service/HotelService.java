@@ -5,10 +5,7 @@ import com.imatia.campusdual.grupoun_bootcampbackend.model.dao.HotelDAO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.HotelDTO;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.dto.dtomapper.HotelMapper;
 import com.imatia.campusdual.grupoun_bootcampbackend.model.entity.Hotel;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelAlreadyExistsException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.HotelDoesNotExistException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidFloorNumberException;
-import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.InvalidNumberOfFloorsException;
+import com.imatia.campusdual.grupoun_bootcampbackend.service.exception.*;
 import com.imatia.campusdual.grupoun_bootcampbackend.util.RoomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -40,10 +37,12 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public int insertHotel(HotelDTO hotelDTO) throws HotelAlreadyExistsException, InvalidNumberOfFloorsException {
-        List<HotelDTO> allHotelDTOs = queryAll();
+    public int insertHotel(HotelDTO hotelDTO) throws HotelAlreadyExistsException, InvalidNumberOfFloorsException, InvalidHotelNameException {
+        if (hotelDTO.getName() == null || hotelDTO.getName().isEmpty()) {
+            throw new InvalidHotelNameException("A non-empty hotel name must be provided");
+        }
 
-        if (allHotelDTOs.stream().anyMatch(dto -> dto.getName().equals(hotelDTO.getName()))) {
+        if (hotelDAO.existsByNameIgnoreCase(hotelDTO.getName())) {
             throw new HotelAlreadyExistsException("This hotel already exists");
         }
 
