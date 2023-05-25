@@ -54,8 +54,7 @@ public class HotelController {
     }
 
     @PutMapping(value="/update")
-    public
-    ResponseEntity<Map<String,?>>updateHotel(@RequestBody HotelDTO hotelDTO){
+    public ResponseEntity<Map<String,?>>updateHotel(@RequestBody HotelDTO hotelDTO){
         int updatedHotelId;
         try {
             updatedHotelId = hotelService.updateHotel(hotelDTO);

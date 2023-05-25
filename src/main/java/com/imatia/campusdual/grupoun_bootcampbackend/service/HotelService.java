@@ -58,34 +58,42 @@ public class HotelService implements IHotelService {
 
     @Override
     public int updateHotel(HotelDTO hotelDTO) throws HotelDoesNotExistException, InvalidFloorNumberException, IllegalStateException {
-
-        if (hotelDAO.existsById(hotelDTO.getId())) {
-
-            throw new HotelDoesNotExistException("The hotel does not exist");
-        }
         //Validación nombre no nulo ni vacío
-        if(hotelDTO.getName()!=null && hotelDTO.getName().isEmpty()){
-            throw  new IllegalStateException ("Empty name");
+        if (hotelDTO.getName() != null && hotelDTO.getName().isEmpty()) {
+            throw new IllegalStateException("Empty name");
         }
+
         //El número de plantas modificado debe estar entre 0 y 10
-        if(hotelDTO.getNumberOfFloors()<0 && hotelDTO.getNumberOfFloors()>10){
+        if (hotelDTO.getNumberOfFloors() < 0 && hotelDTO.getNumberOfFloors() > 10) {
             throw new IllegalStateException("Number of floors must be between 0-10");
         }
-        Hotel hotel= hotelDAO.getReferenceById(hotelDTO.getId());
-        if(hotelDTO.getNumberOfFloors()>0){
+
+        Hotel hotel = hotelDAO
+                .findById(hotelDTO.getId())
+                .orElseThrow(() -> new HotelDoesNotExistException("No hotel with the specified id could be found"));
+
+        if (hotelDTO.getNumberOfFloors() > 0) {
             hotel.setNumberOfFloors(hotelDTO.getNumberOfFloors());
         }
         //Si el nombre del Hotel es nulo, no actualizamos ese dato
-        if (hotelDTO.getName()!=null){
-           hotel.setName(hotelDTO.getName());
+        if (hotelDTO.getName() != null) {
+            hotel.setName(hotelDTO.getName());
         }
+
         //Validación de habitaciones al borrar unha planta
-        if(hotelDTO.getNumberOfFloors()<hotel.getNumberOfFloors()){
-           if (hotel.getRooms().stream().anyMatch(room -> roomUtils.getFloorNumber(room.getRoomNumber())>hotelDTO.getNumberOfFloors())){
-               throw new InvalidFloorNumberException("Invalid number of floors");
-            }
+        if (
+                hotelDTO.getNumberOfFloors() < hotel.getNumberOfFloors() &&
+                        hotel.getRooms()
+                                .stream()
+                                .anyMatch(
+                                        room -> roomUtils
+                                                .getFloorNumber(room.getRoomNumber()) > hotelDTO.getNumberOfFloors()
+                                )
+        ) {
+                throw new InvalidFloorNumberException("Invalid number of floors");
         }
-        return hotelDAO.saveAndFlush(hotelMapper.toEntity(hotelDTO)).getId();
+
+        return hotelDAO.saveAndFlush(hotel).getId();
     }
 
     @Override
