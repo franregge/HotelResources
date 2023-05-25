@@ -53,8 +53,8 @@ public class HotelController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping(value="/update")
-    public ResponseEntity<Map<String,?>>updateHotel(@RequestBody HotelDTO hotelDTO){
+    @PutMapping(value = "/update")
+    public ResponseEntity<Map<String, ?>> updateHotel(@RequestBody HotelDTO hotelDTO) {
         int updatedHotelId;
         try {
             updatedHotelId = hotelService.updateHotel(hotelDTO);
@@ -69,8 +69,8 @@ public class HotelController {
 
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
-        HashMap<String,Integer>response = new HashMap<>();
-        response.put("updatedHotelId",updatedHotelId);
+        HashMap<String, Integer> response = new HashMap<>();
+        response.put("updatedHotelId", updatedHotelId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
