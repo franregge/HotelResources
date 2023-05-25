@@ -26,8 +26,6 @@ public class HotelService implements IHotelService {
     @Autowired
     private DefaultOntimizeDaoHelper daoHelper;
 
-    public void loginQuery(Map<?, ?> key, List<?> attr) {
-    }
 
     //Sample to permission
     //@Secured({ PermissionsProviderSecured.SECURED })

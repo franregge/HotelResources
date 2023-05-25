@@ -1,4 +1,4 @@
-package com.ontimize.hr.ws.core.rest.exception;
+package com.ontimize.hr.model.core.service.exception;
 
 public class RoomNotAvailableException extends Exception {
 
