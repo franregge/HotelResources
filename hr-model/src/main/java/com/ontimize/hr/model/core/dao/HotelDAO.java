@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
         configurationFilePlaceholder = "dao/placeholders.properties")
 public class HotelDAO extends OntimizeJdbcDaoSupport {
 
-    public static final String ID = "id";
-    public static final String NAME = "name";
-    public static final String NUMBER_OF_FLOORS = "number_of_floors";
+    public static final String ID = "ID";
+    public static final String NAME = "NAME";
+    public static final String NUMBER_OF_FLOORS = "NUMBER_OF_FLOORS";
 
 
 }
