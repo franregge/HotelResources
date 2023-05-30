@@ -15,6 +15,7 @@
     <Queries>
         <Query id="default">
             <ValidColumns>
+                <Column>id</Column>
                 <Column>name</Column>
                 <Column>number_of_floors</Column>
             </ValidColumns>
@@ -25,6 +26,29 @@
                     FROM
                         ${mainschema}.hotels
                     #WHERE#
+                ]]>
+            </Sentence>
+        </Query>
+        <Query id="bookingsInHotel">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="room_id" databaseName="id" prefix="r"/>
+                <AmbiguousColumn name="hotel_id" databaseName="id" prefix="h"/>
+                <AmbiguousColumn name="booking_id" databaseName="id" prefix="b"/>
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.bookings b INNER JOIN ${mainschema}.rooms r
+                    ON
+                       b.room_id = r.id
+                    INNER JOIN
+                        ${mainschema}.hotels h
+                    ON
+                    h.id = r.hotel_id
+                    #WHERE#
+
                 ]]>
             </Sentence>
         </Query>

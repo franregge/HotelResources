@@ -13,4 +13,6 @@ public interface IHotelService {
     public EntityResult hotelQuery(Map<?, ?> keyMap, List<?> attrList);
     public EntityResult hotelInsert(Map<?, ?> attrMap) throws HotelAlreadyExistsException, InvalidNumberOfFloorsException;
     public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception;
+
+    EntityResult hotelDelete(Map<?, ?> keyMap) throws Exception;
 }
