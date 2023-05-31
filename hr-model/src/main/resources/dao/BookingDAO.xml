@@ -17,8 +17,8 @@
             <ValidColumns>
                 <Column>id</Column>
                 <Column>room_id</Column>
-                <Column>check_in_date</Column>
-                <Column>check_out_date</Column>
+                <Column>arrival_date</Column>
+                <Column>departure_date</Column>
                 <Column>dni</Column>
                 <Column>name</Column>
                 <Column>surname1</Column>

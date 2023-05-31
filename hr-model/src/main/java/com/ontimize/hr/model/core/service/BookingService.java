@@ -26,50 +26,44 @@ public class BookingService implements IBookingService {
     @Autowired
     private BookingDAO bookingDAO;
 
-    Predicate<Map<?, ?>> datesAreImpossible = (map) -> {
-
-        LocalDateTime checkindate = (LocalDateTime) map.get("check_in_date");
-        LocalDate checkoutdate = (LocalDate) map.get("check_out_date");
-
-        return checkindate
-                .isBefore(LocalDateTime.now()) || // TODO: incluír intervalo de tolerancia?
-                checkoutdate
-                        .isBefore(checkindate.toLocalDate());
+    Predicate<Map<?,?>> arrivalDateBeforeNow = (bookingMap) ->{
+        LocalDate arrivalDate = (LocalDate) bookingMap.get(BookingDAO.ARRIVAL_DATE);
+        return arrivalDate.isBefore(LocalDate.now());
     };
 
-    BiPredicate<Map<?, ?>, EntityResult> datesOverlapForRoom = (bookingMap, bookingEntityResult) -> {
-        List<LocalDateTime> checkInDateList = (List<LocalDateTime>) bookingEntityResult.get("check_in_date");
-        List<LocalDate> checkOutDateList = (List<LocalDate>) bookingEntityResult.get("checkOutDate");
-        LocalDateTime insertedCheckInDate = (LocalDateTime) bookingMap.get("check_in_date");
-        LocalDate insertedCheckOutDate = (LocalDate) bookingMap.get("check_out_date");
 
-
-        for (int i = 0; i < checkInDateList.size(); i++) {
-
-
-            if (
-                    insertedCheckInDate
-                            .isAfter(
-                                    checkInDateList
-                                            .get(i)) ||
-                            insertedCheckInDate
-                                    .toLocalDate()
-                                    .isEqual(
-                                            checkInDateList
-                                                    .get(i)
-                                                    .toLocalDate())
-                            ||
-                            (
-                                    insertedCheckOutDate
-                                            .isBefore(checkOutDateList.get(i)) ||
-                                            insertedCheckOutDate
-                                                    .isEqual(checkOutDateList.get(i)))) {
-                return true;
-            }
-        }
-
-        return false;
+    Predicate<Map<?,?>> departureDateBeforeArrivalDate =(bookingMap)->{
+        LocalDate departureDate = (LocalDate) bookingMap.get(BookingDAO.DEPARTURE_DATE);
+        LocalDate arrivalDate = (LocalDate) bookingMap.get(BookingDAO.ARRIVAL_DATE);
+        return departureDate.isBefore(arrivalDate);
     };
+    BiPredicate<Map<?,?>, EntityResult> datesOverlapForRoom = (bookingMap, bookingEntityResult) ->{
+        LocalDate departureDate = (LocalDate) bookingMap.get(BookingDAO.DEPARTURE_DATE);
+        LocalDate arrivalDate = (LocalDate) bookingMap.get(BookingDAO.ARRIVAL_DATE);
+
+        LocalDate departureDateCheck = (LocalDate) bookingEntityResult.get(BookingDAO.DEPARTURE_DATE);
+        LocalDate arrivalDateCheck = (LocalDate) bookingEntityResult.get(BookingDAO.ARRIVAL_DATE);
+
+        int roomID = (int) bookingMap.get(BookingDAO.ROOM_ID);
+        int roomIDCheck = (int) bookingEntityResult.get(BookingDAO.ROOM_ID);
+
+        return roomID == roomIDCheck &&
+                (
+                        arrivalDate
+                                .isAfter(arrivalDateCheck) ||
+                                arrivalDate
+                                        .isEqual(arrivalDateCheck)
+                ) &&
+                (
+                        departureDate
+                                .isBefore(departureDateCheck) ||
+                                departureDate
+                                        .isEqual(departureDateCheck)
+                );
+    };
+
+
+
 
 
     @Override
@@ -81,12 +75,18 @@ public class BookingService implements IBookingService {
     public EntityResult bookingInsert(Map<?, ?> attrMap) throws InvalidBookingDateException {
         Map<String, Integer> filter = new HashMap<>();
         filter.put("room_id", (Integer) attrMap.get("room_id"));
-        List<String> queriedAtributeList = List.of("check_in_date", "check_out_date");
+        List<String> queriedAtributeList = List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.DEPARTURE_DATE);
 
         EntityResult entityResult = bookingQuery(filter, queriedAtributeList);
 
         if (datesOverlapForRoom.test(attrMap, entityResult)) {
             throw new InvalidBookingDateException("Occupied room in those dates");
+        }
+        if (arrivalDateBeforeNow.test(attrMap)){
+            throw new InvalidBookingDateException("The arrival date must be after now");
+        }
+        if (departureDateBeforeArrivalDate.test(attrMap)){
+            throw new InvalidBookingDateException("The departure date must be after arrival date");
         }
 
         return this.daoHelper.insert(this.bookingDAO, attrMap);

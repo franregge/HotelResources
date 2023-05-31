@@ -14,8 +14,8 @@ public class BookingDAO extends OntimizeJdbcDaoSupport {
 
     public static final String ID = "id";
     public static final String ROOM_ID = "room_id";
-    public static final String CHECK_IN_DATE = "check_in_date";
-    public static final String CHECK_OUT_DATE = "check_out_date";
+    public static final String ARRIVAL_DATE = "arrival_date";
+    public static final String DEPARTURE_DATE = "departure_date";
     public static final String DNI = "dni";
     public static final String NAME = "name";
     public static final String SURNAME1 = "surname1";

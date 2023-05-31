@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 @Lazy
 @Service("RoomService")
 public class RoomService implements IRoomService {
@@ -39,72 +40,90 @@ public class RoomService implements IRoomService {
         return this.daoHelper.query(this.roomDAO, keymap, attrList);
     }
 
-    public boolean validateRoomNumber(int roomNumber,int numberOfFloors) {
-
-        return roomNumber >=FIRST_ROOM_NUMBER &&
-                roomNumber <= 999 &&
-                roomUtils.getFloorNumber(roomNumber) <= numberOfFloors;
-
+    public boolean validateRoomNumberOverMinimum(int roomNumber) {
+        return roomNumber >= FIRST_ROOM_NUMBER;
     }
 
-    @Override
-    public EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException {
-        int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
+    public boolean validateRoomNumberRoomNonZero(int roomNumber) {
+        return roomNumber % 10 != 0;
+    }
 
+    public boolean validateRoomNumberUnderMaximum(int roomNumber) {
+        return roomNumber <= 9999;
+    }
 
+    public boolean validateRoomNumberEnoughFloors(int roomNumber, int numberOfFloors) {
+        return roomUtils.getFloorNumber(roomNumber) <= numberOfFloors;
+    }
 
-        Map<String, Integer> keyMap = new HashMap<>();
-
-        EntityResult assignedHotelEntityResult =
-       hotelService.hotelQuery(keyMap,List.of(HotelDAO.NUMBER_OF_FLOORS));
-
-        if (
-                !validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0))
-        ) {
-            throw new InvalidRoomNumberException("Cannot create room with this number, not enough floors");
+    public void validateRoomNumber(int roomNumber, int numberOfFloors) throws InvalidRoomNumberException {
+        if (!validateRoomNumberOverMinimum(roomNumber)) {
+            throw new InvalidRoomNumberException("The roomNumber has to be over 100");
         }
-
-        return this.daoHelper.insert(this.roomDAO, attrMap);
+        if (!validateRoomNumberUnderMaximum(roomNumber)) {
+            throw new InvalidRoomNumberException("The roomNumber has to be under 10000");
+        }
+        if (!validateRoomNumberEnoughFloors(roomNumber, numberOfFloors)) {
+            throw new InvalidRoomNumberException("This hotel has not enough floors");
+        }
+        if (!validateRoomNumberRoomNonZero(roomNumber)){
+            throw new InvalidRoomNumberException("The roomNumber cannot finish with 0");
+        }
     }
-    public EntityResult roomDelete(Map<?, ?> keyMap) throws Exception {
-        Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
 
-        //if (!this.daoHelper.query(hotelDAO, keyMap, List.of("hotel_id"),HotelDAO.QUERY_BOOKINGS_IN_HOTEL).isEmpty()){
-        //    throw new Exception("This hotel has booked rooms");
-        //}
+        @Override
+        public EntityResult roomInsert (Map < ?, ?>attrMap) throws InvalidRoomNumberException {
+            int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
 
-        if(this.daoHelper.query(roomDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()){
+
+            Map<String, Integer> keyMap = new HashMap<>();
+
+            EntityResult assignedHotelEntityResult =
+                    hotelService.hotelQuery(keyMap, List.of(HotelDAO.NUMBER_OF_FLOORS));
+
+            validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0));
+
+            return this.daoHelper.insert(this.roomDAO, attrMap);
+        }
+        public EntityResult roomDelete (Map < ?, ?>keyMap) throws Exception {
+            Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
+
+            //if (!this.daoHelper.query(hotelDAO, keyMap, List.of("hotel_id"),HotelDAO.QUERY_BOOKINGS_IN_HOTEL).isEmpty()){
+            //    throw new Exception("This hotel has booked rooms");
+            //}
+
+            if (this.daoHelper.query(roomDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()) {
+                EntityResult result = this.daoHelper.delete(roomDAO, keyMap);
+                result.setMessage("No rooms with this id");
+                result.setCode(EntityResult.OPERATION_WRONG);
+                return result;
+            }
+
             EntityResult result = this.daoHelper.delete(roomDAO, keyMap);
-            result.setMessage("No rooms with this id");
-            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage("Room deleted successfully");
+            result.put("deleted_id", roomId);
             return result;
         }
 
-        EntityResult result = this.daoHelper.delete(roomDAO, keyMap);
-        result.setMessage("Room deleted successfully");
-        result.put("deleted_id", roomId);
-        return result;
-    }
+        @Override
+        public EntityResult roomUpdate (Map < ?, ?>attrMap, Map < ?, ?>keyMap) throws InvalidRoomNumberException {
 
-    @Override
-    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException {
+            EntityResult roomEntityResult = roomQuery(keyMap, List.of(RoomDAO.HOTEL_ID));
+            int assignedHotelId = ((List<Integer>) roomEntityResult.get(RoomDAO.HOTEL_ID)).get(0);
 
-        EntityResult roomEntityResult = roomQuery(keyMap,List.of(RoomDAO.HOTEL_ID));
-        int assignedHotelId= ((List<Integer>) roomEntityResult.get(RoomDAO.HOTEL_ID)).get(0);
+            Map<String, Integer> filter = new HashMap<>();
+            filter.put(RoomDAO.HOTEL_ID, assignedHotelId);
 
-        Map<String, Integer> filter = new HashMap<>();
-        filter.put(RoomDAO.HOTEL_ID,assignedHotelId);
+            EntityResult assignedHotelEntityResult =
+                    hotelService.hotelQuery(filter, List.of(HotelDAO.NUMBER_OF_FLOORS));
 
-        EntityResult assignedHotelEntityResult =
-                hotelService.hotelQuery(filter,List.of(HotelDAO.NUMBER_OF_FLOORS));
+            if (
+                    !validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0))
+            ) {
+                throw new InvalidRoomNumberException("Cannot update the room with this number, not enough floors");
+            }
 
-        if (
-                !validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0))
-        ) {
-            throw new InvalidRoomNumberException("Cannot update the room with this number, not enough floors");
+            return this.daoHelper.update(this.roomDAO, attrMap, keyMap);
         }
 
-        return this.daoHelper.update(this.roomDAO, attrMap, keyMap);
     }
-
-}
