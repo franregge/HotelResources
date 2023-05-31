@@ -77,6 +77,7 @@ public class RoomService implements IRoomService {
 
 
             Map<String, Integer> keyMap = new HashMap<>();
+            keyMap.put(HotelDAO.ID, assignedHotelId);
 
             EntityResult assignedHotelEntityResult =
                     hotelService.hotelQuery(keyMap, List.of(HotelDAO.NUMBER_OF_FLOORS));
@@ -117,11 +118,7 @@ public class RoomService implements IRoomService {
             EntityResult assignedHotelEntityResult =
                     hotelService.hotelQuery(filter, List.of(HotelDAO.NUMBER_OF_FLOORS));
 
-            if (
-                    !validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0))
-            ) {
-                throw new InvalidRoomNumberException("Cannot update the room with this number, not enough floors");
-            }
+            validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0));
 
             return this.daoHelper.update(this.roomDAO, attrMap, keyMap);
         }
