@@ -3,7 +3,6 @@ package com.ontimize.hr.model.core.service;
 import com.ontimize.hr.api.core.service.IRoomService;
 import com.ontimize.hr.api.core.service.exception.InvalidAssignedHotelException;
 import com.ontimize.hr.api.core.service.exception.InvalidRoomNumberException;
-import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.util.RoomUtils;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Lazy
@@ -46,24 +44,22 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public EntityResult roomInsert(Map<?, ?> attrMap) {
+    public int roomInsert(Map<?, ?> attrMap) throws InvalidAssignedHotelException, InvalidRoomNumberException {
         int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
 
-        Map<String, Integer> keyMap = new HashMap<>();
+        if (assignedHotelId == 0 || !hotelService.equals(assignedHotelId)) {
+            throw new InvalidAssignedHotelException("The assigned hotel does not exist");
+        }
 
-        EntityResult assignedHotelEntityResult =
-       hotelService.hotelQuery();
-        if (
-                !validateRoomNumber(attrMap.get(RoomDAO.ROOM_NUMBER), assignedHotelDTO.getNumberOfFloors()) ||
-                        roomDAO.existsByRoomNumberAndHotel_Id(roomDTO.getRoomNumber(), assignedHotelId)
-        ) {
+        if (!validateRoomNumber(attrMap.size(), assignedHotelId)) {
             throw new InvalidRoomNumberException("Cannot create room with this number");
         }
 
-        Hotel assignedHotel = hotelMapper.toEntity(hotelService.queryHotel(assignedHotelDTO));
-        Room room = roomMapper.toEntity(roomDTO);
-        room.setHotel(assignedHotel);
-        return this.daoHelper.insert(this.roomDAO, attrMap);
+        attrMap.put("hotel_id", assignedHotelId);
+        EntityResult result = this.daoHelper.insert(this.roomDAO, attrMap);
+        int roomId = result.getCode();
+
+        return result.calculateRecordNumber();
     }
 
     @Override
