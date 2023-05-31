@@ -3,6 +3,7 @@ package com.ontimize.hr.model.core.service;
 import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.api.core.service.exception.InvalidBookingDateException;
+import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,9 +91,31 @@ public class BookingService implements IBookingService {
 
         return this.daoHelper.insert(this.bookingDAO, attrMap);
     }
+    @Override
+    public EntityResult bookingDelete(Map<?, ?> keyMap) throws Exception {
+        Integer bookingId = (Integer) keyMap.get(BookingDAO.ID);
+
+        //if (!this.daoHelper.query(hotelDAO, keyMap, List.of("hotel_id"),HotelDAO.QUERY_BOOKINGS_IN_HOTEL).isEmpty()){
+        //    throw new Exception("This hotel has booked rooms");
+        //}
+
+        if(this.daoHelper.query(bookingDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()){
+            EntityResult result = this.daoHelper.delete(bookingDAO, keyMap);
+            result.setMessage("No booking with this id");
+            result.setCode(EntityResult.OPERATION_WRONG);
+            return result;
+        }
+
+        EntityResult result = this.daoHelper.delete(bookingDAO, keyMap);
+        result.setMessage("Booking deleted successfully");
+        result.put("deleted_id", bookingId);
+        return result;
+    }
 
     @Override
     public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
+
+
         return this.daoHelper.update(this.bookingDAO, attrMap, keyMap);
     }
 }

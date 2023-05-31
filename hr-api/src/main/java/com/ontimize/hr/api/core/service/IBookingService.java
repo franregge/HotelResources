@@ -10,5 +10,8 @@ public interface IBookingService {
 
     public EntityResult bookingQuery(Map<?, ?> keymap, List<?> attrList);
     public EntityResult bookingInsert(Map<?, ?> attrMap) throws InvalidBookingDateException;
+
+    EntityResult bookingDelete(Map<?, ?> keyMap) throws Exception;
+
     public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap);
 }
