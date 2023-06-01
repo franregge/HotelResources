@@ -17,4 +17,5 @@ public class RoomController extends ORestController<IRoomService> {
     public IRoomService getService() {
         return this.roomService;
     }
+
 }

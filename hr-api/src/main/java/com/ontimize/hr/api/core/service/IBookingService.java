@@ -9,6 +9,7 @@ import java.util.Map;
 public interface IBookingService {
 
     public EntityResult bookingQuery(Map<?, ?> keymap, List<?> attrList);
+
     public EntityResult bookingInsert(Map<?, ?> attrMap) throws InvalidBookingDateException, InvalidBookingDNIException;
 
     EntityResult bookingDelete(Map<?, ?> keyMap) throws Exception;
