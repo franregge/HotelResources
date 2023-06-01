@@ -89,7 +89,7 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException {
+    public EntityResult roomInsert(Map<?, ?> attrMap) {
         EntityResult result = null;
         try {
             int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
@@ -114,7 +114,7 @@ public class RoomService implements IRoomService {
         return result;
     }
 
-    public EntityResult roomDelete(Map<?, ?> keyMap) throws Exception {
+    public EntityResult roomDelete(Map<?, ?> keyMap) {
 
         EntityResult result = null;
         try {
@@ -143,7 +143,7 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException {
+    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
 
         EntityResult result = null;
         try {

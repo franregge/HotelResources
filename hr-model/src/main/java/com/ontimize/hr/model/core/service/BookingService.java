@@ -5,6 +5,7 @@ import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -171,14 +172,24 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public EntityResult bookingInsert(Map<?, ?> attrMap) throws InvalidBookingDateException, InvalidBookingDNIException {
-        validateBooking(attrMap, datesOverlapForRoom);
+    public EntityResult bookingInsert(Map<?, ?> attrMap) {
+        EntityResult result;
 
-        return this.daoHelper.insert(this.bookingDAO, attrMap);
+        try {
+            validateBooking(attrMap, datesOverlapForRoom);
+
+            result = this.daoHelper.insert(this.bookingDAO, attrMap);
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(e.getMessage());
+            result.setCode(EntityResult.OPERATION_WRONG);
+        }
+
+        return result;
     }
 
     @Override
-    public EntityResult bookingDelete(Map<?, ?> keyMap) throws Exception {
+    public EntityResult bookingDelete(Map<?, ?> keyMap) {
         Integer bookingId = (Integer) keyMap.get(BookingDAO.ID);
 
         //if (!this.daoHelper.query(hotelDAO, keyMap, List.of("hotel_id"),HotelDAO.QUERY_BOOKINGS_IN_HOTEL).isEmpty()){
@@ -199,58 +210,66 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidBookingDateException, InvalidBookingDNIException, BookingDoesNotExistException, BookingNotModifiableException, RoomDoesNotExistException, InvalidBookingRoomException {
-        Map<String, Integer> filter = new HashMap<>();
-        filter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
-        EntityResult originalBookingEntityResult =
-                daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID));
+    public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
+        EntityResult result;
 
-        if (originalBookingEntityResult.isEmpty()) {
-            throw new BookingDoesNotExistException("A booking with this ID could not be found");
+        try {
+            Map<String, Integer> filter = new HashMap<>();
+            filter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
+            EntityResult originalBookingEntityResult =
+                    daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID));
+
+            if (originalBookingEntityResult.isEmpty()) {
+                throw new BookingDoesNotExistException("A booking with this ID could not be found");
+            }
+
+            Map<?, ?> originalBooking = originalBookingEntityResult.getRecordValues(0);
+            LocalDate originalBookingArrivalDate = ((Date) originalBooking.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
+
+            filter = new HashMap<>();
+            filter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
+            EntityResult destinationRoomEntityResult = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID));
+
+            if (destinationRoomEntityResult.isEmpty()) {
+                throw new RoomDoesNotExistException("A room with the specified ID could not be found");
+            }
+
+            Map<? super Object, ? super Object> bookingWithDates = new HashMap<>(attrMap);
+
+            if (attrMap.get(BookingDAO.ARRIVAL_DATE) == null) {
+                bookingWithDates.put(BookingDAO.ARRIVAL_DATE, (((Date) originalBooking.get(BookingDAO.ARRIVAL_DATE)).toLocalDate().toString()));
+            }
+
+            if (attrMap.get(BookingDAO.DEPARTURE_DATE) == null) {
+                bookingWithDates.put(BookingDAO.DEPARTURE_DATE, (((Date) originalBooking.get(BookingDAO.DEPARTURE_DATE)).toLocalDate().toString()));
+            }
+
+            validateBookingUpdate(bookingWithDates, datesOverlapForRoomExcludingThisBooking);
+
+            if (LocalDate.now().until(originalBookingArrivalDate, ChronoUnit.DAYS) < 1) {
+                throw new BookingNotModifiableException("Bookings cannot be modified less than 24 prior to the arrival date");
+            }
+
+            filter = new HashMap<>();
+            filter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
+            Map<?, ?> originalRoom = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID)).getRecordValues(0);
+
+            if (
+                    originalRoom.get(RoomDAO.HOTEL_ID) != destinationRoomEntityResult.getRecordValues(0).get(RoomDAO.HOTEL_ID)
+            ) {
+                throw new InvalidBookingRoomException("The new room must be in the same hotel as the original one");
+            }
+
+            bookingWithDates.put(BookingDAO.ARRIVAL_DATE, LocalDate.parse((String) bookingWithDates.get(BookingDAO.ARRIVAL_DATE)));
+            bookingWithDates.put(BookingDAO.DEPARTURE_DATE, LocalDate.parse((String) bookingWithDates.get(BookingDAO.DEPARTURE_DATE)));
+
+            result = this.daoHelper.update(this.bookingDAO, bookingWithDates, keyMap);
+            result.put("updated_id", keyMap.get(BookingDAO.ID));
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(e.getMessage());
+            result.setCode(EntityResult.OPERATION_WRONG);
         }
-
-        Map<?, ?> originalBooking = originalBookingEntityResult.getRecordValues(0);
-        LocalDate originalBookingArrivalDate = ((Date) originalBooking.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
-
-        filter = new HashMap<>();
-        filter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
-        EntityResult destinationRoomEntityResult = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID));
-
-        if (destinationRoomEntityResult.isEmpty()) {
-            throw new RoomDoesNotExistException("A room with the specified ID could not be found");
-        }
-
-        Map<? super Object, ? super Object> bookingWithDates = new HashMap<>(attrMap);
-
-        if (attrMap.get(BookingDAO.ARRIVAL_DATE) == null) {
-            bookingWithDates.put(BookingDAO.ARRIVAL_DATE, (((Date) originalBooking.get(BookingDAO.ARRIVAL_DATE)).toLocalDate().toString()));
-        }
-
-        if (attrMap.get(BookingDAO.DEPARTURE_DATE) == null) {
-            bookingWithDates.put(BookingDAO.DEPARTURE_DATE, (((Date) originalBooking.get(BookingDAO.DEPARTURE_DATE)).toLocalDate().toString()));
-        }
-
-        validateBookingUpdate(bookingWithDates, datesOverlapForRoomExcludingThisBooking);
-
-        if (LocalDate.now().until(originalBookingArrivalDate, ChronoUnit.DAYS) < 1) {
-            throw new BookingNotModifiableException("Bookings cannot be modified less than 24 prior to the arrival date");
-        }
-
-        filter = new HashMap<>();
-        filter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
-        Map<?, ?> originalRoom = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID)).getRecordValues(0);
-
-        if (
-                originalRoom.get(RoomDAO.HOTEL_ID) != destinationRoomEntityResult.getRecordValues(0).get(RoomDAO.HOTEL_ID)
-        ) {
-            throw new InvalidBookingRoomException("The new room must be in the same hotel as the original one");
-        }
-
-        bookingWithDates.put(BookingDAO.ARRIVAL_DATE, LocalDate.parse((String) bookingWithDates.get(BookingDAO.ARRIVAL_DATE)));
-        bookingWithDates.put(BookingDAO.DEPARTURE_DATE, LocalDate.parse((String) bookingWithDates.get(BookingDAO.DEPARTURE_DATE)));
-
-        EntityResult result = this.daoHelper.update(this.bookingDAO, bookingWithDates, keyMap);
-        result.put("updated_id", keyMap.get(BookingDAO.ID));
 
         return result;
     }
