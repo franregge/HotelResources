@@ -217,7 +217,7 @@ public class BookingService implements IBookingService {
             Map<String, Integer> filter = new HashMap<>();
             filter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
             EntityResult originalBookingEntityResult =
-                    daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID));
+                    daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID, BookingDAO.DEPARTURE_DATE));
 
             if (originalBookingEntityResult.isEmpty()) {
                 throw new BookingDoesNotExistException("A booking with this ID could not be found");
