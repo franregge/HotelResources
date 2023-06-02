@@ -17,4 +17,5 @@ public class BookingController extends ORestController<IBookingService> {
     public IBookingService getService() {
         return this.bookingService;
     }
+
 }

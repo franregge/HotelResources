@@ -89,7 +89,7 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException {
+    public EntityResult roomInsert(Map<?, ?> attrMap) {
         EntityResult result = null;
         try {
             int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
@@ -114,7 +114,7 @@ public class RoomService implements IRoomService {
         return result;
     }
 
-    public EntityResult roomDelete(Map<?, ?> keyMap) throws Exception {
+    public EntityResult roomDelete(Map<?, ?> keyMap) {
 
         EntityResult result = null;
         try {
@@ -134,7 +134,7 @@ public class RoomService implements IRoomService {
             result = this.daoHelper.delete(roomDAO, keyMap);
             result.setMessage("Room deleted successfully");
             result.put("deleted_id", roomId);
-        }catch (Exception e){
+        } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
             result.setMessage(e.getMessage());
@@ -143,25 +143,25 @@ public class RoomService implements IRoomService {
     }
 
     @Override
-    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException {
+    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
 
         EntityResult result = null;
         try {
 
-        EntityResult roomEntityResult = roomQuery(keyMap, List.of(RoomDAO.HOTEL_ID));
-        int assignedHotelId = ((List<Integer>) roomEntityResult.get(RoomDAO.HOTEL_ID)).get(0);
+            EntityResult roomEntityResult = roomQuery(keyMap, List.of(RoomDAO.HOTEL_ID));
+            int assignedHotelId = ((List<Integer>) roomEntityResult.get(RoomDAO.HOTEL_ID)).get(0);
 
-        Map<String, Integer> filter = new HashMap<>();
-        filter.put(RoomDAO.HOTEL_ID, assignedHotelId);
+            Map<String, Integer> filter = new HashMap<>();
+            filter.put(RoomDAO.HOTEL_ID, assignedHotelId);
 
-        EntityResult assignedHotelEntityResult =
-                hotelService.hotelQuery(filter, List.of(HotelDAO.NUMBER_OF_FLOORS));
+            EntityResult assignedHotelEntityResult =
+                    hotelService.hotelQuery(filter, List.of(HotelDAO.NUMBER_OF_FLOORS));
 
-        validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0));
-        validateNumberOfBeds((int) attrMap.get(RoomDAO.NUMBER_OF_BEDS));
+            validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0));
+            validateNumberOfBeds((int) attrMap.get(RoomDAO.NUMBER_OF_BEDS));
 
-        result = this.daoHelper.update(this.roomDAO, attrMap, keyMap);
-        }catch (Exception e){
+            result = this.daoHelper.update(this.roomDAO, attrMap, keyMap);
+        } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
             result.setMessage(e.getMessage());

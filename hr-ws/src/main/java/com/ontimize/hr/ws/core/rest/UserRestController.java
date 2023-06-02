@@ -18,20 +18,20 @@ import com.ontimize.jee.server.rest.ORestController;
 @RequestMapping("/users")
 public class UserRestController extends ORestController<IUserService> {
 
-	@Autowired
-	private IUserService userSrv;
+    @Autowired
+    private IUserService userSrv;
 
-	@Override
-	public IUserService getService() {
-		return this.userSrv;
-	}
+    @Override
+    public IUserService getService() {
+        return this.userSrv;
+    }
 
-	@RequestMapping(
-		value = "/login",
-		method = RequestMethod.POST,
-		produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<EntityResult> login() {
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+    @RequestMapping(
+            value = "/login",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntityResult> login() {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

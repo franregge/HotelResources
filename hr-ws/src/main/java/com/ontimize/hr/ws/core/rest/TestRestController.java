@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestRestController {
 
-	@RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> testRest() {
-		return new ResponseEntity<>("It Works!", HttpStatus.OK);
-	}
+    @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> testRest() {
+        return new ResponseEntity<>("It Works!", HttpStatus.OK);
+    }
 
 }

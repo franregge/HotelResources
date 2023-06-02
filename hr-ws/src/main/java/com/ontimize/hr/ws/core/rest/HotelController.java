@@ -17,6 +17,4 @@ public class HotelController extends ORestController<IHotelService> {
         return this.hotelService;
     }
 
-
-
 }

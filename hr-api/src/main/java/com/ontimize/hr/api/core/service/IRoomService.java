@@ -11,6 +11,9 @@ import java.util.Map;
 public interface IRoomService {
 
     public EntityResult roomQuery(Map<?, ?> keymap, List<?> attrList);
+
     public EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
+
     public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
+
 }
