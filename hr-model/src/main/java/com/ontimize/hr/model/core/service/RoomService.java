@@ -11,8 +11,11 @@ import com.ontimize.hr.model.core.util.RoomUtils;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.PSQLWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -105,6 +108,10 @@ public class RoomService implements IRoomService {
             validatePriceOverMinimum(BigDecimal.valueOf((int) attrMap.get(RoomDAO.BASE_PRICE)));
             result = this.daoHelper.insert(this.roomDAO, attrMap);
 
+        } catch (DuplicateKeyException e) {
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage("This room already exists");
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);

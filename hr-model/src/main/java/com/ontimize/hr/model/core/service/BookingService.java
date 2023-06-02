@@ -59,8 +59,8 @@ public class BookingService implements IBookingService {
                 continue;
             }
 
-            departureDateToCheck = (LocalDate) bookingToCheck.get(BookingDAO.DEPARTURE_DATE);
-            arrivalDateToCheck = (LocalDate) bookingToCheck.get(BookingDAO.ARRIVAL_DATE);
+            departureDateToCheck = ((Date) bookingToCheck.get(BookingDAO.DEPARTURE_DATE)).toLocalDate();
+            arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
                     (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) &&
@@ -135,7 +135,7 @@ public class BookingService implements IBookingService {
 
         Map<String, Integer> filter = new HashMap<>();
         filter.put(BookingDAO.ROOM_ID, (Integer) attrMap.get(BookingDAO.ROOM_ID));
-        List<String> queriedAtributeList = List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.DEPARTURE_DATE, BookingDAO.ROOM_ID);
+        List<String> queriedAtributeList = List.of(BookingDAO.ID, BookingDAO.ARRIVAL_DATE, BookingDAO.DEPARTURE_DATE, BookingDAO.ROOM_ID);
 
         EntityResult bookingsForThisRoomEntityResult = bookingQuery(filter, queriedAtributeList);
 
@@ -235,6 +235,8 @@ public class BookingService implements IBookingService {
             }
 
             Map<? super Object, ? super Object> bookingWithDates = new HashMap<>(attrMap);
+            bookingWithDates.put(BookingDAO.ID, keyMap.get(BookingDAO.ID));
+            bookingWithDates.put(BookingDAO.ROOM_ID, originalBooking.get(BookingDAO.ROOM_ID));
 
             if (attrMap.get(BookingDAO.ARRIVAL_DATE) == null) {
                 bookingWithDates.put(BookingDAO.ARRIVAL_DATE, (((Date) originalBooking.get(BookingDAO.ARRIVAL_DATE)).toLocalDate().toString()));
@@ -266,6 +268,7 @@ public class BookingService implements IBookingService {
             result = this.daoHelper.update(this.bookingDAO, bookingWithDates, keyMap);
             result.put("updated_id", keyMap.get(BookingDAO.ID));
         } catch (Exception e) {
+            e.printStackTrace();
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
