@@ -5,6 +5,7 @@ import com.ontimize.hr.api.core.service.exception.InvalidAssignedHotelException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfBeds;
 import com.ontimize.hr.api.core.service.exception.InvalidPriceException;
 import com.ontimize.hr.api.core.service.exception.InvalidRoomNumberException;
+import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.util.RoomUtils;
@@ -141,6 +142,7 @@ public class RoomService implements IRoomService {
             result = this.daoHelper.delete(roomDAO, keyMap);
             result.setMessage("Room deleted successfully");
             result.put("deleted_id", roomId);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
@@ -168,6 +170,9 @@ public class RoomService implements IRoomService {
             validateNumberOfBeds((int) attrMap.get(RoomDAO.NUMBER_OF_BEDS));
 
             result = this.daoHelper.update(this.roomDAO, attrMap, keyMap);
+            result.put("updated_id", keyMap.get(RoomDAO.ID));
+            result.setMessage("Room updated successfully");
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);

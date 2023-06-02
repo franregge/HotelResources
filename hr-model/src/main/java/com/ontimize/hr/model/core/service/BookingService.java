@@ -179,6 +179,9 @@ public class BookingService implements IBookingService {
             validateBooking(attrMap, datesOverlapForRoom);
 
             result = this.daoHelper.insert(this.bookingDAO, attrMap);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+            result.setMessage("Booking inserted successfully");
+
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
@@ -267,6 +270,8 @@ public class BookingService implements IBookingService {
 
             result = this.daoHelper.update(this.bookingDAO, bookingWithDates, keyMap);
             result.put("updated_id", keyMap.get(BookingDAO.ID));
+            result.setMessage("Booking updated successfully");
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
             result = new EntityResultMapImpl();
