@@ -117,7 +117,7 @@ public class BookingService implements IBookingService {
         if (overlapTestPredicate.test(attrMap, bookingsForThisRoomEntityResult)) {
             throw new InvalidBookingDateException("Occupied room in those dates");
         }
-    }
+    }//validateBooking
 
     public boolean validateDNI(String dni) {
         List<Character> letters = List.of(
