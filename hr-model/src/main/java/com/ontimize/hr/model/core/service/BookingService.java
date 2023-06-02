@@ -99,15 +99,15 @@ public class BookingService implements IBookingService {
 
     private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
         if (!validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException("The DNI is not valid");
+            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
         }
 
         if (arrivalDateBeforeNow.test(attrMap)) {
-            throw new InvalidBookingDateException("The arrival date must be after now");
+            throw new InvalidBookingDateException(IBookingService.DATE_BEFORE_NOW_MESSAGE);
         }
 
         if (departureDateBeforeArrivalDate.test(attrMap)) {
-            throw new InvalidBookingDateException("The departure date must be after arrival date");
+            throw new InvalidBookingDateException(IBookingService.ARRIVAL_DATE_AFTER_DEPARTURE_DATE_MESSAGE);
         }
 
         Map<String, Integer> filter = new HashMap<>();
@@ -117,21 +117,21 @@ public class BookingService implements IBookingService {
         EntityResult bookingsForThisRoomEntityResult = bookingQuery(filter, queriedAtributeList);
 
         if (overlapTestPredicate.test(attrMap, bookingsForThisRoomEntityResult)) {
-            throw new InvalidBookingDateException("Occupied room in those dates");
+            throw new InvalidBookingDateException(IBookingService.DATES_OVERLAP);
         }
     }//validateBooking
 
     private void validateBookingUpdate(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
         if (attrMap.get(BookingDAO.DNI) != null && !validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException("The DNI is not valid");
+            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
         }
 
         if (arrivalDateBeforeNow.test(attrMap)) {
-            throw new InvalidBookingDateException("The arrival date must be after now");
+            throw new InvalidBookingDateException(IBookingService.DATE_BEFORE_NOW_MESSAGE);
         }
 
         if (departureDateBeforeArrivalDate.test(attrMap))
-            throw new InvalidBookingDateException("The departure date must be after arrival date");
+            throw new InvalidBookingDateException(IBookingService.ARRIVAL_DATE_AFTER_DEPARTURE_DATE_MESSAGE);
 
         Map<String, Integer> filter = new HashMap<>();
         filter.put(BookingDAO.ROOM_ID, (Integer) attrMap.get(BookingDAO.ROOM_ID));
@@ -140,7 +140,7 @@ public class BookingService implements IBookingService {
         EntityResult bookingsForThisRoomEntityResult = bookingQuery(filter, queriedAtributeList);
 
         if (overlapTestPredicate.test(attrMap, bookingsForThisRoomEntityResult)) {
-            throw new InvalidBookingDateException("Occupied room in those dates");
+            throw new InvalidBookingDateException(IBookingService.DATES_OVERLAP);
         }
     }
 
@@ -180,7 +180,7 @@ public class BookingService implements IBookingService {
 
             result = this.daoHelper.insert(this.bookingDAO, attrMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            result.setMessage("Booking inserted successfully");
+            result.setMessage(IBookingService.BOOKING_UPDATE_SUCCESS);
 
         } catch (Exception e) {
             result = new EntityResultMapImpl();
@@ -223,7 +223,7 @@ public class BookingService implements IBookingService {
                     daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID, BookingDAO.DEPARTURE_DATE));
 
             if (originalBookingEntityResult.isEmpty()) {
-                throw new BookingDoesNotExistException("A booking with this ID could not be found");
+                throw new BookingDoesNotExistException(IBookingService.BOOKING_NOT_FOUND);
             }
 
             Map<?, ?> originalBooking = originalBookingEntityResult.getRecordValues(0);
@@ -234,7 +234,7 @@ public class BookingService implements IBookingService {
             EntityResult destinationRoomEntityResult = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID));
 
             if (destinationRoomEntityResult.isEmpty()) {
-                throw new RoomDoesNotExistException("A room with the specified ID could not be found");
+                throw new RoomDoesNotExistException(IBookingService.BOOKING_NOT_FOUND);
             }
 
             Map<? super Object, ? super Object> bookingWithDates = new HashMap<>(attrMap);
@@ -252,7 +252,7 @@ public class BookingService implements IBookingService {
             validateBookingUpdate(bookingWithDates, datesOverlapForRoomExcludingThisBooking);
 
             if (LocalDate.now().until(originalBookingArrivalDate, ChronoUnit.DAYS) < 1) {
-                throw new BookingNotModifiableException("Bookings cannot be modified less than 24 prior to the arrival date");
+                throw new BookingNotModifiableException(IBookingService.ONE_DAY_MARGIN_ERROR);
             }
 
             filter = new HashMap<>();
