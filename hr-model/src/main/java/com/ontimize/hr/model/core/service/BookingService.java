@@ -144,7 +144,7 @@ public class BookingService implements IBookingService {
         }
     }
 
-    public boolean validateDNI(String dni) {
+    private boolean validateDNI(String dni) {
         List<Character> letters = List.of(
                 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H',
                 'L', 'C', 'K', 'E'
