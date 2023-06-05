@@ -94,6 +94,7 @@ public class HotelService implements IHotelService {
 
 
             if (attrMap.get(HotelDAO.NAME) != null && ((String) attrMap.get(HotelDAO.NAME)).isEmpty()) {
+
                 throw new IllegalStateException("You must provide a non-empty name");
             }
 
