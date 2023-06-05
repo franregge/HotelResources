@@ -200,14 +200,15 @@ public class BookingService implements IBookingService {
         //}
 
         if (this.daoHelper.query(bookingDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()) {
-            EntityResult result = this.daoHelper.delete(bookingDAO, keyMap);
-            result.setMessage(BookingService.NO_BOOKING_FOUND_WITH_ID);
+            EntityResult result = new EntityResultMapImpl();
+            result.setMessage(IBookingService.NO_BOOKING_WITH_ID);
             result.setCode(EntityResult.OPERATION_WRONG);
             return result;
         }
 
         EntityResult result = this.daoHelper.delete(bookingDAO, keyMap);
-        result.setMessage("Booking deleted successfully");
+        result.setMessage(IBookingService.DELETION_SUCCESS);
+        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         result.put("deleted_id", bookingId);
         return result;
     }
