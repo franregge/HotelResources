@@ -9,11 +9,11 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 
 
 @Lazy
-@Repository(value = "UserDao")
+@Repository(value = "old_UserDao")
 @ConfigurationFile(
-        configurationFile = "dao/UserDao.xml",
+        configurationFile = "dao/old_UserDao.xml",
         configurationFilePlaceholder = "dao/placeholders.properties")
-public class UserDao extends OntimizeJdbcDaoSupport {
+public class old_UserDao extends OntimizeJdbcDaoSupport {
 
     public static final String USR_EMAIL = "user_email";
     public static final String USR_PASSWORD = "user_password";

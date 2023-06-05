@@ -8,11 +8,11 @@ import com.ontimize.jee.server.dao.common.ConfigurationFile;
 import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 
 
-@Repository(value = "UserRoleDao")
+@Repository(value = "old_UserRoleDao")
 @Lazy
 @ConfigurationFile(
-        configurationFile = "dao/UserRoleDao.xml",
+        configurationFile = "dao/old_UserRoleDao.xml",
         configurationFilePlaceholder = "dao/placeholders.properties")
-public class UserRoleDao extends OntimizeJdbcDaoSupport {
+public class old_UserRoleDao extends OntimizeJdbcDaoSupport {
 
 }
