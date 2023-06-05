@@ -29,14 +29,14 @@ ontimize:
       mode: default
       ignore-paths: /**
       role-information-service:
-         role-repository: UserRoleDao
+         role-repository: old_UserRoleDao
          role-name-column: ROLENAME
          server-permission-query-id: serverPermissions
          server-permission-name-column: PERMISSION_NAME
          client-permission-query-id: clientPermissions
          client-permission-column: XMLCLIENTPERMISSION
       user-information-service:
-         user-repository: UserDao
+         user-repository: old_UserDao
          user-login-column: USER_
          user-password-column: PASSWORD
          query-id: login
@@ -49,7 +49,7 @@ ontimize:
             - LASTPASSWORDUPDATE
             - FIRSTLOGIN
       user-role-information-service:
-         user-role-repository: UserRoleDao
+         user-role-repository: old_UserRoleDao
          query-id: userRole
          role-login-column: USER_
          role-name-column: ROLENAME

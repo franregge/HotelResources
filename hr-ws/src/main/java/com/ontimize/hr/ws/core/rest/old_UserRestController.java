@@ -16,7 +16,7 @@ import com.ontimize.jee.server.rest.ORestController;
 
 @RestController
 @RequestMapping("/users")
-public class UserRestController extends ORestController<IUserService> {
+public class old_UserRestController extends ORestController<IUserService> {
 
     @Autowired
     private IUserService userSrv;
