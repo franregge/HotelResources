@@ -41,7 +41,7 @@ ALTER TABLE rooms
         UNIQUE USING INDEX u_hotel_id_room_number;
 
 
-CREATE TABLE users (
+CREATE TABLE public.users (
   id SERIAL PRIMARY KEY,
   user_name VARCHAR(255) NOT NULL,
   surname1 VARCHAR(255) NOT NULL,

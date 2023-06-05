@@ -92,7 +92,7 @@ public class HotelService implements IHotelService {
                 throw new HotelDoesNotExistException("No hotel with the specified id could be found");
             }
 
-            //Validación nombre no nulo ni vacío
+
             if (attrMap.get(HotelDAO.NAME) != null && ((String) attrMap.get(HotelDAO.NAME)).isEmpty()) {
                 throw new IllegalStateException("You must provide a non-empty name");
             }
