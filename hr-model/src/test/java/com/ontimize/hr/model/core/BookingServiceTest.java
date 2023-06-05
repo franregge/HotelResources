@@ -48,7 +48,7 @@ public class BookingServiceTest {
 
         @Test
         void insertBooking_validBooking_bookingIsSaved_Test() {
-            attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
+            //attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
             attrMap.put(BookingDAO.DNI, "66955662V");
             attrMap.put(BookingDAO.ROOM_ID, 6);
