@@ -11,7 +11,8 @@ import com.ontimize.jee.server.dao.jdbc.OntimizeJdbcDaoSupport;
 @Repository(value = "UserRoleDao")
 @Lazy
 @ConfigurationFile(
-	configurationFile = "dao/UserRoleDao.xml",
-	configurationFilePlaceholder = "dao/placeholders.properties")
+        configurationFile = "dao/UserRoleDao.xml",
+        configurationFilePlaceholder = "dao/placeholders.properties")
 public class UserRoleDao extends OntimizeJdbcDaoSupport {
+
 }

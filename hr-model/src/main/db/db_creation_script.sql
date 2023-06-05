@@ -12,6 +12,8 @@ CREATE TABLE public.rooms
     id          SERIAL NOT NULL PRIMARY KEY,
     room_number INT    NOT NULL,
     hotel_id    INT    NOT NULL,
+    number_of_beds INT NOT NULL,
+    base_price NUMERIC NOT NULL,
     FOREIGN KEY (hotel_id) REFERENCES public.hotels (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

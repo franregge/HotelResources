@@ -21,6 +21,4 @@ public class BookingDAO extends OntimizeJdbcDaoSupport {
     public static final String SURNAME1 = "surname1";
     public static final String SURNAME2 = "surname2";
 
-
-
 }

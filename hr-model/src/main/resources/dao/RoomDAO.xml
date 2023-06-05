@@ -18,6 +18,8 @@
                 <Column>id</Column>
                 <Column>room_number</Column>
                 <Column>hotel_id</Column>
+                <Column>number_of_beds</Column>
+                <Column>base_price</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
