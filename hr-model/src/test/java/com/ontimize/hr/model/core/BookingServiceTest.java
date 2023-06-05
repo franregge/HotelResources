@@ -151,21 +151,34 @@ public class BookingServiceTest {
 
         @Test
         void existingBooking_resultIsSuccess() {
-
             keyMap.put(BookingDAO.ID, 1);
             EntityResult queryResult = new EntityResultMapImpl();
-            queryResult.put("test", "test");
+            queryResult.put("test", List.of("test"));
+            EntityResult deleteResult = new EntityResultMapImpl();
+            deleteResult.setCode(EntityResult.OPERATION_SUCCESSFUL);
 
             when(daoHelper.query(any(), any(), any())).thenReturn(queryResult);
+            when(daoHelper.delete(any(), any())).thenReturn(deleteResult);
 
-            EntityResult deleteResult = bookingService.bookingDelete(keyMap);
+            EntityResult result = bookingService.bookingDelete(keyMap);
 
-            assertEquals(BookingService.);
+            assertEquals(IBookingService.DELETION_SUCCESS, result.getMessage());
+            assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
         }
 
         @Test
-        void inexistentBooking_resultIsError() {
+        void nonexistentBooking_resultIsError() {
+            keyMap.put(BookingDAO.ID, 1);
+            EntityResult queryResult = new EntityResultMapImpl();
+            EntityResult deleteResult = new EntityResultMapImpl();
+            deleteResult.setCode(EntityResult.OPERATION_SUCCESSFUL);
 
+            when(daoHelper.query(any(),any(),any())).thenReturn(queryResult);
+
+            EntityResult result = bookingService.bookingDelete(keyMap);
+
+            assertEquals(BookingService.NO_BOOKING_WITH_ID, result.getMessage());
+            assertEquals(EntityResult.OPERATION_WRONG, result.getCode());
         }
 
     }

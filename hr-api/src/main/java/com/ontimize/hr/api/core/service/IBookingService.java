@@ -24,6 +24,7 @@ public interface IBookingService {
     String BOOKING_NOT_FOUND= "A booking with this ID could not be found";
     String ONE_DAY_MARGIN_ERROR = "Bookings cannot be modified less than 24 prior to the arrival date";
     String NO_BOOKING_WITH_ID = "No booking with this id";
+    String DELETION_SUCCESS = "Booking deleted successfully";
 
 
 }
