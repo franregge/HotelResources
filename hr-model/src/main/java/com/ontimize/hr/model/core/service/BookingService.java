@@ -180,7 +180,7 @@ public class BookingService implements IBookingService {
 
             result = this.daoHelper.insert(this.bookingDAO, attrMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            result.setMessage(IBookingService.BOOKING_UPDATE_SUCCESS);
+            result.setMessage(IBookingService.BOOKING_INSERT_SUCCESS);
 
         } catch (Exception e) {
             result = new EntityResultMapImpl();
