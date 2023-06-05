@@ -1,4 +1,7 @@
+DROP TABLE IF EXISTS public.bookings;
+DROP TABLE IF EXISTS public.rooms;
 DROP TABLE IF EXISTS public.hotels;
+DROP TABLE IF EXISTS public.users;
 CREATE TABLE public.hotels
 (
     id               SERIAL       NOT NULL PRIMARY KEY,
@@ -6,7 +9,6 @@ CREATE TABLE public.hotels
     number_of_floors INT          NOT NULL
 );
 
-DROP TABLE IF EXISTS public.rooms;
 CREATE TABLE public.rooms
 (
     id          SERIAL NOT NULL PRIMARY KEY,
@@ -17,7 +19,7 @@ CREATE TABLE public.rooms
     FOREIGN KEY (hotel_id) REFERENCES public.hotels (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-DROP TABLE IF EXISTS public.bookings;
+
 CREATE TABLE public.bookings
 (
     id             SERIAL       NOT NULL PRIMARY KEY,
@@ -37,3 +39,16 @@ CREATE UNIQUE INDEX CONCURRENTLY u_hotel_id_room_number
 ALTER TABLE rooms
     ADD CONSTRAINT u_hotel_id_room_number
         UNIQUE USING INDEX u_hotel_id_room_number;
+
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  user_name VARCHAR(255) NOT NULL,
+  surname1 VARCHAR(255) NOT NULL,
+  surname2 VARCHAR(255),
+  id_document VARCHAR(255) NOT NULL,
+  country VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  user_password VARCHAR(255) NOT NULL
+);

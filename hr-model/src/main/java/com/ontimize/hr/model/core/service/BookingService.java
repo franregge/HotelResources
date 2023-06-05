@@ -274,7 +274,7 @@ public class BookingService implements IBookingService {
             result.setMessage("Booking updated successfully");
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         } catch (Exception e) {
-            e.printStackTrace();
+
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);

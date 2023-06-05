@@ -135,6 +135,35 @@ public class BookingServiceTest {
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class updateBooking {
+        Map<Object, Object> attrMap = new HashMap<>();
+        Map<Object,Object> keyMap= new HashMap<>();
+
+        @Test
+        void updateBooking_validBooking_bookingIsUpdated_Test() {
+
+            EntityResult bookingEntityResult = new EntityResultMapImpl();
+
+            keyMap.put(BookingDAO.ID,1);
+            attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
+            attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
+            attrMap.put(BookingDAO.DNI, "66955662V");
+            attrMap.put(BookingDAO.ROOM_ID, 6);
+            attrMap.put(BookingDAO.NAME, "Manolo");
+            attrMap.put(BookingDAO.SURNAME1, "Garcia");
+
+            Instant conflictingArrivalDate = Instant.now().plus(1L, ChronoUnit.DAYS);
+            Instant conflictingDepartureDate = Instant.now().plus(5L, ChronoUnit.DAYS);
+            bookingEntityResult.put(BookingDAO.ARRIVAL_DATE, List.of(new Date(conflictingArrivalDate.toEpochMilli())));
+            bookingEntityResult.put(BookingDAO.DEPARTURE_DATE, List.of(new Date(conflictingDepartureDate.toEpochMilli())));
+            bookingEntityResult.put(BookingDAO.DNI, List.of("66955662V"));
+            bookingEntityResult.put(BookingDAO.ROOM_ID, List.of(6));
+            bookingEntityResult.put(BookingDAO.NAME, List.of("Manolo"));
+            bookingEntityResult.put(BookingDAO.SURNAME1, List.of("Garcia"));
+
+            when(daoHelper.query(any(), any(), any())).thenReturn(bookingEntityResult);
+
+
+            assertDoesNotThrow(() -> bookingService.bookingUpdate(attrMap,keyMap));
 
     }
 
@@ -183,4 +212,5 @@ public class BookingServiceTest {
 
     }
 
+}
 }
