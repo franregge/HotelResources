@@ -93,7 +93,7 @@ public class HotelService implements IHotelService {
             }
 
             //Validación nombre no nulo ni vacío
-            if (attrMap.get(HotelDAO.NAME) != null && ((String) attrMap.get(HotelDAO.NAME)).isEmpty()) {
+            if (attrMap.get(HotelDAO.NAME) != null || ((String) attrMap.get(HotelDAO.NAME)).isEmpty()) {
                 throw new IllegalStateException("You must provide a non-empty name");
             }
 
