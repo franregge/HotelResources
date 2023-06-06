@@ -99,7 +99,7 @@ public class BookingService implements IBookingService {
 
     private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
         if (!validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
+            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
         if (arrivalDateBeforeNow.test(attrMap)) {
@@ -123,7 +123,7 @@ public class BookingService implements IBookingService {
 
     private void validateBookingUpdate(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
         if (attrMap.get(BookingDAO.DNI) != null && !validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
+            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
         if (arrivalDateBeforeNow.test(attrMap)) {

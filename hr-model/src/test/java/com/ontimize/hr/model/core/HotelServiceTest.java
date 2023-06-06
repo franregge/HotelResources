@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
-public class hotelServiceTest {
+public class HotelServiceTest {
     @InjectMocks
     HotelService hotelService;
     @Mock
@@ -90,11 +90,5 @@ public class hotelServiceTest {
         }
 
     }
-    @Nested
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class updateHotel {
-        Map<Object, Object> attrMap = new HashMap<>();
 
-
-    }
 }

@@ -59,8 +59,8 @@ public class UserService implements IUserService {
 
 
     private void validateUser(Map<?, ?> attrMap) throws InvalidBookingDNIException, InvalidPasswordException {
-        if (!validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
+        if (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
+            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
         if (!passwordLengthOverEight.test(attrMap)) {
@@ -118,6 +118,7 @@ public class UserService implements IUserService {
             result = this.daoHelper.insert(this.userDAO, attrMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
+
 
         } catch (Exception e) {
             result = new EntityResultMapImpl();

@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 @Lazy
-@Repository(value = "UserDAO")
+@Repository(value = "UserRoleDAO")
 @ConfigurationFile(
-        configurationFile = "dao/UserDAO.xml",
+        configurationFile = "dao/UserRoleDAO.xml",
         configurationFilePlaceholder = "dao/placeholders.properties")
 
-public class RolesDAO extends OntimizeJdbcDaoSupport {
+public class UserRoleDAO extends OntimizeJdbcDaoSupport {
     public static final String ID = "id";
     public static final String NAME ="name";
 }
