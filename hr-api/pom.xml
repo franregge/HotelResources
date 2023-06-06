@@ -18,7 +18,6 @@
             <groupId>com.ontimize.jee</groupId>
             <artifactId>ontimize-jee-common</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>

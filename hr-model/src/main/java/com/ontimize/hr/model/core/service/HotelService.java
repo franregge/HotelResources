@@ -46,7 +46,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    public EntityResult hotelInsert(Map<?, ?> attrMap) throws HotelAlreadyExistsException, InvalidNumberOfFloorsException {
+    public EntityResult hotelInsert(Map<?, ?> attrMap) {
         Map<String, String> filter = new HashMap<>();
         filter.put(HotelDAO.NAME, (String) attrMap.get(HotelDAO.NAME));
         List<String> attrList = List.of(HotelDAO.NAME);
@@ -55,11 +55,11 @@ public class HotelService implements IHotelService {
 
         try {
             if (entityResult.calculateRecordNumber() > 0) {
-                throw new HotelAlreadyExistsException("This hotel already exists");
+                throw new HotelAlreadyExistsException(IHotelService.HOTEL_ALREADY_EXISTS_ERROR);
             }
 
-            if ((int) attrMap.get(HotelDAO.NUMBER_OF_FLOORS) > 9 || (int) attrMap.get(HotelDAO.NUMBER_OF_FLOORS) < 1) {
-                throw new InvalidNumberOfFloorsException("The number of floors must be between 1 and 9");
+            if ((int) attrMap.get(HotelDAO.NUMBER_OF_FLOORS) > 99 || (int) attrMap.get(HotelDAO.NUMBER_OF_FLOORS) < 1) {
+                throw new InvalidNumberOfFloorsException("The number of floors must be between 1 and 99");
             }
 
             result = this.daoHelper.insert(hotelDAO, attrMap);
@@ -67,7 +67,6 @@ public class HotelService implements IHotelService {
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
         } catch (Exception e) {
-            e.printStackTrace();
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
@@ -77,7 +76,6 @@ public class HotelService implements IHotelService {
 
     @Override
     public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception {
-        // TODO error messages
         Map<String, Integer> filter = new HashMap<>();
         Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
         EntityResult result;
@@ -94,8 +92,9 @@ public class HotelService implements IHotelService {
                 throw new HotelDoesNotExistException("No hotel with the specified id could be found");
             }
 
-            //Validación nombre no nulo ni vacío
+
             if (attrMap.get(HotelDAO.NAME) != null && ((String) attrMap.get(HotelDAO.NAME)).isEmpty()) {
+
                 throw new IllegalStateException("You must provide a non-empty name");
             }
 

@@ -99,7 +99,7 @@ public class BookingService implements IBookingService {
 
     private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
         if (!validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
+            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
         if (arrivalDateBeforeNow.test(attrMap)) {
@@ -123,7 +123,7 @@ public class BookingService implements IBookingService {
 
     private void validateBookingUpdate(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
         if (attrMap.get(BookingDAO.DNI) != null && !validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
+            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
         if (arrivalDateBeforeNow.test(attrMap)) {
@@ -180,7 +180,7 @@ public class BookingService implements IBookingService {
 
             result = this.daoHelper.insert(this.bookingDAO, attrMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            result.setMessage(IBookingService.BOOKING_UPDATE_SUCCESS);
+            result.setMessage(IBookingService.BOOKING_INSERT_SUCCESS);
 
         } catch (Exception e) {
             result = new EntityResultMapImpl();
@@ -274,7 +274,7 @@ public class BookingService implements IBookingService {
             result.setMessage("Booking updated successfully");
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         } catch (Exception e) {
-            e.printStackTrace();
+
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
