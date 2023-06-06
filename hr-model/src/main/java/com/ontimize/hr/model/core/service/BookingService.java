@@ -4,6 +4,7 @@ import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
+import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -32,6 +33,9 @@ public class BookingService implements IBookingService {
     private BookingDAO bookingDAO;
     @Autowired
     private RoomService roomService;
+
+    @Autowired
+    private UserService userService;
 
     Predicate<Map<?, ?>> arrivalDateBeforeNow = bookingMap -> {
         LocalDate arrivalDate = LocalDate.parse((String) bookingMap.get(BookingDAO.ARRIVAL_DATE));
@@ -98,9 +102,7 @@ public class BookingService implements IBookingService {
     };
 
     private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
-        if (!validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
-        }
+
 
         if (arrivalDateBeforeNow.test(attrMap)) {
             throw new InvalidBookingDateException(IBookingService.DATE_BEFORE_NOW_MESSAGE);
@@ -119,12 +121,11 @@ public class BookingService implements IBookingService {
         if (overlapTestPredicate.test(attrMap, bookingsForThisRoomEntityResult)) {
             throw new InvalidBookingDateException(IBookingService.DATES_OVERLAP);
         }
-    }//validateBooking
 
-    private void validateBookingUpdate(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
-        if (attrMap.get(BookingDAO.DNI) != null && !validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
-        }
+    }
+
+    private void validateBookingUpdate(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDateException {
+
 
         if (arrivalDateBeforeNow.test(attrMap)) {
             throw new InvalidBookingDateException(IBookingService.DATE_BEFORE_NOW_MESSAGE);
@@ -142,28 +143,6 @@ public class BookingService implements IBookingService {
         if (overlapTestPredicate.test(attrMap, bookingsForThisRoomEntityResult)) {
             throw new InvalidBookingDateException(IBookingService.DATES_OVERLAP);
         }
-    }
-
-    private boolean validateDNI(String dni) {
-        List<Character> letters = List.of(
-                'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H',
-                'L', 'C', 'K', 'E'
-        );
-
-        if (dni.length() != 9) {
-            return false;
-        }
-
-        dni = dni.toUpperCase();
-
-        if (!dni.matches("\\d{8}[A-HJ-NP-TV-Z]")) {
-            return false;
-        }
-
-        int numberSegment = Integer.parseInt(dni.substring(0, 8));
-        char letter = dni.charAt(8);
-
-        return letters.get(numberSegment % 23) == letter;
     }
 
     @Override
@@ -219,9 +198,18 @@ public class BookingService implements IBookingService {
 
         try {
             Map<String, Integer> filter = new HashMap<>();
+            Map<String, Integer> filter2 = new HashMap<>();
             filter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
+            filter2.put(BookingDAO.USER_ID, (Integer) keyMap.get(BookingDAO.USER_ID));
+            EntityResult UserEntityResult = userService.userQuery(filter, List.of(UserDAO.ID));
+
+            if (UserEntityResult.isEmpty()) {
+                throw new UserDoesNotExistException(IBookingService.USER_NOT_FOUND);
+            }
+
             EntityResult originalBookingEntityResult =
                     daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID, BookingDAO.DEPARTURE_DATE));
+
 
             if (originalBookingEntityResult.isEmpty()) {
                 throw new BookingDoesNotExistException(IBookingService.BOOKING_NOT_FOUND);
