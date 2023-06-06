@@ -21,13 +21,13 @@ public interface IUserService {
 
     String PASS_LENGTH_TOO_SHORT = "The password length has to be over 7";
 
-    String PASS_HAS_LETTER = "The password must have at least one letter";
+    String PASS_HAS_NO_LETTER = "The password must have at least one letter";
 
-    String PASS_HAS_NUMBER = "The password must have at least one number";
+    String PASS_HAS_NO_NUMBER = "The password must have at least one number";
 
-    String PASS_HAS_CAPITAL_LETTER = "The password must have at least one capital letter";
+    String PASS_HAS_NO_CAPITAL_LETTER = "The password must have at least one capital letter";
 
-    String PASS_HAS_LOWER_CASE_LETTER = "The password must have at least one lower-case letter";
+    String PASS_HAS_NO_LOWER_CASE_LETTER = "The password must have at least one lower-case letter";
 
     String USER_INSERT_SUCCESS= "User inserted successfully";
 }

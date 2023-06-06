@@ -6,19 +6,19 @@ import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
-import com.ontimize.jee.common.db.Entity;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+@Lazy
+@Service("UserService")
 public class UserService implements IUserService {
 
     @Autowired
@@ -63,24 +63,24 @@ public class UserService implements IUserService {
             throw new InvalidBookingDNIException(IBookingService.INVALID_DNI);
         }
 
-        if (passwordLengthOverEight.test(attrMap)) {
+        if (!passwordLengthOverEight.test(attrMap)) {
             throw new InvalidPasswordException(IUserService.PASS_LENGTH_TOO_SHORT);
         }
 
-        if (passwordHasLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_LETTER);
+        if (!passwordHasLetter.test(attrMap)) {
+            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_LETTER);
         }
 
-        if (passwordHasNumber.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_NUMBER);
+        if (!passwordHasNumber.test(attrMap)) {
+            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_NUMBER);
         }
 
-        if (passwordHasCapitalLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_CAPITAL_LETTER);
+        if (!passwordHasCapitalLetter.test(attrMap)) {
+            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_CAPITAL_LETTER);
         }
 
-        if (passwordHasLowerCaseLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_LOWER_CASE_LETTER);
+        if (!passwordHasLowerCaseLetter.test(attrMap)) {
+            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
         }
     }
 
