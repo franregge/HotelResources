@@ -20,10 +20,11 @@
                 <Column>surname1</Column>
                 <Column>surname2</Column>
                 <Column>id_document</Column>
-                <Column>country</Column>
+                <Column>country_id</Column>
                 <Column>phone_number</Column>
                 <Column>email</Column>
                 <Column>user_password</Column>
+                <Column>role_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[

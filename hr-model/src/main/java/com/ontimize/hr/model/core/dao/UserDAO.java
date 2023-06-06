@@ -19,9 +19,10 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
     public static final String SURNAME1 = "surname1";
     public static final String SURNAME2 = "surname2";
     public static final String ID_DOCUMENT = "id_document";
-    public static final String COUNTRY = "country";
+    public static final String COUNTRY_ID = "country_id";
     public static final String PHONE_NUMBER = "phone_number";
     public static final String EMAIL = "email";
     public static final String USER_PASSWORD = "user_password";
+    public static final String ROLE_ID = "role_id";
 
 }
