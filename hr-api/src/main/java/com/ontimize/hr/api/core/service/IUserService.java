@@ -17,7 +17,7 @@ public interface IUserService {
 
     public EntityResult userDelete(Map<?, ?> keyMap);
 
-    String INVALID_DNI= "The DNI is not valid";
+    String INVALID_ID_DOCUMENT = "The id document number is not valid";
 
     String PASS_LENGTH_TOO_SHORT = "The password length has to be over 7";
 

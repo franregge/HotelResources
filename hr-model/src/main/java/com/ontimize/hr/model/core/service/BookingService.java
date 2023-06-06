@@ -67,8 +67,14 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) &&
-                            (departureDate.isBefore(departureDateToCheck) || departureDate.isEqual(departureDateToCheck))
+                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) ||
+                            (
+                                    departureDate.isAfter(arrivalDateToCheck) &&
+                                            (
+                                                    departureDate.isBefore(departureDateToCheck) ||
+                                                            departureDate.isEqual(departureDateToCheck)
+                                            )
+                            )
             ) {
                 return true;
             }
@@ -91,8 +97,14 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) &&
-                            (departureDate.isBefore(departureDateToCheck) || departureDate.isEqual(departureDateToCheck))
+                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) ||
+                            (
+                                    departureDate.isAfter(arrivalDateToCheck) &&
+                                            (
+                                                    departureDate.isBefore(departureDateToCheck) ||
+                                                            departureDate.isEqual(departureDateToCheck)
+                                            )
+                            )
             ) {
                 return true;
             }
@@ -197,18 +209,18 @@ public class BookingService implements IBookingService {
         EntityResult result;
 
         try {
-            Map<String, Integer> filter = new HashMap<>();
-            Map<String, Integer> filter2 = new HashMap<>();
-            filter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
-            filter2.put(BookingDAO.USER_ID, (Integer) keyMap.get(BookingDAO.USER_ID));
-            EntityResult UserEntityResult = userService.userQuery(filter, List.of(UserDAO.ID));
+            Map<String, Integer> bookingIdFilter = new HashMap<>();
+            Map<String, Integer> bookingUserIdFilter = new HashMap<>();
+            bookingIdFilter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
+            bookingUserIdFilter.put(BookingDAO.USER_ID, (Integer) keyMap.get(BookingDAO.USER_ID));
+            EntityResult userEntityResult = userService.userQuery(bookingUserIdFilter, List.of(UserDAO.ID));
 
-            if (UserEntityResult.isEmpty()) {
+            if (userEntityResult.isEmpty()) {
                 throw new UserDoesNotExistException(IBookingService.USER_NOT_FOUND);
             }
 
             EntityResult originalBookingEntityResult =
-                    daoHelper.query(bookingDAO, filter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID, BookingDAO.DEPARTURE_DATE));
+                    daoHelper.query(bookingDAO, bookingIdFilter, List.of(BookingDAO.ARRIVAL_DATE, BookingDAO.ROOM_ID, BookingDAO.DEPARTURE_DATE));
 
 
             if (originalBookingEntityResult.isEmpty()) {
@@ -218,9 +230,9 @@ public class BookingService implements IBookingService {
             Map<?, ?> originalBooking = originalBookingEntityResult.getRecordValues(0);
             LocalDate originalBookingArrivalDate = ((Date) originalBooking.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
-            filter = new HashMap<>();
-            filter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
-            EntityResult destinationRoomEntityResult = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID));
+            Map<String, Integer> originalRoomIdFilter = new HashMap<>();
+            originalRoomIdFilter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
+            EntityResult destinationRoomEntityResult = roomService.roomQuery(originalRoomIdFilter, List.of(RoomDAO.HOTEL_ID));
 
             if (destinationRoomEntityResult.isEmpty()) {
                 throw new RoomDoesNotExistException(IBookingService.BOOKING_NOT_FOUND);
@@ -244,9 +256,9 @@ public class BookingService implements IBookingService {
                 throw new BookingNotModifiableException(IBookingService.ONE_DAY_MARGIN_ERROR);
             }
 
-            filter = new HashMap<>();
-            filter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
-            Map<?, ?> originalRoom = roomService.roomQuery(filter, List.of(RoomDAO.HOTEL_ID)).getRecordValues(0);
+            Map<String, Integer> newRoomIdFilter = new HashMap<>();
+            newRoomIdFilter.put(RoomDAO.ID, (Integer) originalBooking.get(BookingDAO.ROOM_ID));
+            Map<?, ?> originalRoom = roomService.roomQuery(newRoomIdFilter, List.of(RoomDAO.HOTEL_ID)).getRecordValues(0);
 
             if (
                     originalRoom.get(RoomDAO.HOTEL_ID) != destinationRoomEntityResult.getRecordValues(0).get(RoomDAO.HOTEL_ID)
