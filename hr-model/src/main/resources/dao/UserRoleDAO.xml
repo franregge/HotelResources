@@ -16,7 +16,7 @@
         <Query id="default">
             <ValidColumns>
                 <Column>id</Column>
-                <Column>name</Column>
+                <Column>rolename</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -26,6 +26,64 @@
                         ${mainschema}.roles
                     #WHERE#
                 ]]>
+            </Sentence>
+        </Query>
+        <Query id="serverPermissions">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="id" prefix="r" />
+                <AmbiguousColumn name="id" prefix="sp" />
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+					SELECT
+						#COLUMNS#
+					FROM
+						${mainschema}.roles r
+						JOIN ${mainschema}.roles_server_permissions rsp ON r.id = rsp.role_id
+						JOIN ${mainschema}.server_permissions sp ON rsp.server_permission_id = sp.id
+					#WHERE#
+					#ORDER#
+					]]>
+            </Sentence>
+        </Query>
+        <Query id="clientPermissions">
+            <Sentence>
+                <![CDATA[
+					select
+						#COLUMNS#
+					from
+						${mainschema}.roles r
+					#WHERE#
+					#ORDER#
+					]]>
+            </Sentence>
+        </Query>
+        <Query id="login">
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM ${mainschema}.users
+                    #WHERE#
+                    #ORDER#
+                ]]>
+            </Sentence>
+        </Query>
+        <Query id="userRole">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="id" prefix="u" />
+                <AmbiguousColumn name="id" prefix="r" />
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+					select
+						#COLUMNS#
+					from
+						${mainschema}.users u
+						JOIN ${mainschema}.roles r ON u.role_id = r.id
+					#WHERE#
+					#ORDER#
+					]]>
             </Sentence>
         </Query>
     </Queries>

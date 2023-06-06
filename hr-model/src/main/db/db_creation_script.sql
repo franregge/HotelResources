@@ -2,11 +2,10 @@ DROP TABLE IF EXISTS public.bookings;
 DROP TABLE IF EXISTS public.rooms;
 DROP TABLE IF EXISTS public.hotels;
 DROP TABLE IF EXISTS public.users;
-DROP TABLE IF EXISTS public.roles;
-DROP TABLE IF EXISTS public.server_permissions;
 DROP TABLE IF EXISTS public.roles_server_permissions;
+DROP TABLE IF EXISTS public.server_permissions;
+DROP TABLE IF EXISTS public.roles CASCADE;
 DROP TABLE IF EXISTS public.countries;
-
 
 CREATE TABLE public.hotels
 (
@@ -46,6 +45,17 @@ ALTER TABLE rooms
     ADD CONSTRAINT u_hotel_id_room_number
         UNIQUE USING INDEX u_hotel_id_room_number;
 
+CREATE TABLE public.roles (
+                              id SERIAL PRIMARY KEY,
+                              rolename VARCHAR(255) NOT NULL,
+                              xml_client_permission VARCHAR(10485760) NOT NULL DEFAULT ('<?xml version="1.0" encoding="UTF-8"?><security></security>')
+);
+
+CREATE TABLE public.countries (
+                                  id SERIAL PRIMARY KEY,
+                                  name VARCHAR(255) NOT NULL
+);
+
 
 CREATE TABLE public.users (
   id SERIAL PRIMARY KEY,
@@ -61,21 +71,15 @@ CREATE TABLE public.users (
   foreign key (role_id) references public.roles(id)
   on delete restrict
   on update cascade,
-  foreign key (country) references public.countries(id)
+  foreign key (country_id) references public.countries(id)
     on delete restrict
     on update cascade
 );
 
-CREATE TABLE public.roles (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    xml_client_permission VARCHAR(10485760) NOT NULL DEFAULT ('<?xml version="1.0" encoding="UTF-8"?><security></security>')
-)
-
 CREATE TABLE public.server_permissions (
     id SERIAL PRIMARY KEY,
     method VARCHAR(255) NOT NULL
-)
+);
 
 CREATE TABLE public.roles_server_permissions (
     role_id INT,
@@ -84,10 +88,4 @@ CREATE TABLE public.roles_server_permissions (
     FOREIGN KEY (role_id) references public.roles(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (server_permission_id) references public.server_permissions(id)
     ON DELETE CASCADE ON UPDATE CASCADE
-)
-
-CREATE TABLE public.countries (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-)
-
+);
