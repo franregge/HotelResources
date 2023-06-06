@@ -54,12 +54,12 @@ CREATE TABLE public.users (
   id_document VARCHAR(255) NOT NULL,
   country_id INT NOT NULL,
   phone_number VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
   user_password VARCHAR(255) NOT null,
   foreign key (role_id) references public.roles(id)
   on delete restrict
   on update cascade,
-  foreign key (country) references public.countries(id)
+  foreign key (country_id) references public.countries(id)
     on delete restrict
     on update cascade
 );
