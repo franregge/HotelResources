@@ -2,7 +2,9 @@ package com.ontimize.hr.model.core;
 
 import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.model.core.dao.BookingDAO;
+import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.service.BookingService;
+import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -40,6 +42,8 @@ public class BookingServiceTest {
 
     @Mock
     BookingDAO bookingDAO;
+    @Mock
+    UserService userService;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -48,38 +52,26 @@ public class BookingServiceTest {
 
         @Test
         void insertBooking_validBooking_bookingIsSaved_Test() {
-            //attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
+            attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.DNI, "66955662V");
+            attrMap.put(BookingDAO.USER_ID,2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
-            attrMap.put(BookingDAO.NAME, "Manolo");
-            attrMap.put(BookingDAO.SURNAME1, "Garcia");
 
             assertDoesNotThrow(() -> bookingService.bookingInsert(attrMap));
         }
 
-        @Test
-        void insertBooking_invalidBooking_wrongDNI_Test() {
-            attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
-            attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.DNI, "66955662W");
-            attrMap.put(BookingDAO.ROOM_ID, 6);
-            attrMap.put(BookingDAO.NAME, "Manolo");
-            attrMap.put(BookingDAO.SURNAME1, "Garcia");
-
-            EntityResult actualResult = bookingService.bookingInsert(attrMap);
-
-            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
-        }
 
         @Test
         void insertBooking_invalidBooking_arrivalDateBeforeNow() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().minusDays(1).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.DNI, "66955662V");
+            attrMap.put(BookingDAO.USER_ID,1);
             attrMap.put(BookingDAO.ROOM_ID, 6);
-            attrMap.put(BookingDAO.NAME, "Manolo");
-            attrMap.put(BookingDAO.SURNAME1, "Garcia");
+
+            EntityResult er =new EntityResultMapImpl();
+            er.put("",List.of(""));
+
+            when(userService.userQuery(any(),any())).thenReturn(er);
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
 
@@ -91,10 +83,13 @@ public class BookingServiceTest {
         void insertBooking_invalidBooking_arrivalDateAfterDepartureDate() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(3).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(1).toString());
-            attrMap.put(BookingDAO.DNI, "66955662V");
+            attrMap.put(BookingDAO.USER_ID,2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
-            attrMap.put(BookingDAO.NAME, "Manolo");
-            attrMap.put(BookingDAO.SURNAME1, "Garcia");
+
+            EntityResult er =new EntityResultMapImpl();
+            er.put("",List.of(""));
+
+            when(userService.userQuery(any(),any())).thenReturn(er);
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
 
@@ -108,26 +103,44 @@ public class BookingServiceTest {
 
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5).toString());
-            attrMap.put(BookingDAO.DNI, "66955662V");
+            attrMap.put(BookingDAO.USER_ID,2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
-            attrMap.put(BookingDAO.NAME, "Manolo");
-            attrMap.put(BookingDAO.SURNAME1, "Garcia");
 
             Instant conflictingArrivalDate = Instant.now().plus(1L, ChronoUnit.DAYS);
             Instant conflictingDepartureDate = Instant.now().plus(5L, ChronoUnit.DAYS);
             conflictingEntityResult.put(BookingDAO.ARRIVAL_DATE, List.of(new Date(conflictingArrivalDate.toEpochMilli())));
             conflictingEntityResult.put(BookingDAO.DEPARTURE_DATE, List.of(new Date(conflictingDepartureDate.toEpochMilli())));
-            conflictingEntityResult.put(BookingDAO.DNI, List.of("66955662V"));
+            conflictingEntityResult.put(BookingDAO.USER_ID, List.of(2));
             conflictingEntityResult.put(BookingDAO.ROOM_ID, List.of(6));
-            conflictingEntityResult.put(BookingDAO.NAME, List.of("Manolo"));
-            conflictingEntityResult.put(BookingDAO.SURNAME1, List.of("Garcia"));
+
+            EntityResult er = new EntityResultMapImpl();
+            er.put("",List.of(""));
 
             when(daoHelper.query(any(), any(), any())).thenReturn(conflictingEntityResult);
+            when(userService.userQuery(any(),any())).thenReturn(er);
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
 
             assertEquals(IBookingService.DATES_OVERLAP, actualResult.getMessage());
             assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
+        }
+        @Test
+        void insertBooking_invalidBooking_userDoesNotExist(){
+            EntityResult conflictingEntityResult = new EntityResultMapImpl();
+
+            attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1).toString());
+            attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5).toString());
+            attrMap.put(BookingDAO.USER_ID,2);
+            attrMap.put(BookingDAO.ROOM_ID, 6);
+
+            when(userService.userQuery(any(),any())).thenReturn(conflictingEntityResult);
+
+
+            EntityResult actualResult = bookingService.bookingInsert(attrMap);
+
+            assertEquals(IBookingService.USER_NOT_FOUND, actualResult.getMessage());
+            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
+
         }
 
     }
@@ -146,21 +159,16 @@ public class BookingServiceTest {
             keyMap.put(BookingDAO.ID,1);
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.DNI, "66955662V");
+            attrMap.put(BookingDAO.USER_ID,2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
-            attrMap.put(BookingDAO.NAME, "Manolo");
-            attrMap.put(BookingDAO.SURNAME1, "Garcia");
 
             Instant conflictingArrivalDate = Instant.now().plus(1L, ChronoUnit.DAYS);
             Instant conflictingDepartureDate = Instant.now().plus(5L, ChronoUnit.DAYS);
             bookingEntityResult.put(BookingDAO.ARRIVAL_DATE, List.of(new Date(conflictingArrivalDate.toEpochMilli())));
             bookingEntityResult.put(BookingDAO.DEPARTURE_DATE, List.of(new Date(conflictingDepartureDate.toEpochMilli())));
-            bookingEntityResult.put(BookingDAO.DNI, List.of("66955662V"));
+            bookingEntityResult.put(BookingDAO.USER_ID, List.of(2));
             bookingEntityResult.put(BookingDAO.ROOM_ID, List.of(6));
-            bookingEntityResult.put(BookingDAO.NAME, List.of("Manolo"));
-            bookingEntityResult.put(BookingDAO.SURNAME1, List.of("Garcia"));
 
-            when(daoHelper.query(any(), any(), any())).thenReturn(bookingEntityResult);
 
 
             assertDoesNotThrow(() -> bookingService.bookingUpdate(attrMap,keyMap));
