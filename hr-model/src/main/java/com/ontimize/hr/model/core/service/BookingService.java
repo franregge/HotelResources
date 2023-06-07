@@ -113,9 +113,13 @@ public class BookingService implements IBookingService {
         return false;
     };
 
-    private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
+    private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDateException, UserDoesNotExistException {
+        Map<String, ? super Object> userIDFilter = new HashMap<>();
+        userIDFilter.put(UserDAO.ID, attrMap.get(BookingDAO.USER_ID));
 
-
+        if (userService.userQuery(userIDFilter,List.of(UserDAO.ID)).isEmpty()){
+            throw new UserDoesNotExistException(IBookingService.USER_NOT_FOUND);
+        }
         if (arrivalDateBeforeNow.test(attrMap)) {
             throw new InvalidBookingDateException(IBookingService.DATE_BEFORE_NOW_MESSAGE);
         }
