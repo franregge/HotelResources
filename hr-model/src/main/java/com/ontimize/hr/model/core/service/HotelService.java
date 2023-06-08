@@ -8,6 +8,7 @@ import com.ontimize.hr.api.core.service.exception.InvalidNumberOfFloorsException
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
+import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
