@@ -67,10 +67,12 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
+
                     (((arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) && (arrivalDate.isBefore(departureDateToCheck)))
                             || (departureDate.isAfter(arrivalDateToCheck)&& (departureDate.isBefore(departureDateToCheck)|| departureDate.isEqual(departureDateToCheck))))
                             || ((((arrivalDateToCheck.isAfter(arrivalDate) || arrivalDateToCheck.isEqual(arrivalDate)) && (arrivalDateToCheck.isBefore(departureDate)))
                             || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck)))))
+
 
             ) {
                 return true;
@@ -97,12 +99,10 @@ public class BookingService implements IBookingService {
                     (((arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) && (arrivalDate.isBefore(departureDateToCheck)))
                 || (departureDate.isAfter(arrivalDateToCheck)&& (departureDate.isBefore(departureDateToCheck)|| departureDate.isEqual(departureDateToCheck))))
                     || ((((arrivalDateToCheck.isAfter(arrivalDate) || arrivalDateToCheck.isEqual(arrivalDate)) && (arrivalDateToCheck.isBefore(departureDate)))
-                            || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck)))))
-            )
+                            || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck))))))
 
-            {
                 return true;
-            }
+
         }
 
         return false;
