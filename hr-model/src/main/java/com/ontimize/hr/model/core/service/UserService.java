@@ -66,23 +66,23 @@ public class UserService implements IUserService {
         }
 
         if (!passwordLengthOverEight.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_LENGTH_TOO_SHORT);
+            throw new InvalidPasswordException(IUserService.INVALID_PASSWORD);
         }
 
         if (!passwordHasLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_LETTER);
+            throw new InvalidPasswordException(IUserService.INVALID_PASSWORD);
         }
 
         if (!passwordHasNumber.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_NUMBER);
+            throw new InvalidPasswordException(IUserService.INVALID_PASSWORD);
         }
 
         if (!passwordHasCapitalLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_CAPITAL_LETTER);
+            throw new InvalidPasswordException(IUserService.INVALID_PASSWORD);
         }
 
         if (!passwordHasLowerCaseLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
+            throw new InvalidPasswordException(IUserService.INVALID_PASSWORD);
         }
     }
 
