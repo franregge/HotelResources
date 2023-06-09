@@ -97,14 +97,16 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) ||
+                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) &&
                             (
+                                (arrivalDate.isBefore(departureDateToCheck) || arrivalDate.isEqual(departureDateToCheck) )) ||
+                                (
                                     departureDate.isAfter(arrivalDateToCheck) &&
                                             (
                                                     departureDate.isBefore(departureDateToCheck) ||
                                                             departureDate.isEqual(departureDateToCheck)
                                             )
-                            )
+                                )
             ) {
                 return true;
             }

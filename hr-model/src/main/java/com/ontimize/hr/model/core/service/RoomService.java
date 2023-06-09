@@ -95,6 +95,7 @@ public class RoomService implements IRoomService {
     @Override
     public EntityResult roomInsert(Map<?, ?> attrMap) {
         EntityResult result = null;
+        Integer roomId = (Integer) attrMap.get(RoomDAO.ID);
         try {
             int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
 
@@ -108,6 +109,8 @@ public class RoomService implements IRoomService {
             validateNumberOfBeds((int) attrMap.get(RoomDAO.NUMBER_OF_BEDS));
             validatePriceOverMinimum(BigDecimal.valueOf((int) attrMap.get(RoomDAO.BASE_PRICE)));
             result = this.daoHelper.insert(this.roomDAO, attrMap);
+            result.setMessage("Room created successfully");
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
         } catch (DuplicateKeyException e) {
             result = new EntityResultMapImpl();
