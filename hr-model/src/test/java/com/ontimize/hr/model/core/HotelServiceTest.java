@@ -2,7 +2,9 @@ package com.ontimize.hr.model.core;
 
 import com.ontimize.hr.api.core.service.IHotelService;
 import com.ontimize.hr.model.core.dao.HotelDAO;
+import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.service.HotelService;
+import com.ontimize.hr.model.core.service.RoomService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -20,8 +22,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 public class HotelServiceTest {
     @InjectMocks
@@ -30,10 +33,12 @@ public class HotelServiceTest {
     DefaultOntimizeDaoHelper daoHelper;
     @Mock
     HotelDAO hotelDAO;
+    @Mock
+    RoomService roomService;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class insertHotel {
+    class InsertHotel {
         Map<Object, Object> attrMap = new HashMap<>();
 
         @Test
@@ -88,6 +93,45 @@ public class HotelServiceTest {
             assertEquals(IHotelService.HOTEL_ALREADY_EXISTS_ERROR, actualResult.getMessage());
             assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
         }
+
+    }
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class UpdateHotel{
+        Map<Object, Object> attrMap = new HashMap<>();
+        Map<Object,Object> keyMap= new HashMap<>();
+
+        @Test
+        void updateHotel_validHotel_hotelIsUpdated() {
+
+            attrMap.put(HotelDAO.NUMBER_OF_FLOORS, 6);
+            attrMap.put(HotelDAO.NAME, "Hotel Estrella");
+
+            keyMap.put(HotelDAO.ID,1);
+            EntityResult hotelEntityResult = new EntityResultMapImpl();
+            hotelEntityResult.addRecord(new HashMap<>(2,2));
+            when(hotelService.hotelQuery(anyMap(), eq(anyList()))).thenReturn(hotelEntityResult);
+
+            EntityResult hotelRoomsEntityResult = new EntityResultMapImpl();
+            hotelRoomsEntityResult.addRecord(new HashMap());
+            when(roomService.roomQuery(anyMap(), anyList())).thenReturn(hotelRoomsEntityResult);
+
+            EntityResult updateResult = new EntityResultMapImpl();
+            when(hotelDAO.update(anyMap(), anyMap())).thenReturn(updateResult);
+
+            EntityResult result = null;
+            try {
+                result = hotelService.hotelUpdate(attrMap, keyMap);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+
+            verify(hotelDAO, times(1)).update(eq(attrMap), eq(keyMap));
+            assertEquals("Hotel updated successfully", result.getMessage());
+            assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
+        }
+
 
     }
 

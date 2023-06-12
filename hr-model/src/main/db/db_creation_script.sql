@@ -31,10 +31,8 @@ CREATE TABLE public.bookings
     room_id        INT          NOT NULL,
     arrival_date   DATE         NOT NULL,
     departure_date DATE         NOT NULL,
-    dni            CHAR(9)      NOT NULL,
-    name           VARCHAR(100) NOT NULL,
-    surname1       VARCHAR(100) NOT NULL,
-    surname2       VARCHAR(100),
+    user_id INT not null,
+    foreign key (user_id) references public.users (id) ON DELETE RESTRICT ON UPDATE restrict,
     FOREIGN KEY (room_id) REFERENCES public.rooms (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -66,7 +64,7 @@ CREATE TABLE public.users (
   id_document VARCHAR(255) NOT NULL,
   country_id INT NOT NULL,
   phone_number VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
   user_password VARCHAR(255) NOT null,
   foreign key (role_id) references public.roles(id)
   on delete restrict
