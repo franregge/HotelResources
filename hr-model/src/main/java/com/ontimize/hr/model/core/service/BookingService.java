@@ -37,6 +37,9 @@ public class BookingService implements IBookingService {
     @Autowired
     private UserService userService;
 
+    private final BiPredicate<LocalDate, LocalDate> dateAfterOrEqual = (date1, date2) -> date1.isAfter(date2) || date1.isEqual(date2);
+    private final BiPredicate<LocalDate, LocalDate> dateBeforeOrEqual = (date1, date2) -> date1.isBefore(date2) || date1.isEqual(date2);
+
     Predicate<Map<?, ?>> arrivalDateBeforeNow = bookingMap -> {
         LocalDate arrivalDate = LocalDate.parse((String) bookingMap.get(BookingDAO.ARRIVAL_DATE));
         return arrivalDate.isBefore(LocalDate.now());
@@ -67,13 +70,10 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-
-                    (((arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) && (arrivalDate.isBefore(departureDateToCheck)))
-                            || (departureDate.isAfter(arrivalDateToCheck)&& (departureDate.isBefore(departureDateToCheck)|| departureDate.isEqual(departureDateToCheck))))
-                            || ((((arrivalDateToCheck.isAfter(arrivalDate) || arrivalDateToCheck.isEqual(arrivalDate)) && (arrivalDateToCheck.isBefore(departureDate)))
-                            || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck)))))
-
-
+                    ((dateAfterOrEqual.test(arrivalDate, arrivalDateToCheck) && arrivalDate.isBefore(departureDateToCheck))
+                            || (departureDate.isAfter(arrivalDateToCheck) && dateBeforeOrEqual.test(departureDate, departureDateToCheck)))
+                            || ((dateAfterOrEqual.test(arrivalDateToCheck, arrivalDate) && (arrivalDateToCheck.isBefore(departureDate)))
+                            || (departureDateToCheck.isAfter(arrivalDate) && dateBeforeOrEqual.test(departureDateToCheck, departureDate)))
             ) {
                 return true;
             }
@@ -96,13 +96,13 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-                    (((arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) && (arrivalDate.isBefore(departureDateToCheck)))
-                || (departureDate.isAfter(arrivalDateToCheck)&& (departureDate.isBefore(departureDateToCheck)|| departureDate.isEqual(departureDateToCheck))))
-                    || ((((arrivalDateToCheck.isAfter(arrivalDate) || arrivalDateToCheck.isEqual(arrivalDate)) && (arrivalDateToCheck.isBefore(departureDate)))
-                            || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck))))))
-
+                    ((dateBeforeOrEqual.test(arrivalDate, arrivalDateToCheck) && arrivalDate.isBefore(departureDateToCheck))
+                            || (departureDate.isAfter(arrivalDateToCheck) && dateBeforeOrEqual.test(departureDate, departureDateToCheck)))
+                            || (dateAfterOrEqual.test(arrivalDateToCheck, arrivalDate) && (arrivalDateToCheck.isBefore(departureDate))
+                            || (departureDateToCheck.isAfter(arrivalDate) && dateBeforeOrEqual.test(departureDateToCheck, departureDate)))
+            ) {
                 return true;
-
+            }
         }
 
         return false;
@@ -112,7 +112,7 @@ public class BookingService implements IBookingService {
         Map<String, ? super Object> userIDFilter = new HashMap<>();
         userIDFilter.put(UserDAO.ID, attrMap.get(BookingDAO.USER_ID));
 
-        if (userService.userQuery(userIDFilter,List.of(UserDAO.ID)).isEmpty()){
+        if (userService.userQuery(userIDFilter, List.of(UserDAO.ID)).isEmpty()) {
             throw new UserDoesNotExistException(IBookingService.USER_NOT_FOUND);
         }
         if (arrivalDateBeforeNow.test(attrMap)) {
