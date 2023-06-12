@@ -63,8 +63,10 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) &&
-                            (departureDate.isBefore(departureDateToCheck) || departureDate.isEqual(departureDateToCheck))
+                    (((arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) && (arrivalDate.isBefore(departureDateToCheck)))
+                            || (departureDate.isAfter(arrivalDateToCheck)&& (departureDate.isBefore(departureDateToCheck)|| departureDate.isEqual(departureDateToCheck))))
+                            || ((((arrivalDateToCheck.isAfter(arrivalDate) || arrivalDateToCheck.isEqual(arrivalDate)) && (arrivalDateToCheck.isBefore(departureDate)))
+                            || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck)))))
             ) {
                 return true;
             }
@@ -87,8 +89,10 @@ public class BookingService implements IBookingService {
             arrivalDateToCheck = ((Date) bookingToCheck.get(BookingDAO.ARRIVAL_DATE)).toLocalDate();
 
             if (
-                    (arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) &&
-                            (departureDate.isBefore(departureDateToCheck) || departureDate.isEqual(departureDateToCheck))
+                    (((arrivalDate.isAfter(arrivalDateToCheck) || arrivalDate.isEqual(arrivalDateToCheck)) && (arrivalDate.isBefore(departureDateToCheck)))
+                            || (departureDate.isAfter(arrivalDateToCheck)&& (departureDate.isBefore(departureDateToCheck)|| departureDate.isEqual(departureDateToCheck))))
+                            || ((((arrivalDateToCheck.isAfter(arrivalDate) || arrivalDateToCheck.isEqual(arrivalDate)) && (arrivalDateToCheck.isBefore(departureDate)))
+                            || (departureDateToCheck.isAfter(arrivalDate)&& (departureDateToCheck.isBefore(departureDate)|| departureDate.isEqual(departureDateToCheck)))))
             ) {
                 return true;
             }
@@ -98,9 +102,7 @@ public class BookingService implements IBookingService {
     };
 
     private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDNIException, InvalidBookingDateException {
-        if (!validateDNI((String) attrMap.get(BookingDAO.DNI))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
-        }
+
 
         if (arrivalDateBeforeNow.test(attrMap)) {
             throw new InvalidBookingDateException(IBookingService.DATE_BEFORE_NOW_MESSAGE);
@@ -165,7 +167,7 @@ public class BookingService implements IBookingService {
 
         return letters.get(numberSegment % 23) == letter;
     }
-
+@Secured({NameRoles.MANAGER})
     @Override
     public EntityResult bookingQuery(Map<?, ?> keymap, List<?> attrList) {
         return this.daoHelper.query(this.bookingDAO, keymap, attrList);
@@ -190,7 +192,7 @@ public class BookingService implements IBookingService {
 
         return result;
     }
-
+    @Secured({NameRoles.MANAGER})
     @Override
     public EntityResult bookingDelete(Map<?, ?> keyMap) {
         Integer bookingId = (Integer) keyMap.get(BookingDAO.ID);
@@ -212,7 +214,7 @@ public class BookingService implements IBookingService {
         result.put("deleted_id", bookingId);
         return result;
     }
-
+    @Secured({NameRoles.MANAGER})
     @Override
     public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         EntityResult result;

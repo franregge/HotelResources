@@ -53,10 +53,10 @@ public class UserService implements IUserService {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.matches(".*[a-zñ].*");
     };
-
+    @Secured({NameRoles.MANAGER})
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
-        return null;
+        return this.daoHelper.query(userDAO, keyMap, attrList);
     }
 
 
