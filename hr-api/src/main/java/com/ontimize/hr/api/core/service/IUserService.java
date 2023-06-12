@@ -30,4 +30,5 @@ public interface IUserService {
     String PASS_HAS_NO_LOWER_CASE_LETTER = "The password must have at least one lower-case letter";
 
     String USER_INSERT_SUCCESS= "User inserted successfully";
+    String PASS_INSTRUCTIONS= "The password must have at least one number,one Capital letter, one lower case letter and the password length has to be over 7";
 }
