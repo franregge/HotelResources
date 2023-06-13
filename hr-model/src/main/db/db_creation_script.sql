@@ -6,8 +6,9 @@ DROP TABLE IF EXISTS public.roles_server_permissions;
 DROP TABLE IF EXISTS public.server_permissions;
 DROP TABLE IF EXISTS public.roles CASCADE;
 DROP TABLE IF EXISTS public.countries;
+DROP TABLE IF EXISTS public.countries;
+DROP TABLE IF EXISTS public.roles_users;
 
-CREATE TABLE public.hotels
 (
     id               SERIAL       NOT NULL PRIMARY KEY,
     name             VARCHAR(255) NOT NULL,
@@ -57,7 +58,6 @@ CREATE TABLE public.countries (
 
 CREATE TABLE public.users (
   id SERIAL PRIMARY KEY,
-  role_id INT NOT NULL ,
   user_name VARCHAR(255) NOT NULL,
   surname1 VARCHAR(255) NOT NULL,
   surname2 VARCHAR(255),
@@ -66,9 +66,6 @@ CREATE TABLE public.users (
   phone_number VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   user_password VARCHAR(255) NOT null,
-  foreign key (role_id) references public.roles(id)
-  on delete restrict
-  on update cascade,
   foreign key (country_id) references public.countries(id)
     on delete restrict
     on update cascade
@@ -87,3 +84,11 @@ CREATE TABLE public.roles_server_permissions (
     FOREIGN KEY (server_permission_id) references public.server_permissions(id)
     ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE public.roles_users (
+    id SERIAL PRIMARY KEY,
+    user_id INT,
+    role_id INT,
+    FOREIGN KEY(user_id) references public.users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(role_id) references public.roles(role_id) ON DELETE CASCADE ON UPDATE CASCADE
+)
