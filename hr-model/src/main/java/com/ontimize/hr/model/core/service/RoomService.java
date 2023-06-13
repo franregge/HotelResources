@@ -5,6 +5,7 @@ import com.ontimize.hr.api.core.service.exception.InvalidAssignedHotelException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfBeds;
 import com.ontimize.hr.api.core.service.exception.InvalidPriceException;
 import com.ontimize.hr.api.core.service.exception.InvalidRoomNumberException;
+import com.ontimize.hr.model.core.NameRoles;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
@@ -17,6 +18,7 @@ import org.postgresql.util.PSQLWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -91,7 +93,7 @@ public class RoomService implements IRoomService {
             throw new InvalidRoomNumberException("The roomNumber cannot finish with 0");
         }
     }
-
+    @Secured({NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult roomInsert(Map<?, ?> attrMap) {
         EntityResult result = null;
@@ -124,7 +126,7 @@ public class RoomService implements IRoomService {
 
         return result;
     }
-
+    @Secured({NameRoles.MANAGER,NameRoles.ROOT})
     public EntityResult roomDelete(Map<?, ?> keyMap) {
 
         EntityResult result = null;
@@ -153,7 +155,7 @@ public class RoomService implements IRoomService {
         }
         return result;
     }
-
+    @Secured({NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
 

@@ -160,7 +160,7 @@ public class BookingService implements IBookingService {
     public EntityResult bookingQuery(Map<?, ?> keymap, List<?> attrList) {
         return this.daoHelper.query(this.bookingDAO, keymap, attrList);
     }
-@Secured({NameRoles.ClIENT,NameRoles.MANAGER})
+@Secured({NameRoles.ClIENT,NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult bookingInsert(Map<?, ?> attrMap) {
         EntityResult result;
@@ -180,7 +180,7 @@ public class BookingService implements IBookingService {
 
         return result;
     }
-
+    @Secured({NameRoles.ClIENT,NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult bookingDelete(Map<?, ?> keyMap) {
         Integer bookingId = (Integer) keyMap.get(BookingDAO.ID);
@@ -202,7 +202,7 @@ public class BookingService implements IBookingService {
         result.put("deleted_id", bookingId);
         return result;
     }
-
+    @Secured({NameRoles.ClIENT,NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         EntityResult result;

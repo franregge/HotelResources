@@ -109,7 +109,7 @@ public class UserService implements IUserService {
 
         return letters.get(numberSegment % 23) == letter;
     }
-@Secured({NameRoles.MANAGER})
+    @Secured({NameRoles.GUEST,NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
         EntityResult result;
@@ -130,12 +130,13 @@ public class UserService implements IUserService {
 
         return result;
     }
-
+    @Secured({NameRoles.GUEST,NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         return null;
     }
 
+    @Secured({NameRoles.GUEST,NameRoles.MANAGER,NameRoles.ROOT})
     @Override
     public EntityResult userDelete(Map<?, ?> keyMap) {
         return null;
