@@ -6,8 +6,9 @@ DROP TABLE IF EXISTS public.roles_server_permissions;
 DROP TABLE IF EXISTS public.server_permissions;
 DROP TABLE IF EXISTS public.roles CASCADE;
 DROP TABLE IF EXISTS public.countries;
+DROP TABLE IF EXISTS public.countries;
+DROP TABLE IF EXISTS public.roles_users;
 
-CREATE TABLE public.hotels
 (
     id               SERIAL       NOT NULL PRIMARY KEY,
     name             VARCHAR(255) NOT NULL,
@@ -31,10 +32,8 @@ CREATE TABLE public.bookings
     room_id        INT          NOT NULL,
     arrival_date   DATE         NOT NULL,
     departure_date DATE         NOT NULL,
-    dni            CHAR(9)      NOT NULL,
-    name           VARCHAR(100) NOT NULL,
-    surname1       VARCHAR(100) NOT NULL,
-    surname2       VARCHAR(100),
+    user_id INT not null,
+    foreign key (user_id) references public.users (id) ON DELETE RESTRICT ON UPDATE restrict,
     FOREIGN KEY (room_id) REFERENCES public.rooms (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -59,18 +58,15 @@ CREATE TABLE public.countries (
 
 CREATE TABLE public.users (
   id SERIAL PRIMARY KEY,
-  role_id INT NOT NULL ,
+  login_name VARCHAR(255) NOT NULL UNIQUE,
   user_name VARCHAR(255) NOT NULL,
   surname1 VARCHAR(255) NOT NULL,
   surname2 VARCHAR(255),
   id_document VARCHAR(255) NOT NULL,
   country_id INT NOT NULL,
   phone_number VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
   user_password VARCHAR(255) NOT null,
-  foreign key (role_id) references public.roles(id)
-  on delete restrict
-  on update cascade,
   foreign key (country_id) references public.countries(id)
     on delete restrict
     on update cascade
@@ -89,3 +85,11 @@ CREATE TABLE public.roles_server_permissions (
     FOREIGN KEY (server_permission_id) references public.server_permissions(id)
     ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE public.roles_users (
+    id SERIAL PRIMARY KEY,
+    user_id INT,
+    role_id INT,
+    FOREIGN KEY(login_name) references public.users(login_name) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY(role_id) references public.roles(role_id) ON DELETE CASCADE ON UPDATE CASCADE
+)

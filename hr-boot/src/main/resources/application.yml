@@ -37,7 +37,7 @@ ontimize:
          client-permission-column: xml_client_permission
       user-information-service:
          user-repository: UserDAO
-         user-login-column: user_name
+         user-login-column: login_name
          user-password-column: user_password
          query-id: login
          other-data:
@@ -46,10 +46,10 @@ ontimize:
             - email
             - id_document
       user-role-information-service:
-         user-role-repository: UserRoleDAO
+         user-role-repository: UsersRolesDAO
          query-id: userRole
-         role-login-column: user_name
-         role-name-column: rolename
+         role-login-column: login_name
+         role-name-column: role_id
 server:
    port: 30030
    tomcat:

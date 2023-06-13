@@ -9,6 +9,7 @@ import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -53,7 +54,7 @@ public class UserService implements IUserService {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.matches(".*[a-zñ].*");
     };
-    @Secured({NameRoles.MANAGER})
+    @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
         return this.daoHelper.query(userDAO, keyMap, attrList);
@@ -109,7 +110,7 @@ public class UserService implements IUserService {
 
         return letters.get(numberSegment % 23) == letter;
     }
-@Secured({NameRoles.MANAGER})
+    @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
         EntityResult result;
@@ -130,12 +131,13 @@ public class UserService implements IUserService {
 
         return result;
     }
-
+    @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         return null;
     }
 
+    @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userDelete(Map<?, ?> keyMap) {
         return null;

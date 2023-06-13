@@ -7,6 +7,7 @@ import com.ontimize.hr.api.core.service.exception.InvalidFloorNumberException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfFloorsException;
 
 
+import com.ontimize.hr.model.core.NameRoles;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
@@ -79,7 +80,8 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    @Secured({"ROLE_MANAGER"})    public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception {
+    @Secured({ PermissionsProviderSecured.SECURED })
+    public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception {
         Map<String, Integer> filter = new HashMap<>();
         Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
         EntityResult result;
