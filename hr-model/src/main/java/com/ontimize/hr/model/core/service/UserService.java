@@ -110,7 +110,7 @@ public class UserService implements IUserService {
 
         return letters.get(numberSegment % 23) == letter;
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
         EntityResult result;
@@ -134,7 +134,7 @@ public class UserService implements IUserService {
     @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
-        return null;
+        return null; // TODO check user can only update itself
     }
 
     @Secured({ PermissionsProviderSecured.SECURED })
