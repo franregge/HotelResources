@@ -25,6 +25,7 @@ public interface IBookingService {
     String NO_BOOKING_WITH_ID = "No booking with this id";
     String DELETION_SUCCESS = "Booking deleted successfully";
 
+    String INVALID_ID_DOCUMENT ="The id document is not valid";
     String USER_NOT_FOUND = "No user with this id could be found";
 
 

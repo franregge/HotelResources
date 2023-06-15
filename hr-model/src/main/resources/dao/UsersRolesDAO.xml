@@ -3,27 +3,27 @@
         xmlns="http://www.ontimize.com/schema/jdbc"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd"
-        catalog="" schema="${mainschema}" table="roles"
+        catalog="" schema="${mainschema}" table="roles_users"
         datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>role_id</Column>
+        <Column>id</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>role_id</Column>
+        <Column>id</Column>
     </UpdateKeys>
-    <GeneratedKey>role_id</GeneratedKey>
+    <GeneratedKey>id</GeneratedKey>
     <Queries>
         <Query id="default">
             <ValidColumns>
                 <Column>role_id</Column>
-                <Column>rolename</Column>
+                <Column>login_name</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
                     SELECT
                         #COLUMNS#
                     FROM
-                        ${mainschema}.roles
+                        ${mainschema}.roles_users
                     #WHERE#
                 ]]>
             </Sentence>
@@ -33,7 +33,7 @@
                 <![CDATA[
                     SELECT
                         #COLUMNS#
-                    FROM ${mainschema}.users
+                    FROM ${mainschema}.roles_users
                     #WHERE#
                     #ORDER#
                 ]]>
@@ -67,8 +67,8 @@
 					select
 						#COLUMNS#
 					from
-						${mainschema}.roles r
-						JOIN ${mainschema}.roles_server_permissions rsp ON r.role_id = rsp.role_id
+						${mainschema}.roles_users ru
+						JOIN ${mainschema}.roles_server_permissions rsp ON ru.role_id = rsp.role_id
 						JOIN ${mainschema}.server_permissions sp ON rsp.server_permission_id = sp.server_permission_id
 					#WHERE#
 					#ORDER#
@@ -81,7 +81,7 @@
 					select
 						#COLUMNS#
 					from
-						${mainschema}.roles r
+						${mainschema}.roles_users ru
 					#WHERE#
 					#ORDER#
 					]]>
