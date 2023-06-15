@@ -42,8 +42,8 @@ public class UserRestController extends ORestController<IUserService> {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityResult> employeeInsert(Map<?, ?>attrMap){
-        userSrv.employeeInsert(attrMap);
-    return new ResponseEntity<>(HttpStatus.OK);
+        EntityResult result = userSrv.employeeInsert(attrMap);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
