@@ -28,12 +28,13 @@ public class UserService implements IUserService {
     @Autowired
     private DefaultOntimizeDaoHelper daoHelper;
 
+
     Predicate<Map<?, ?>> passwordLengthOverEight = userMap -> {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.length() >= 8;
     };
     Predicate<Map<?, ?>> notEmployeeRole = userMap -> {
-        String role_id = (String) userMap.get(UserDAO.ROLE_ID);
+        String role_id = String.valueOf(userMap.get(UserDAO.ROLE_ID)) ;
         return role_id.matches(UserDAO.EMPLOYEE_ROLE_ID) ;
     };
 
@@ -113,7 +114,7 @@ public class UserService implements IUserService {
 
         return letters.get(numberSegment % 23) == letter;
     }
-
+    @Secured({})
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
         EntityResult result;
@@ -133,6 +134,7 @@ public class UserService implements IUserService {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
+            e.printStackTrace();
         }
 
         return result;
@@ -140,12 +142,14 @@ public class UserService implements IUserService {
     @Override
     @Secured({ PermissionsProviderSecured.SECURED })
     public EntityResult employeeInsert(Map<?, ?> attrMap) {
+
+        Map<?,?> data = (Map)attrMap.get("data");
         EntityResult result;
 
         try {
-            validateUser(attrMap);
+            validateUser(data);
 
-            result = this.daoHelper.insert(this.userDAO, attrMap);
+            result = this.daoHelper.insert(this.userDAO, data);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
 
@@ -154,6 +158,7 @@ public class UserService implements IUserService {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
+            e.printStackTrace();
         }
 
         return result;

@@ -17,5 +17,5 @@ public class BookingDAO extends OntimizeJdbcDaoSupport {
     public static final String ARRIVAL_DATE = "arrival_date";
     public static final String DEPARTURE_DATE = "departure_date";
 
-    public static final String USER_ID = "user_id";
+    public static final String USER_LOGIN_NAME = "user_login_name";
 }
