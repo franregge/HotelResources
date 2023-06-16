@@ -56,5 +56,22 @@
                 ]]>
             </Sentence>
         </Query>
+        <Query id="role_info">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="login_name" prefix="u" />
+                <AmbiguousColumn name="role_id" prefix="r" />
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.users u
+                        JOIN ${mainschema}.roles_users ru ON u.login_name = ru.login_name
+						            JOIN ${mainschema}.roles r ON ru.role_id = r.role_id
+                    #WHERE#
+                ]]>
+            </Sentence>
+        </Query>
     </Queries>
 </JdbcEntitySetup>

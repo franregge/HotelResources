@@ -41,4 +41,6 @@ public interface IUserService {
     String ONLY_MANAGER_ADD_EMPLOYEES= "Cannot add employees with your role";
     String NO_USER_FOUND= "Can't find users with this login name";
     String DELETION_SUCCESS= "User deleted successfully";
+
+    String WRONG_ROLE = "You cant update users with this role";
 }

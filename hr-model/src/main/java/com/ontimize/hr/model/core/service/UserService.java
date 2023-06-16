@@ -5,6 +5,7 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.model.core.dao.UserDAO;
+import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -32,10 +34,6 @@ public class UserService implements IUserService {
     Predicate<Map<?, ?>> passwordLengthOverEight = userMap -> {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.length() >= 8;
-    };
-    Predicate<Map<?, ?>> notEmployeeRole = userMap -> {
-        String role_id = String.valueOf(userMap.get(UserDAO.ROLE_ID)) ;
-        return role_id.matches(UserDAO.EMPLOYEE_ROLE_ID) ;
     };
 
     Predicate<Map<?, ?>> passwordHasLetter = userMap -> {
@@ -115,15 +113,22 @@ public class UserService implements IUserService {
         return letters.get(numberSegment % 23) == letter;
     }
 
+    public List<String> getUserRoles(String loginName){
+
+        Map<String,String> filter = new HashMap<>();
+        filter.put(UserDAO.LOGIN_NAME,loginName);
+        List<String> queriedAtributeList = List.of(UserRoleDAO.NAME);
+
+        return (List<String>) this.daoHelper.query(userDAO,filter,queriedAtributeList,UserDAO.ROLES_INFO).get(UserRoleDAO.NAME);
+    }
+
     @Secured({})
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
         EntityResult result;
 
         try {
-            if (notEmployeeRole.test(attrMap)){
-                throw new  Exception(IUserService.ONLY_MANAGER_ADD_EMPLOYEES);
-            }
+
             validateUser(attrMap);
 
             result = this.daoHelper.insert(this.userDAO, attrMap);
@@ -188,7 +193,24 @@ public class UserService implements IUserService {
     @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
-        return null; // TODO check user can only update itself
+
+        EntityResult result =null;
+
+        try {
+
+            validateUser(attrMap);
+            result = this.daoHelper.update(this.userDAO, attrMap, keyMap);
+            result.put("updated_user", keyMap.get((UserDAO.LOGIN_NAME)));
+            result.setMessage("User updated successfully");
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+
+        }catch (Exception e){
+            result= new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(e.getMessage());
+        }
+
+        return result;
     }
 
     @Secured({ PermissionsProviderSecured.SECURED })

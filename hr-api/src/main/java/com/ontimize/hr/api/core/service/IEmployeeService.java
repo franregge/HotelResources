@@ -13,6 +13,6 @@ public interface IEmployeeService {
 
     EntityResult employeeDelete(Map<?, ?> keyMap);
 
-    EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap);
+    EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) throws Exception;
 
 }
