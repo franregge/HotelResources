@@ -114,6 +114,7 @@ public class UserService implements IUserService {
 
         return letters.get(numberSegment % 23) == letter;
     }
+
     @Secured({})
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
