@@ -43,6 +43,14 @@ public class UserRestController extends ORestController<IUserService> {
         EntityResult result = userSrv.employeeInsert(attrMap);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+    @RequestMapping(
+            value="/employee",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EntityResult> employeeDelete(@RequestBody Map<?, ?>attrMap){
+        EntityResult result = userSrv.employeeDelete(attrMap);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
     @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityResult> addUser(@RequestBody Map<?, ?> attrMap) {
