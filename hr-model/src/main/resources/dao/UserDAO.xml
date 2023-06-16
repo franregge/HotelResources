@@ -6,16 +6,14 @@
         catalog="" schema="${mainschema}" table="users"
         datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>id</Column>
+        <Column>login_name</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>id</Column>
+        <Column>login_name</Column>
     </UpdateKeys>
-    <GeneratedKey>id</GeneratedKey>
     <Queries>
         <Query id="default">
             <ValidColumns>
-                <Column>id</Column>
                 <Column>login_name</Column>
                 <Column>user_name</Column>
                 <Column>surname1</Column>
@@ -38,7 +36,6 @@
         </Query>
         <Query id="login">
             <ValidColumns>
-                <Column>id</Column>
                 <Column>login_name</Column>
                 <Column>user_name</Column>
                 <Column>surname1</Column>

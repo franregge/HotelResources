@@ -4,8 +4,6 @@ import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
-import com.ontimize.hr.model.core.NameRoles;
-import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -30,9 +28,14 @@ public class UserService implements IUserService {
     @Autowired
     private DefaultOntimizeDaoHelper daoHelper;
 
+
     Predicate<Map<?, ?>> passwordLengthOverEight = userMap -> {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.length() >= 8;
+    };
+    Predicate<Map<?, ?>> notEmployeeRole = userMap -> {
+        String role_id = String.valueOf(userMap.get(UserDAO.ROLE_ID)) ;
+        return role_id.matches(UserDAO.EMPLOYEE_ROLE_ID) ;
     };
 
     Predicate<Map<?, ?>> passwordHasLetter = userMap -> {
@@ -61,7 +64,8 @@ public class UserService implements IUserService {
     }
 
 
-    private void validateUser(Map<?, ?> attrMap) throws InvalidBookingDNIException, InvalidPasswordException {
+    private void validateUser(Map<?, ?> attrMap) throws Exception {
+
         if (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
             throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
@@ -111,11 +115,15 @@ public class UserService implements IUserService {
         return letters.get(numberSegment % 23) == letter;
     }
 
+    @Secured({})
     @Override
     public EntityResult userInsert(Map<?, ?> attrMap) {
         EntityResult result;
 
         try {
+            if (notEmployeeRole.test(attrMap)){
+                throw new  Exception(IUserService.ONLY_MANAGER_ADD_EMPLOYEES);
+            }
             validateUser(attrMap);
 
             result = this.daoHelper.insert(this.userDAO, attrMap);
@@ -127,6 +135,31 @@ public class UserService implements IUserService {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+    @Override
+    @Secured({ PermissionsProviderSecured.SECURED })
+    public EntityResult employeeInsert(Map<?, ?> attrMap) {
+
+        Map<?,?> data = (Map)attrMap.get("data");
+        EntityResult result;
+
+        try {
+            validateUser(data);
+
+            result = this.daoHelper.insert(this.userDAO, data);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+            result.setMessage(IUserService.USER_INSERT_SUCCESS);
+
+
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(e.getMessage());
+            result.setCode(EntityResult.OPERATION_WRONG);
+            e.printStackTrace();
         }
 
         return result;
