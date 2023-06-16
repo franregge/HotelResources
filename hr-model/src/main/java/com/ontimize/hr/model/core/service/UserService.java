@@ -162,8 +162,22 @@ public class UserService implements IUserService {
             if (originalUserEntityResult.isEmpty()) {
                 throw new BookingDoesNotExistException(IUserService.USER_NOT_FOUND);
             }
+            Map<?, ?> originalUser = originalUserEntityResult.getRecordValues(0);
+            Map<Object, Object> userUpdated = new HashMap<>(attrMap);
+            userUpdated.put(UserDAO.ID, keyMap.get(UserDAO.ID));
+            userUpdated.put(UserDAO.USER_NAME, originalUser.get(UserDAO.USER_NAME));
+            userUpdated.put(UserDAO.SURNAME1, originalUser.get(UserDAO.SURNAME1));
+            userUpdated.put(UserDAO.SURNAME2, originalUser.get(UserDAO.SURNAME2));
+            userUpdated.put(UserDAO.ID_DOCUMENT, originalUser.get(UserDAO.ID_DOCUMENT));
+            userUpdated.put(UserDAO.COUNTRY_ID, originalUser.get(UserDAO.COUNTRY_ID));
+            userUpdated.put(UserDAO.PHONE_NUMBER, originalUser.get(UserDAO.PHONE_NUMBER));
+            userUpdated.put(UserDAO.EMAIL, originalUser.get(UserDAO.EMAIL));
+            userUpdated.put(UserDAO.USER_PASSWORD, originalUser.get(UserDAO.USER_PASSWORD));
+            userUpdated.put(UserDAO.ROLE_ID, originalUser.get(UserDAO.ROLE_ID));
 
-            result = this.daoHelper.update(this.userDAO, bookingWithDates, keyMap);
+
+
+            result = this.daoHelper.update(this.userDAO, userUpdated, keyMap);
             result.put("updated_id", keyMap.get(UserDAO.ID));
             result.setMessage("User updated successfully");
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
