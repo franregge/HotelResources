@@ -34,8 +34,8 @@ public class UserService implements IUserService {
         return password.length() >= 8;
     };
     Predicate<Map<?, ?>> notEmployeeRole = userMap -> {
-        String role_id = String.valueOf(userMap.get(UserDAO.ROLE_ID)) ;
-        return role_id.matches(UserDAO.EMPLOYEE_ROLE_ID) ;
+        String role_id = String.valueOf(userMap.get(UserDAO.ROLE_ID));
+        return role_id.matches(UserDAO.EMPLOYEE_ROLE_ID);
     };
 
     Predicate<Map<?, ?>> passwordHasLetter = userMap -> {
@@ -57,7 +57,8 @@ public class UserService implements IUserService {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.matches(".*[a-zñ].*");
     };
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
         return this.daoHelper.query(userDAO, keyMap, attrList);
@@ -71,23 +72,23 @@ public class UserService implements IUserService {
         }
 
         if (!passwordLengthOverEight.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_LENGTH_TOO_SHORT);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_LENGTH_TOO_SHORT);
         }
 
         if (!passwordHasLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LETTER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_LETTER);
         }
 
         if (!passwordHasNumber.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_NUMBER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_NUMBER);
         }
 
         if (!passwordHasCapitalLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_CAPITAL_LETTER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_CAPITAL_LETTER);
         }
 
         if (!passwordHasLowerCaseLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
         }
     }
 
@@ -121,8 +122,8 @@ public class UserService implements IUserService {
         EntityResult result;
 
         try {
-            if (notEmployeeRole.test(attrMap)){
-                throw new  Exception(IUserService.ONLY_MANAGER_ADD_EMPLOYEES);
+            if (notEmployeeRole.test(attrMap)) {
+                throw new Exception(IUserService.ONLY_MANAGER_ADD_EMPLOYEES);
             }
             validateUser(attrMap);
 
@@ -140,11 +141,12 @@ public class UserService implements IUserService {
 
         return result;
     }
+
     @Override
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult employeeInsert(Map<?, ?> attrMap) {
 
-        Map<?,?> data = (Map)attrMap.get("data");
+        Map<?, ?> data = (Map) attrMap.get("data");
         EntityResult result;
 
         try {
@@ -164,10 +166,11 @@ public class UserService implements IUserService {
 
         return result;
     }
+
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeDelete(Map<?, ?> keyMap) {
-        Map<Object,Object> data = (Map)keyMap.get("data");
+        Map<Object, Object> data = (Map) keyMap.get("data");
 
         String userLoginName = (String) data.get(UserDAO.LOGIN_NAME);
 
@@ -185,15 +188,30 @@ public class UserService implements IUserService {
         result.put("deleted_user", userLoginName);
         return result;
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         return null; // TODO check user can only update itself
     }
 
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userDelete(Map<?, ?> keyMap) {
-        return null;
+        Integer userId = (Integer) keyMap.get(UserDAO.ROLE_ID);
+
+        if (userId == 3){
+            if (this.daoHelper.query(userDAO, keyMap, List.of(UserDAO.LOGIN_NAME)).isEmpty()) {
+                EntityResult result = new EntityResultMapImpl();
+                result.setMessage(IUserService.NO_USER_WITH_ID);
+                result.setCode(EntityResult.OPERATION_WRONG);
+                return result;
+            }
+        }
+        EntityResult result = this.daoHelper.delete(userDAO, keyMap);
+        result.setMessage(IUserService.DELETION_SUCCESS);
+        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+        result.put("deleted_id", userId);
+        return result;
     }
 }

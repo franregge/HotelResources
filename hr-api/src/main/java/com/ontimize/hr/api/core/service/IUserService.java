@@ -35,7 +35,7 @@ public interface IUserService {
     String PASS_HAS_NO_CAPITAL_LETTER = "The password must have at least one capital letter";
 
     String PASS_HAS_NO_LOWER_CASE_LETTER = "The password must have at least one lower-case letter";
-
+    String NO_USER_WITH_ID = "No user with this id";
     String USER_INSERT_SUCCESS= "User inserted successfully";
     String PASS_INSTRUCTIONS= "The password must have at least one number,one Capital letter, one lower case letter and the password length has to be over 7";
     String ONLY_MANAGER_ADD_EMPLOYEES= "Cannot add employees with your role";

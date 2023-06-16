@@ -47,7 +47,7 @@ public class UserRestController extends ORestController<IUserService> {
             value="/employee",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EntityResult> employeeDelete(@RequestBody Map<?, ?>attrMap){
+    public ResponseEntity<EntityResult> userDelete(@RequestBody Map<?, ?>attrMap){
         EntityResult result = userSrv.employeeDelete(attrMap);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
