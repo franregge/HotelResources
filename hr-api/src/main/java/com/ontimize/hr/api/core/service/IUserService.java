@@ -19,6 +19,12 @@ public interface IUserService {
 
     String INVALID_DNI= "The DNI is not valid";
 
+    String NO_USER_WITH_ID = "No user with this id";
+
+    String DELETION_SUCCESS = "User deleted successfully";
+
+    String USER_NOT_FOUND = "No user with this id could be found";
+
     String PASS_LENGTH_TOO_SHORT = "The password length has to be over 7";
 
     String PASS_HAS_NO_LETTER = "The password must have at least one letter";
