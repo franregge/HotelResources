@@ -43,4 +43,10 @@ public interface IUserService {
     String DELETION_SUCCESS= "User deleted successfully";
 
     String WRONG_ROLE = "You cant update users with this role";
+
+    String INVALID_EMAIL= "The email is not valid";
+
+    String EMPTY_PHONE_NUMBER= "The phone number can't be empty";
+
+    String EMPTY_COUNTRY_ID= "The country id can't be empty";
 }

@@ -2,8 +2,7 @@ package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IUserService;
-import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
-import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
+import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -55,6 +54,19 @@ public class UserService implements IUserService {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.matches(".*[a-zñ].*");
     };
+
+    Predicate<Map<?, ?>> emailIsValid = userMap -> {
+        String email =(String) userMap.get(UserDAO.EMAIL);
+        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    };
+
+    Predicate<Map<?, ?>> phoneNumberIsValid = userMap -> {
+        String phone_number =(String) userMap.get(UserDAO.PHONE_NUMBER);
+        return !phone_number.isBlank() && !phone_number.isEmpty();
+    };
+
+
+
     @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
@@ -87,6 +99,64 @@ public class UserService implements IUserService {
         if (!passwordHasLowerCaseLetter.test(attrMap)) {
             throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
         }
+
+        if(attrMap.get(UserDAO.COUNTRY_ID)==null){
+            throw new InvalidCountryException(IUserService.EMPTY_COUNTRY_ID);
+        }
+
+        if (!phoneNumberIsValid.test(attrMap)) {
+            throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+        }
+
+        if (!emailIsValid.test(attrMap)) {
+            throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+        }
+    }
+
+    private void validateUserUpdate(Map<?, ?> attrMap) throws Exception {
+
+
+        if (attrMap.get(UserDAO.USER_PASSWORD)!=null){
+            if (!passwordLengthOverEight.test(attrMap)) {
+                throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_LENGTH_TOO_SHORT);
+            }
+
+            if (!passwordHasLetter.test(attrMap)) {
+                throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LETTER);
+            }
+
+            if (!passwordHasNumber.test(attrMap)) {
+                throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_NUMBER);
+            }
+
+            if (!passwordHasCapitalLetter.test(attrMap)) {
+                throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_CAPITAL_LETTER);
+            }
+
+            if (!passwordHasLowerCaseLetter.test(attrMap)) {
+                throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
+            }
+        }
+
+        if(attrMap.get(UserDAO.ID_DOCUMENT)!=null){
+            if (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
+                throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
+            }
+        }
+
+        if(attrMap.get(UserDAO.EMAIL)!=null){
+            if (!emailIsValid.test(attrMap)) {
+                throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+            }
+        }
+
+        if(attrMap.get(UserDAO.PHONE_NUMBER)!=null){
+            if (!phoneNumberIsValid.test(attrMap)) {
+                throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+            }
+        }
+
+
     }
 
 
@@ -198,7 +268,8 @@ public class UserService implements IUserService {
 
         try {
 
-            validateUser(attrMap);
+            validateUserUpdate(attrMap);
+
             result = this.daoHelper.update(this.userDAO, attrMap, keyMap);
             result.put("updated_user", keyMap.get((UserDAO.LOGIN_NAME)));
             result.setMessage("User updated successfully");
