@@ -2,6 +2,7 @@ package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IEmployeeService;
 import com.ontimize.hr.api.core.service.IUserService;
+import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -47,7 +48,7 @@ public class EmployeeService implements IEmployeeService {
     public EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) throws Exception {
 
         if (!userService.getUserRoles((String) filter.get(UserDAO.LOGIN_NAME)).contains(UserRoleDAO.EMPLOYEE_ROLE)){
-            throw new Exception(IUserService.WRONG_ROLE);
+            throw new Exception("Cannot delete this user");
         }
 
         return userService.userUpdate(attrMap,filter);

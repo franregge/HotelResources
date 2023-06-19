@@ -4,6 +4,7 @@ import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
+import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -113,13 +114,18 @@ public class UserService implements IUserService {
         return letters.get(numberSegment % 23) == letter;
     }
 
-    public List<String> getUserRoles(String loginName){
+    public List<String> getUserRoles(String loginName) throws UserDoesNotExistException {
 
         Map<String,String> filter = new HashMap<>();
         filter.put(UserDAO.LOGIN_NAME,loginName);
         List<String> queriedAtributeList = List.of(UserRoleDAO.NAME);
+        EntityResult result = this.daoHelper.query(userDAO,filter,queriedAtributeList,UserDAO.ROLES_INFO);
 
-        return (List<String>) this.daoHelper.query(userDAO,filter,queriedAtributeList,UserDAO.ROLES_INFO).get(UserRoleDAO.NAME);
+        if (result.isEmpty()) {
+            throw new UserDoesNotExistException(IUserService.NO_USER_FOUND);
+        }
+
+        return (List<String>) result.get(UserRoleDAO.NAME);
     }
 
     @Secured({})
