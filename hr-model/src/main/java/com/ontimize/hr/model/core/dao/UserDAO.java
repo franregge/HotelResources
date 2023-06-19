@@ -24,6 +24,6 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
     public static final String EMAIL = "email";
     public static final String USER_PASSWORD = "user_password";
 
-    public static final String ROLES_INFO = "roles_info";
+    public static final String ROLES_INFO = "role_info";
 
 }
