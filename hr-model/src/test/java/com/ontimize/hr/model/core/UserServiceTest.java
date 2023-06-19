@@ -47,7 +47,7 @@ public class UserServiceTest {
             attrMap.put(UserDAO.PHONE_NUMBER,"666666666");
             attrMap.put(UserDAO.SURNAME2,"Martinez");
             attrMap.put(UserDAO.EMAIL,"manolo.martinez@mymail.com");
-            attrMap.put(UserDAO.ROLE_ID,1);
+            attrMap.put(UserDAO.LOGIN_NAME,"SoyManolo");
 
             assertDoesNotThrow(()->userService.userInsert(attrMap));
 
@@ -64,7 +64,7 @@ public class UserServiceTest {
             attrMap.put(UserDAO.PHONE_NUMBER,"666666666");
             attrMap.put(UserDAO.SURNAME2,"Martinez");
             attrMap.put(UserDAO.EMAIL,"manolo.martinez@mymail.com");
-            attrMap.put(UserDAO.ROLE_ID,1);
+            attrMap.put(UserDAO.LOGIN_NAME,"SoyManolo");
 
             EntityResult actualResult = userService.userInsert(attrMap);
 
@@ -82,7 +82,8 @@ public class UserServiceTest {
             attrMap.put(UserDAO.PHONE_NUMBER,"666666666");
             attrMap.put(UserDAO.SURNAME2,"Martinez");
             attrMap.put(UserDAO.EMAIL,"manolo.martinez@mymail.com");
-            attrMap.put(UserDAO.ROLE_ID,1);
+            attrMap.put(UserDAO.ROLE_NAME,1);
+            attrMap.put(UserDAO.LOGIN_NAME,"SoyManolo");
 
             EntityResult actualResult = userService.userInsert(attrMap);
 

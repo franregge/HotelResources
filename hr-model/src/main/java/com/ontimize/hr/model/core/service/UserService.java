@@ -5,6 +5,8 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.model.core.dao.UserDAO;
+import com.ontimize.hr.model.core.dao.UserRoleDAO;
+import com.ontimize.hr.model.core.dao.UsersRolesDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.sql.PreparedStatement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -26,16 +30,18 @@ public class UserService implements IUserService {
     private UserDAO userDAO;
 
     @Autowired
+    private UserRoleDAO userRoleDAO;
+
+    @Autowired
+    private UsersRolesDAO usersRolesDAO;
+
+    @Autowired
     private DefaultOntimizeDaoHelper daoHelper;
 
 
     Predicate<Map<?, ?>> passwordLengthOverEight = userMap -> {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.length() >= 8;
-    };
-    Predicate<Map<?, ?>> notEmployeeRole = userMap -> {
-        String role_id = String.valueOf(userMap.get(UserDAO.ROLE_ID)) ;
-        return role_id.matches(UserDAO.EMPLOYEE_ROLE_ID) ;
     };
 
     Predicate<Map<?, ?>> passwordHasLetter = userMap -> {
@@ -57,7 +63,8 @@ public class UserService implements IUserService {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
         return password.matches(".*[a-zñ].*");
     };
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
         return this.daoHelper.query(userDAO, keyMap, attrList);
@@ -71,23 +78,23 @@ public class UserService implements IUserService {
         }
 
         if (!passwordLengthOverEight.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_LENGTH_TOO_SHORT);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_LENGTH_TOO_SHORT);
         }
 
         if (!passwordHasLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LETTER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_LETTER);
         }
 
         if (!passwordHasNumber.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_NUMBER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_NUMBER);
         }
 
         if (!passwordHasCapitalLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_CAPITAL_LETTER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_CAPITAL_LETTER);
         }
 
         if (!passwordHasLowerCaseLetter.test(attrMap)) {
-            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS+". "+IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
+            throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_HAS_NO_LOWER_CASE_LETTER);
         }
     }
 
@@ -117,16 +124,20 @@ public class UserService implements IUserService {
 
     @Secured({})
     @Override
-    public EntityResult userInsert(Map<?, ?> attrMap) {
+    public EntityResult userInsert(Map<? super Object, ? super Object> attrMap) {
         EntityResult result;
 
         try {
-            if (notEmployeeRole.test(attrMap)){
-                throw new  Exception(IUserService.ONLY_MANAGER_ADD_EMPLOYEES);
-            }
+            // TODO error checking
             validateUser(attrMap);
 
             result = this.daoHelper.insert(this.userDAO, attrMap);
+
+            Map<String, ? super Object> roleInsertAttributes = new HashMap<>();
+            roleInsertAttributes.put(UsersRolesDAO.LOGIN_NAME, attrMap.get(UserDAO.LOGIN_NAME));
+            roleInsertAttributes.put(UsersRolesDAO.ROLE_NAME, attrMap.get(UserDAO.ROLE_NAME));
+
+            this.daoHelper.insert(usersRolesDAO, roleInsertAttributes);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
 
@@ -140,60 +151,31 @@ public class UserService implements IUserService {
 
         return result;
     }
-    @Override
-    @Secured({ PermissionsProviderSecured.SECURED })
-    public EntityResult employeeInsert(Map<?, ?> attrMap) {
 
-        Map<?,?> data = (Map)attrMap.get("data");
-        EntityResult result;
-
-        try {
-            validateUser(data);
-
-            result = this.daoHelper.insert(this.userDAO, data);
-            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            result.setMessage(IUserService.USER_INSERT_SUCCESS);
-
-
-        } catch (Exception e) {
-            result = new EntityResultMapImpl();
-            result.setMessage(e.getMessage());
-            result.setCode(EntityResult.OPERATION_WRONG);
-            e.printStackTrace();
-        }
-
-        return result;
-    }
     @Secured({PermissionsProviderSecured.SECURED})
-    @Override
-    public EntityResult employeeDelete(Map<?, ?> keyMap) {
-        Map<Object,Object> data = (Map)keyMap.get("data");
-
-        String userLoginName = (String) data.get(UserDAO.LOGIN_NAME);
-
-
-        if (this.daoHelper.query(userDAO, data, List.of(UserDAO.LOGIN_NAME)).isEmpty()) {
-            EntityResult result = new EntityResultMapImpl();
-            result.setMessage(IUserService.NO_USER_FOUND);
-            result.setCode(EntityResult.OPERATION_WRONG);
-            return result;
-        }
-
-        EntityResult result = this.daoHelper.delete(userDAO, data);
-        result.setMessage(IUserService.DELETION_SUCCESS);
-        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-        result.put("deleted_user", userLoginName);
-        return result;
-    }
-    @Secured({ PermissionsProviderSecured.SECURED })
     @Override
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         return null; // TODO check user can only update itself
     }
 
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userDelete(Map<?, ?> keyMap) {
-        return null;
+        String loginName = (String) keyMap.get(UserDAO.LOGIN_NAME);
+        EntityResult result;
+
+        if (this.daoHelper.query(userDAO, keyMap, List.of(UserDAO.LOGIN_NAME)).isEmpty()) {
+            result = new EntityResultMapImpl();
+            result.setMessage(IUserService.NO_USER_WITH_ID);
+            result.setCode(EntityResult.OPERATION_WRONG);
+            return result;
+        }
+
+        result = this.daoHelper.delete(userDAO, keyMap);
+        result.setMessage(IUserService.DELETION_SUCCESS);
+        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+        result.put("deleted_id", loginName);
+
+        return result;
     }
 }
