@@ -2,6 +2,7 @@ package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IEmployeeService;
 import com.ontimize.hr.api.core.service.IUserService;
+import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -63,5 +64,4 @@ public class EmployeeService implements IEmployeeService {
         }
         return result;
     }
-
 }
