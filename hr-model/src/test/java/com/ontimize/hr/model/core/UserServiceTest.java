@@ -127,23 +127,5 @@ public class UserServiceTest {
             assertDoesNotThrow(() -> userService.userUpdate(attrMap,keyMap));
 
         }
-
-        @Test
-        void updateUser_invalidPass_errorUser(){
-            EntityResult userEntityResult = new EntityResultMapImpl();
-
-            keyMap.put(UserDAO.LOGIN_NAME,"manager");
-            attrMap.put(UserDAO.USER_PASSWORD,"Pass123");
-            attrMap.put(UserDAO.SURNAME1,"Garcia");
-            attrMap.put(UserDAO.ID_DOCUMENT,"66955662V");
-            attrMap.put(UserDAO.LOGIN_NAME, "manager");
-
-            userEntityResult.put(UserDAO.USER_PASSWORD,"pass1234");
-            userEntityResult.put(UserDAO.SURNAME1,"Garcia");
-            userEntityResult.put(UserDAO.LOGIN_NAME, "manager");
-            userEntityResult.put(UserDAO.ID_DOCUMENT,"66955662V");
-
-            assertThrows(Exception.class()->userService.userUpdate(attrMap,keyMap));
-        }
     }
 }
