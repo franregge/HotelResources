@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 public class UserDAO extends OntimizeJdbcDaoSupport {
 
-    public static final String ID = "id";
+    public static final String LOGIN_NAME = "login_name";
     public static final String USER_NAME = "user_name";
     public static final String SURNAME1 = "surname1";
     public static final String SURNAME2 = "surname2";
@@ -23,6 +23,7 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
     public static final String PHONE_NUMBER = "phone_number";
     public static final String EMAIL = "email";
     public static final String USER_PASSWORD = "user_password";
-    public static final String ROLE_ID = "role_id";
+
+    public static final String ROLES_INFO = "roles_info";
 
 }

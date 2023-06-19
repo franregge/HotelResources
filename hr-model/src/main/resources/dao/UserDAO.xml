@@ -6,16 +6,14 @@
         catalog="" schema="${mainschema}" table="users"
         datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>id</Column>
+        <Column>login_name</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>id</Column>
+        <Column>login_name</Column>
     </UpdateKeys>
-    <GeneratedKey>id</GeneratedKey>
     <Queries>
         <Query id="default">
             <ValidColumns>
-                <Column>id</Column>
                 <Column>login_name</Column>
                 <Column>user_name</Column>
                 <Column>surname1</Column>
@@ -38,7 +36,6 @@
         </Query>
         <Query id="login">
             <ValidColumns>
-                <Column>id</Column>
                 <Column>login_name</Column>
                 <Column>user_name</Column>
                 <Column>surname1</Column>
@@ -55,6 +52,23 @@
                         #COLUMNS#
                     FROM
                         ${mainschema}.users
+                    #WHERE#
+                ]]>
+            </Sentence>
+        </Query>
+        <Query id="role_info">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="login_name" prefix="u" />
+                <AmbiguousColumn name="role_id" prefix="r" />
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.users u
+                        JOIN ${mainschema}.roles_users ru ON u.login_name = ru.login_name
+						            JOIN ${mainschema}.roles r ON ru.role_id = r.role_id
                     #WHERE#
                 ]]>
             </Sentence>

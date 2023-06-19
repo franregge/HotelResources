@@ -111,9 +111,9 @@ public class BookingService implements IBookingService {
 
     private void validateBooking(Map<?, ?> attrMap, BiPredicate<Map<?, ?>, EntityResult> overlapTestPredicate) throws InvalidBookingDateException, UserDoesNotExistException {
         Map<String, ? super Object> userIDFilter = new HashMap<>();
-        userIDFilter.put(UserDAO.ID, attrMap.get(BookingDAO.USER_ID));
+        userIDFilter.put(UserDAO.LOGIN_NAME, attrMap.get(BookingDAO.USER_LOGIN_NAME));
 
-        if (userService.userQuery(userIDFilter, List.of(UserDAO.ID)).isEmpty()) {
+        if (userService.userQuery(userIDFilter, List.of(UserDAO.LOGIN_NAME)).isEmpty()) {
             throw new UserDoesNotExistException(IBookingService.USER_NOT_FOUND);
         }
         if (arrivalDateBeforeNow.test(attrMap)) {
@@ -212,11 +212,12 @@ public class BookingService implements IBookingService {
             Map<String, Integer> bookingIdFilter = new HashMap<>();
             Map<String, Integer> bookingUserIdFilter = new HashMap<>();
             bookingIdFilter.put(BookingDAO.ID, (Integer) keyMap.get(BookingDAO.ID));
-            bookingUserIdFilter.put(BookingDAO.USER_ID, (Integer) keyMap.get(BookingDAO.USER_ID));
-            EntityResult userEntityResult = userService.userQuery(bookingUserIdFilter, List.of(UserDAO.ID));
+            bookingUserIdFilter.put(BookingDAO.USER_LOGIN_NAME, (Integer) keyMap.get(BookingDAO.USER_LOGIN_NAME));
+            EntityResult userEntityResult = userService.userQuery(bookingUserIdFilter, List.of(UserDAO.LOGIN_NAME));
 
             if (userEntityResult.isEmpty()) {
                 throw new UserDoesNotExistException(IBookingService.USER_NOT_FOUND);
+
             }
 
             EntityResult originalBookingEntityResult =

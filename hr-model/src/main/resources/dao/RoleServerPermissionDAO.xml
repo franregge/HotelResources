@@ -6,11 +6,9 @@
         catalog="" schema="${mainschema}" table="roles_server_permissions"
         datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>role_id</Column>
-        <Column>server_permission_id</Column>
+        <Column>id</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>role_id</Column>
-        <Column>server_permission_id</Column>
+        <Column>id</Column>
     </UpdateKeys>
 </JdbcEntitySetup>

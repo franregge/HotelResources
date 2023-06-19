@@ -27,7 +27,7 @@ ontimize:
          upper-like: false
    security:
       mode: default
-      ignore-paths: /
+      ignore-paths: /users/signup
       role-information-service:
          role-repository: UserRoleDAO
          role-name-column: rolename
@@ -49,7 +49,7 @@ ontimize:
          user-role-repository: UsersRolesDAO
          query-id: userRole
          role-login-column: login_name
-         role-name-column: role_id
+         role-name-column: rolename
 server:
    port: 30030
    tomcat:

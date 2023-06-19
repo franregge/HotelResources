@@ -6,12 +6,12 @@
         catalog="" schema="${mainschema}" table="roles"
         datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>id</Column>
+        <Column>role_id</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>id</Column>
+        <Column>role_id</Column>
     </UpdateKeys>
-    <GeneratedKey>id</GeneratedKey>
+    <GeneratedKey>role_id</GeneratedKey>
     <Queries>
         <Query id="default">
             <ValidColumns>
@@ -41,7 +41,7 @@
         </Query>
         <Query id="userRole">
             <AmbiguousColumns>
-                <AmbiguousColumn name="id" prefix="u" />
+                <AmbiguousColumn name="login_name" prefix="u" />
                 <AmbiguousColumn name="role_id" prefix="r" />
             </AmbiguousColumns>
             <Sentence>
@@ -50,7 +50,7 @@
 						#COLUMNS#
 					from
 						${mainschema}.users u
-						JOIN ${mainschema}.roles_users ru ON u.id = ru.user_id
+						JOIN ${mainschema}.roles_users ru ON u.login_name = ru.login_name
 						JOIN ${mainschema}.roles r ON ru.role_id = r.role_id
 					#WHERE#
 					#ORDER#
@@ -89,7 +89,7 @@
         </Query>
         <Query id="userRole">
             <AmbiguousColumns>
-                <AmbiguousColumn name="id" prefix="u" />
+                <AmbiguousColumn name="login_name" prefix="u" />
                 <AmbiguousColumn name="role_id" prefix="r" />
             </AmbiguousColumns>
             <Sentence>
@@ -98,7 +98,7 @@
 						#COLUMNS#
 					from
 						${mainschema}.users u
-						JOIN ${mainschema}.roles_users ru ON u.id = ru.user_id
+						JOIN ${mainschema}.roles_users ru ON u.login_name = ru.login_name
 						JOIN ${mainschema}.roles r ON  r.role_id = ru.role_id
 					#WHERE#
 					#ORDER#
