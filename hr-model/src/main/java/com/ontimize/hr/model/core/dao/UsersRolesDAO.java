@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 
 public class UsersRolesDAO extends OntimizeJdbcDaoSupport {
     public static final String ID = "id";
-    public static final String USER_ID = "user_id";
-    public static final String ROLE_ID ="role_id";
+    public static final String LOGIN_NAME = "login_name";
+    public static final String ROLE_NAME = "rolename";
 }
