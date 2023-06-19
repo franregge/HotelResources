@@ -48,7 +48,7 @@ public class EmployeeService implements IEmployeeService {
     public EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) throws Exception {
 
         if (!userService.getUserRoles((String) filter.get(UserDAO.LOGIN_NAME)).contains(UserRoleDAO.EMPLOYEE_ROLE)){
-            throw new Exception("Cannot delete this user");
+            throw new Exception("Cannot modify this user");
         }
 
         return userService.userUpdate(attrMap,filter);
