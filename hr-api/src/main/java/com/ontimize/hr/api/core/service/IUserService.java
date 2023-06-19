@@ -46,8 +46,6 @@ public interface IUserService {
     String PASS_INSTRUCTIONS= "The password must have at least one number,one Capital letter, one lower case letter and the password length has to be over 7";
     String ONLY_MANAGER_ADD_EMPLOYEES= "Cannot add employees with your role";
     String NO_USER_FOUND= "Can't find users with this login name";
-    String DELETION_SUCCESS= "User deleted successfully";
-
     String WRONG_ROLE = "You cant update users with this role";
 
     String INVALID_EMAIL= "The email is not valid";
