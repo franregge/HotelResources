@@ -13,12 +13,7 @@ public interface IUserService {
 
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList);
 
-    public EntityResult userInsert(Map<?, ?> attrMap);
-
-    EntityResult employeeInsert(Map<?, ?> attrMap);
-
-    @Secured({PermissionsProviderSecured.SECURED})
-    EntityResult employeeDelete(Map<?, ?> keyMap);
+    public EntityResult userInsert(Map<? super Object, ? super Object> attrMap);
 
     public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap);
 
