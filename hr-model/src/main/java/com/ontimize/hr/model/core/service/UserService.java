@@ -69,13 +69,16 @@ public class UserService implements IUserService {
         return !phoneNumber.isBlank() && !phoneNumber.isEmpty();
     };
 
-
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
         return this.daoHelper.query(userDAO, keyMap, attrList);
     }
 
+
+    public EntityResult userIdentifiedQuery(Map<?, ?> filter, List<?> attrList, String queryId) {
+        return this.daoHelper.query(userDAO, filter, attrList, queryId);
+    }
 
     private void validateUser(Map<?, ?> attrMap) throws Exception {
         if (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
@@ -167,7 +170,7 @@ public class UserService implements IUserService {
         Map<String, String> filter = new HashMap<>();
         filter.put(UserDAO.LOGIN_NAME, loginName);
         List<String> queriedAtributeList = List.of(UserRoleDAO.NAME);
-        EntityResult result = this.daoHelper.query(userDAO, filter, queriedAtributeList, UserDAO.ROLES_INFO);
+        EntityResult result = this.daoHelper.query(userDAO, filter, queriedAtributeList, UserDAO.Q_ROLES_INFO);
 
         if (result.isEmpty()) {
             throw new UserDoesNotExistException(IUserService.NO_USER_FOUND);

@@ -22,13 +22,10 @@ public class EmployeeService implements IEmployeeService {
     @Autowired
     private UserService userService;
 
-
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
-    public EntityResult employeeQuery(Map<?, ?> keyMap, List<?> attrList) {
-
-
-        return ;
+    public EntityResult employeeQuery(Map<?, ?> filter, List<?> attrList) {
+        return userService.userIdentifiedQuery(filter, attrList, UserDAO.Q_EMPLOYEE_QUERY);
     }
 
 

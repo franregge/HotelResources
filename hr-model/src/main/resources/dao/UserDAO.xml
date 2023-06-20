@@ -84,8 +84,8 @@
 						#COLUMNS#
 					from
 						${mainschema}.users u
-						JOIN ${mainschema}.users_shifts us ON u.login_name = rs.login_name
-						JOIN ${mainschema}.roles_users ru ON rs.login_name = ru.login_name
+						JOIN ${mainschema}.users_shifts us ON u.login_name = us.login_name
+						JOIN ${mainschema}.roles_users ru ON us.login_name = ru.login_name
 						JOIN ${mainschema}.roles r on r.role_id= ru.role_id
 					#WHERE#
 					#ORDER#

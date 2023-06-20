@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface IEmployeeService {
 
-    EntityResult employeeQuery(Map<?, ?> keyMap, List<?> attrList);
+    EntityResult employeeQuery(Map<?, ?> filter, List<?> attrList);
 
     EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap);
 

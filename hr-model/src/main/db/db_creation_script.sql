@@ -100,8 +100,8 @@ CREATE TABLE public.roles_users
 create type shift as enum ('first','second','third');
 
 create TABLE public.users_shifts
-(login_name varchar(255) not null,
-shift shift not null,
-FOREIGN KEY (login_name)
-REFERENCES users (login_name));
-
+(
+    login_name varchar(255) not null primary key,
+    shift      shift        not null,
+    FOREIGN KEY (login_name) REFERENCES users (login_name) ON DELETE CASCADE ON UPDATE CASCADE
+);
