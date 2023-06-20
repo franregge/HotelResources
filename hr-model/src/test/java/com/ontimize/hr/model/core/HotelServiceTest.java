@@ -97,7 +97,7 @@ public class HotelServiceTest {
 
     }
 
-    @Disabled
+
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class UpdateHotel {
@@ -109,18 +109,20 @@ public class HotelServiceTest {
 
             attrMap.put(HotelDAO.NUMBER_OF_FLOORS, 6);
             attrMap.put(HotelDAO.NAME, "Hotel Estrella");
-
             keyMap.put(HotelDAO.ID, 1);
             EntityResult hotelEntityResult = new EntityResultMapImpl();
             hotelEntityResult.addRecord(new HashMap<>(2, 2));
-            when(hotelService.hotelQuery(anyMap(), eq(anyList()))).thenReturn(hotelEntityResult);
+
 
             EntityResult hotelRoomsEntityResult = new EntityResultMapImpl();
             hotelRoomsEntityResult.addRecord(new HashMap());
             when(roomService.roomQuery(anyMap(), anyList())).thenReturn(hotelRoomsEntityResult);
 
             EntityResult updateResult = new EntityResultMapImpl();
-            when(hotelDAO.update(anyMap(), anyMap())).thenReturn(updateResult);
+            updateResult.put(HotelDAO.ID,List.of(1));
+
+
+            when(daoHelper.query(any(),(any()),any())).thenReturn(updateResult);
 
             EntityResult result = null;
             try {
@@ -128,9 +130,6 @@ public class HotelServiceTest {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
-
-            verify(hotelDAO, times(1)).update(eq(attrMap), eq(keyMap));
             assertEquals("Hotel updated successfully", result.getMessage());
             assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
         }

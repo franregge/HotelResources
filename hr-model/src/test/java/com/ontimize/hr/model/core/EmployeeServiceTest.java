@@ -139,4 +139,29 @@ public class EmployeeServiceTest {
 
 
     }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public class queryEmployee{
+
+        Map<Object, Object> keymap = new HashMap<>();
+
+        @Test
+        void queryEmployee() {
+            keymap.put(UserDAO.LOGIN_NAME,"empleado1");
+
+            EntityResult er = new EntityResultMapImpl();
+            er.setCode(EntityResult.OPERATION_SUCCESSFUL);
+
+            er.put(UserDAO.LOGIN_NAME,List.of("empleado1"));
+            when(userService.userIdentifiedQuery(any(),any(),any())).thenReturn(er);
+
+            EntityResult result;
+            result=employeeService.employeeQuery(new HashMap<>(),List.of("shift"));
+
+            assertDoesNotThrow(() -> employeeService.employeeQuery(new HashMap<>(),List.of("shift")));
+            assertEquals("empleado1",result.getRecordValues(0).get(UserDAO.LOGIN_NAME));
+        }
+
+    }
 }

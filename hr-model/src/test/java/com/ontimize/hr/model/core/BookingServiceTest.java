@@ -43,13 +43,11 @@ public class BookingServiceTest {
     UserService userService;
 
     @Nested
-    @Disabled
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class insertBooking {
         Map<Object, Object> attrMap = new HashMap<>();
 
         @Test
-        @Disabled
         void insertBooking_validBooking_bookingIsSaved_Test() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
@@ -61,7 +59,6 @@ public class BookingServiceTest {
 
 
         @Test
-        @Disabled
         void insertBooking_invalidBooking_arrivalDateBeforeNow() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().minusDays(1).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
@@ -80,7 +77,6 @@ public class BookingServiceTest {
         }
 
         @Test
-        @Disabled
         void insertBooking_invalidBooking_arrivalDateAfterDepartureDate() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(3).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(1).toString());
@@ -127,7 +123,6 @@ public class BookingServiceTest {
         }
 
         @Test
-        @Disabled
         void insertBooking_invalidBooking_userDoesNotExist() {
             EntityResult conflictingEntityResult = new EntityResultMapImpl();
 
@@ -149,7 +144,6 @@ public class BookingServiceTest {
     }
 
     @Nested
-    @Disabled
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class updateBooking {
         Map<Object, Object> attrMap = new HashMap<>();
