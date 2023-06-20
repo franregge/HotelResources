@@ -26,8 +26,11 @@ public class EmployeeService implements IEmployeeService {
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeQuery(Map<?, ?> keyMap, List<?> attrList) {
+
+
         return null;
     }
+
 
     @Secured({PermissionsProviderSecured.SECURED})
     @Override

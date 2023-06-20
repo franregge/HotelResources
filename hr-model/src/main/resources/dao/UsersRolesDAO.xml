@@ -105,5 +105,24 @@
 					]]>
             </Sentence>
         </Query>
+        <Query id="userShiftRole">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="login_name" prefix="u" />
+                <AmbiguousColumn name="role_id" prefix="r" />
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+					select
+						#COLUMNS#
+					from
+						${mainschema}.users u
+						JOIN ${mainschema}.roles_shifts rs ON u.login_name = rs.login_name
+						JOIN ${mainschema}.roles_users ru ON rs.login_name = ru.login_name
+						JOIN ${mainschema}.roles r on r.role_id= ru.role_id
+					#WHERE#
+					#ORDER#
+					]]>
+            </Sentence>
+        </Query>
     </Queries>
 </JdbcEntitySetup>

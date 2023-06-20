@@ -96,4 +96,12 @@ CREATE TABLE public.roles_users
     role_id    INT,
     FOREIGN KEY (login_name) references public.users (login_name) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (role_id) references public.roles (role_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
+create type shift as enum ('first','second','third');
+
+create TABLE public.users_shifts
+(login_name varchar(255) not null,
+shift shift not null,
+FOREIGN KEY (login_name)
+REFERENCES users (login_name));
+
