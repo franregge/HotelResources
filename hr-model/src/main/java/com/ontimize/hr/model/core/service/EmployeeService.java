@@ -2,10 +2,8 @@ package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IEmployeeService;
 import com.ontimize.hr.api.core.service.IUserService;
-import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.hr.model.core.NameRoles;
 import com.ontimize.hr.model.core.dao.UserDAO;
-import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -32,34 +30,55 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Secured({PermissionsProviderSecured.SECURED})
-
     @Override
-    public EntityResult employeeInsert(Map<?, ?> attrMap) {
-        return null;
+    public EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap) {
+        EntityResult result;
+
+        attrMap.put(UserDAO.ROLE_NAME, NameRoles.EMPLOYEE);
+        try {
+            result = userService.userInsert(attrMap);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+            result.setMessage(IUserService.USER_INSERT_SUCCESS);
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(e.getMessage());
+            result.setCode(EntityResult.OPERATION_WRONG);
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
-    @Secured({PermissionsProviderSecured.SECURED})
-
     @Override
-    public EntityResult employeeDelete(Map<?, ?> keyMap) {
-        return null;
+    @Secured({PermissionsProviderSecured.SECURED})
+    public EntityResult employeeDelete(Map<?, ?> keyMap) throws Exception {
+        String loginName = (String) keyMap.get(UserDAO.LOGIN_NAME);
+
+        if (loginName == null) {
+            throw new Exception("You must provide a username");
+        }
+
+        if (!userService.getUserRoles(loginName).contains(NameRoles.EMPLOYEE)) {
+            throw new Exception("Cannot delete this user");
+        }
+
+        return userService.userDelete(keyMap);
     }
 
-    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) {
 
-        EntityResult result = null;
+        EntityResult result;
 
         try {
-            if (!userService.getUserRoles((String) filter.get(UserDAO.LOGIN_NAME)).contains(NameRoles.EMPLOYEE)){
+            if (!userService.getUserRoles((String) filter.get(UserDAO.LOGIN_NAME)).contains(NameRoles.EMPLOYEE)) {
                 throw new Exception(IUserService.WRONG_ROLE);
             }
 
-            result = userService.userUpdate(attrMap,filter);
+            result = userService.userUpdate(attrMap, filter);
 
-        }catch (Exception e){
-            result= new EntityResultMapImpl();
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
             result.setMessage(e.getMessage());
         }

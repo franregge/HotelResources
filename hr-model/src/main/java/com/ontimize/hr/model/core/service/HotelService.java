@@ -6,12 +6,9 @@ import com.ontimize.hr.api.core.service.exception.HotelDoesNotExistException;
 import com.ontimize.hr.api.core.service.exception.InvalidFloorNumberException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfFloorsException;
 
-
-import com.ontimize.hr.model.core.NameRoles;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
-import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -44,13 +41,13 @@ public class HotelService implements IHotelService {
     private RoomUtils roomUtils;
 
     @Override
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult hotelQuery(Map<?, ?> keyMap, List<?> attrList) {
         return this.daoHelper.query(hotelDAO, keyMap, attrList);
     }
 
     @Override
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult hotelInsert(Map<?, ?> attrMap) {
         Map<String, String> filter = new HashMap<>();
         filter.put(HotelDAO.NAME, (String) attrMap.get(HotelDAO.NAME));
@@ -80,7 +77,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception {
         Map<String, Integer> filter = new HashMap<>();
         Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
@@ -149,7 +146,7 @@ public class HotelService implements IHotelService {
     }
 
     @Override
-    @Secured({ PermissionsProviderSecured.SECURED })
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult hotelDelete(Map<?, ?> keyMap) throws Exception {
         Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
         EntityResult result;

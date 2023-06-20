@@ -2,7 +2,6 @@ package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.exception.*;
-import com.ontimize.hr.model.core.NameRoles;
 import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
@@ -34,10 +33,8 @@ public class BookingService implements IBookingService {
     private BookingDAO bookingDAO;
     @Autowired
     private RoomService roomService;
-
     @Autowired
     private UserService userService;
-
     private final BiPredicate<LocalDate, LocalDate> dateAfterOrEqual = (date1, date2) -> date1.isAfter(date2) || date1.isEqual(date2);
     private final BiPredicate<LocalDate, LocalDate> dateBeforeOrEqual = (date1, date2) -> date1.isBefore(date2) || date1.isEqual(date2);
 
@@ -156,12 +153,14 @@ public class BookingService implements IBookingService {
             throw new InvalidBookingDateException(IBookingService.DATES_OVERLAP);
         }
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult bookingQuery(Map<?, ?> keymap, List<?> attrList) {
         return this.daoHelper.query(this.bookingDAO, keymap, attrList);
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult bookingInsert(Map<?, ?> attrMap) {
         EntityResult result;
@@ -181,7 +180,8 @@ public class BookingService implements IBookingService {
 
         return result;
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult bookingDelete(Map<?, ?> keyMap) {
         Integer bookingId = (Integer) keyMap.get(BookingDAO.ID);
@@ -203,7 +203,8 @@ public class BookingService implements IBookingService {
         result.put("deleted_id", bookingId);
         return result;
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         EntityResult result;

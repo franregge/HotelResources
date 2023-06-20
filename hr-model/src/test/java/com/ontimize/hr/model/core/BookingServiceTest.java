@@ -53,7 +53,7 @@ public class BookingServiceTest {
         void insertBooking_validBooking_bookingIsSaved_Test() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.USER_LOGIN_NAME,2);
+            attrMap.put(BookingDAO.USER_LOGIN_NAME, 2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
 
             assertDoesNotThrow(() -> bookingService.bookingInsert(attrMap));
@@ -65,13 +65,13 @@ public class BookingServiceTest {
         void insertBooking_invalidBooking_arrivalDateBeforeNow() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().minusDays(1).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.USER_LOGIN_NAME,1);
+            attrMap.put(BookingDAO.USER_LOGIN_NAME, 1);
             attrMap.put(BookingDAO.ROOM_ID, 6);
 
-            EntityResult er =new EntityResultMapImpl();
-            er.put("",List.of(""));
+            EntityResult er = new EntityResultMapImpl();
+            er.put("", List.of(""));
 
-            when(userService.userQuery(any(),any())).thenReturn(er);
+            when(userService.userQuery(any(), any())).thenReturn(er);
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
 
@@ -84,13 +84,13 @@ public class BookingServiceTest {
         void insertBooking_invalidBooking_arrivalDateAfterDepartureDate() {
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(3).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(1).toString());
-            attrMap.put(BookingDAO.USER_LOGIN_NAME,2);
+            attrMap.put(BookingDAO.USER_LOGIN_NAME, 2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
 
-            EntityResult er =new EntityResultMapImpl();
-            er.put("",List.of(""));
+            EntityResult er = new EntityResultMapImpl();
+            er.put("", List.of(""));
 
-            when(userService.userQuery(any(),any())).thenReturn(er);
+            when(userService.userQuery(any(), any())).thenReturn(er);
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
 
@@ -104,7 +104,7 @@ public class BookingServiceTest {
 
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5).toString());
-            attrMap.put(BookingDAO.USER_LOGIN_NAME,2);
+            attrMap.put(BookingDAO.USER_LOGIN_NAME, 2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
 
             Instant conflictingArrivalDate = Instant.now().plus(1L, ChronoUnit.DAYS);
@@ -115,28 +115,28 @@ public class BookingServiceTest {
             conflictingEntityResult.put(BookingDAO.ROOM_ID, List.of(6));
 
             EntityResult er = new EntityResultMapImpl();
-            er.put("",List.of(""));
+            er.put("", List.of(""));
 
             when(daoHelper.query(any(), any(), any())).thenReturn(conflictingEntityResult);
-            when(userService.userQuery(any(),any())).thenReturn(er);
+            when(userService.userQuery(any(), any())).thenReturn(er);
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
 
             assertEquals(IBookingService.DATES_OVERLAP, actualResult.getMessage());
             assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
         }
+
         @Test
         @Disabled
-
-        void insertBooking_invalidBooking_userDoesNotExist(){
+        void insertBooking_invalidBooking_userDoesNotExist() {
             EntityResult conflictingEntityResult = new EntityResultMapImpl();
 
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1).toString());
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5).toString());
-            attrMap.put(BookingDAO.USER_LOGIN_NAME,2);
+            attrMap.put(BookingDAO.USER_LOGIN_NAME, 2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
 
-            when(userService.userQuery(any(),any())).thenReturn(conflictingEntityResult);
+            when(userService.userQuery(any(), any())).thenReturn(conflictingEntityResult);
 
 
             EntityResult actualResult = bookingService.bookingInsert(attrMap);
@@ -153,17 +153,17 @@ public class BookingServiceTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class updateBooking {
         Map<Object, Object> attrMap = new HashMap<>();
-        Map<Object,Object> keyMap= new HashMap<>();
+        Map<Object, Object> keyMap = new HashMap<>();
 
         @Test
         void updateBooking_validBooking_bookingIsUpdated_Test() {
 
             EntityResult bookingEntityResult = new EntityResultMapImpl();
 
-            keyMap.put(BookingDAO.ID,1);
+            keyMap.put(BookingDAO.ID, 1);
             attrMap.put(BookingDAO.ARRIVAL_DATE, LocalDate.now().plusDays(1));
             attrMap.put(BookingDAO.DEPARTURE_DATE, LocalDate.now().plusDays(5));
-            attrMap.put(BookingDAO.USER_LOGIN_NAME,2);
+            attrMap.put(BookingDAO.USER_LOGIN_NAME, 2);
             attrMap.put(BookingDAO.ROOM_ID, 6);
 
             Instant conflictingArrivalDate = Instant.now().plus(1L, ChronoUnit.DAYS);
@@ -174,55 +174,54 @@ public class BookingServiceTest {
             bookingEntityResult.put(BookingDAO.ROOM_ID, List.of(6));
 
 
+            assertDoesNotThrow(() -> bookingService.bookingUpdate(attrMap, keyMap));
 
-            assertDoesNotThrow(() -> bookingService.bookingUpdate(attrMap,keyMap));
+        }
+
+        @Nested
+        @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+        class deleteBooking {
+
+            private Map<? super Object, ? super Object> keyMap;
+
+            @BeforeEach
+            void init() {
+                keyMap = new HashMap<>();
+            }
+
+            @Test
+            void existingBooking_resultIsSuccess() {
+                keyMap.put(BookingDAO.ID, 1);
+                EntityResult queryResult = new EntityResultMapImpl();
+                queryResult.put("test", List.of("test"));
+                EntityResult deleteResult = new EntityResultMapImpl();
+                deleteResult.setCode(EntityResult.OPERATION_SUCCESSFUL);
+
+                when(daoHelper.query(any(), any(), any())).thenReturn(queryResult);
+                when(daoHelper.delete(any(), any())).thenReturn(deleteResult);
+
+                EntityResult result = bookingService.bookingDelete(keyMap);
+
+                assertEquals(IBookingService.DELETION_SUCCESS, result.getMessage());
+                assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
+            }
+
+            @Test
+            void nonexistentBooking_resultIsError() {
+                keyMap.put(BookingDAO.ID, 1);
+                EntityResult queryResult = new EntityResultMapImpl();
+                EntityResult deleteResult = new EntityResultMapImpl();
+                deleteResult.setCode(EntityResult.OPERATION_SUCCESSFUL);
+
+                when(daoHelper.query(any(), any(), any())).thenReturn(queryResult);
+
+                EntityResult result = bookingService.bookingDelete(keyMap);
+
+                assertEquals(BookingService.NO_BOOKING_WITH_ID, result.getMessage());
+                assertEquals(EntityResult.OPERATION_WRONG, result.getCode());
+            }
+
+        }
 
     }
-
-    @Nested
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class deleteBooking {
-
-        private Map<? super Object, ? super Object> keyMap;
-
-        @BeforeEach
-        void init() {
-            keyMap = new HashMap<>();
-        }
-
-        @Test
-        void existingBooking_resultIsSuccess() {
-            keyMap.put(BookingDAO.ID, 1);
-            EntityResult queryResult = new EntityResultMapImpl();
-            queryResult.put("test", List.of("test"));
-            EntityResult deleteResult = new EntityResultMapImpl();
-            deleteResult.setCode(EntityResult.OPERATION_SUCCESSFUL);
-
-            when(daoHelper.query(any(), any(), any())).thenReturn(queryResult);
-            when(daoHelper.delete(any(), any())).thenReturn(deleteResult);
-
-            EntityResult result = bookingService.bookingDelete(keyMap);
-
-            assertEquals(IBookingService.DELETION_SUCCESS, result.getMessage());
-            assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
-        }
-
-        @Test
-        void nonexistentBooking_resultIsError() {
-            keyMap.put(BookingDAO.ID, 1);
-            EntityResult queryResult = new EntityResultMapImpl();
-            EntityResult deleteResult = new EntityResultMapImpl();
-            deleteResult.setCode(EntityResult.OPERATION_SUCCESSFUL);
-
-            when(daoHelper.query(any(),any(),any())).thenReturn(queryResult);
-
-            EntityResult result = bookingService.bookingDelete(keyMap);
-
-            assertEquals(BookingService.NO_BOOKING_WITH_ID, result.getMessage());
-            assertEquals(EntityResult.OPERATION_WRONG, result.getCode());
-        }
-
-    }
-
-}
 }

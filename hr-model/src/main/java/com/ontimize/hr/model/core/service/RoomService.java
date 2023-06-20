@@ -1,12 +1,9 @@
 package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IRoomService;
-import com.ontimize.hr.api.core.service.exception.InvalidAssignedHotelException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfBeds;
 import com.ontimize.hr.api.core.service.exception.InvalidPriceException;
 import com.ontimize.hr.api.core.service.exception.InvalidRoomNumberException;
-import com.ontimize.hr.model.core.NameRoles;
-import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.util.RoomUtils;
@@ -14,8 +11,6 @@ import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import org.postgresql.util.PSQLException;
-import org.postgresql.util.PSQLWarning;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
@@ -23,7 +18,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +30,10 @@ public class RoomService implements IRoomService {
     private DefaultOntimizeDaoHelper daoHelper;
     @Autowired
     private RoomDAO roomDAO;
-
     @Autowired
     private HotelService hotelService;
-
     @Autowired
     private RoomUtils roomUtils;
-
-
     private final int FIRST_ROOM_NUMBER = 101;
 
     @Override
@@ -94,11 +84,12 @@ public class RoomService implements IRoomService {
             throw new InvalidRoomNumberException("The roomNumber cannot finish with 0");
         }
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult roomInsert(Map<?, ?> attrMap) {
-        EntityResult result = null;
-        Integer roomId = (Integer) attrMap.get(RoomDAO.ID);
+        EntityResult result;
+
         try {
             int assignedHotelId = (int) attrMap.get(RoomDAO.HOTEL_ID);
 
@@ -127,10 +118,11 @@ public class RoomService implements IRoomService {
 
         return result;
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
+
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult roomDelete(Map<?, ?> keyMap) {
 
-        EntityResult result = null;
+        EntityResult result;
         try {
             Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
 
@@ -156,11 +148,12 @@ public class RoomService implements IRoomService {
         }
         return result;
     }
-    @Secured({ PermissionsProviderSecured.SECURED })
-     @Override
+
+    @Secured({PermissionsProviderSecured.SECURED})
+    @Override
     public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
 
-        EntityResult result = null;
+        EntityResult result;
         try {
 
             EntityResult roomEntityResult = roomQuery(keyMap, List.of(RoomDAO.HOTEL_ID));
