@@ -20,13 +20,16 @@ import java.util.Map;
 public class EmployeeService implements IEmployeeService {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
+
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeQuery(Map<?, ?> keyMap, List<?> attrList) {
         return null;
     }
 
+    @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap) {
         EntityResult result;
@@ -64,6 +67,21 @@ public class EmployeeService implements IEmployeeService {
 
     @Override
     public EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) {
-        return null;
+
+        EntityResult result;
+
+        try {
+            if (!userService.getUserRoles((String) filter.get(UserDAO.LOGIN_NAME)).contains(NameRoles.EMPLOYEE)) {
+                throw new Exception(IUserService.WRONG_ROLE);
+            }
+
+            result = userService.userUpdate(attrMap, filter);
+
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(e.getMessage());
+        }
+        return result;
     }
 }

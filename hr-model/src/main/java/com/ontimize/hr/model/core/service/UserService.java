@@ -4,6 +4,7 @@ import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
+import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.hr.model.core.dao.UsersRolesDAO;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +28,8 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserDAO userDAO;
-
-    @Autowired
-    private UserRoleDAO userRoleDAO;
-
     @Autowired
     private UsersRolesDAO usersRolesDAO;
-
     @Autowired
     private DefaultOntimizeDaoHelper daoHelper;
 
@@ -51,7 +46,7 @@ public class UserService implements IUserService {
 
     Predicate<Map<?, ?>> passwordHasNumber = userMap -> {
         String password = (String) userMap.get(UserDAO.USER_PASSWORD);
-        return password.matches(".*[0-9].*");
+        return password.matches(".*[\\d].*");
     };
 
     Predicate<Map<?, ?>> passwordHasCapitalLetter = userMap -> {
@@ -64,6 +59,17 @@ public class UserService implements IUserService {
         return password.matches(".*[a-zñ].*");
     };
 
+    Predicate<Map<?, ?>> emailIsValid = userMap -> {
+        String email = (String) userMap.get(UserDAO.EMAIL);
+        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    };
+
+    Predicate<Map<?, ?>> phoneNumberIsValid = userMap -> {
+        String phoneNumber = (String) userMap.get(UserDAO.PHONE_NUMBER);
+        return !phoneNumber.isBlank() && !phoneNumber.isEmpty();
+    };
+
+
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
@@ -72,11 +78,26 @@ public class UserService implements IUserService {
 
 
     private void validateUser(Map<?, ?> attrMap) throws Exception {
-
         if (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
             throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
+        validatePassword(attrMap);
+
+        if (attrMap.get(UserDAO.COUNTRY_ID) == null) {
+            throw new InvalidCountryException(IUserService.EMPTY_COUNTRY_ID);
+        }
+
+        if (!phoneNumberIsValid.test(attrMap)) {
+            throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+        }
+
+        if (!emailIsValid.test(attrMap)) {
+            throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+        }
+    }
+
+    private void validatePassword(Map<?, ?> attrMap) throws InvalidPasswordException {
         if (!passwordLengthOverEight.test(attrMap)) {
             throw new InvalidPasswordException(IUserService.PASS_INSTRUCTIONS + ". " + IUserService.PASS_LENGTH_TOO_SHORT);
         }
@@ -98,9 +119,29 @@ public class UserService implements IUserService {
         }
     }
 
+    private void validateUserUpdate(Map<?, ?> attrMap) throws Exception {
+        if (attrMap.get(UserDAO.USER_PASSWORD) != null) {
+            validatePassword(attrMap);
+        }
+
+        if (attrMap.get(UserDAO.ID_DOCUMENT) != null && (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT)))) {
+                throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
+
+        }
+
+        if (attrMap.get(UserDAO.EMAIL) != null && (!emailIsValid.test(attrMap))) {
+                throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+
+        }
+
+        if (attrMap.get(UserDAO.PHONE_NUMBER) != null && (!phoneNumberIsValid.test(attrMap))) {
+                throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+
+        }
+    }
+
 
     private boolean validateDNI(String dni) {
-
         List<Character> letters = List.of(
                 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H',
                 'L', 'C', 'K', 'E'
@@ -122,6 +163,19 @@ public class UserService implements IUserService {
         return letters.get(numberSegment % 23) == letter;
     }
 
+    public List<String> getUserRoles(String loginName) throws UserDoesNotExistException {
+        Map<String, String> filter = new HashMap<>();
+        filter.put(UserDAO.LOGIN_NAME, loginName);
+        List<String> queriedAtributeList = List.of(UserRoleDAO.NAME);
+        EntityResult result = this.daoHelper.query(userDAO, filter, queriedAtributeList, UserDAO.ROLES_INFO);
+
+        if (result.isEmpty()) {
+            throw new UserDoesNotExistException(IUserService.NO_USER_FOUND);
+        }
+
+        return (List<String>) result.get(UserRoleDAO.NAME);
+    }
+
     @Secured({})
     @Override
     public EntityResult userInsert(Map<? super Object, ? super Object> attrMap) {
@@ -140,8 +194,6 @@ public class UserService implements IUserService {
             this.daoHelper.insert(usersRolesDAO, roleInsertAttributes);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
-
-
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
@@ -150,12 +202,6 @@ public class UserService implements IUserService {
         }
 
         return result;
-    }
-
-    @Secured({PermissionsProviderSecured.SECURED})
-    @Override
-    public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
-        return null; // TODO check user can only update itself
     }
 
     @Secured({PermissionsProviderSecured.SECURED})
@@ -175,6 +221,30 @@ public class UserService implements IUserService {
         result.setMessage(IUserService.DELETION_SUCCESS);
         result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         result.put("deleted_id", loginName);
+
+        return result;
+    }
+
+    @Secured({PermissionsProviderSecured.SECURED})
+    @Override
+    public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
+
+        EntityResult result;
+
+        try {
+
+            validateUserUpdate(attrMap);
+
+            result = this.daoHelper.update(this.userDAO, attrMap, keyMap);
+            result.put("updated_user", keyMap.get((UserDAO.LOGIN_NAME)));
+            result.setMessage("User updated successfully");
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(e.getMessage());
+        }
 
         return result;
     }

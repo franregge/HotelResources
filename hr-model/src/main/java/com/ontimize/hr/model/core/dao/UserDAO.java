@@ -23,7 +23,7 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
     public static final String PHONE_NUMBER = "phone_number";
     public static final String EMAIL = "email";
     public static final String USER_PASSWORD = "user_password";
-    public static final String EMPLOYEE_ROLE_ID = "6";
+    public static final String ROLES_INFO = "role_info";
     public static final String ROLE_NAME = "role_name";
 
 }

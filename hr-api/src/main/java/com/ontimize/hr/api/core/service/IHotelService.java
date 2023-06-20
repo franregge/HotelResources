@@ -1,7 +1,6 @@
 package com.ontimize.hr.api.core.service;
 
 import com.ontimize.hr.api.core.service.exception.HotelAlreadyExistsException;
-import com.ontimize.hr.api.core.service.exception.HotelDoesNotExistException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfFloorsException;
 import com.ontimize.jee.common.dto.EntityResult;
 
@@ -17,6 +16,7 @@ public interface IHotelService {
     public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception;
 
     EntityResult hotelDelete(Map<?, ?> keyMap) throws Exception;
+
     String HOTEL_ALREADY_EXISTS_ERROR = "This hotel already exists";
 
 }

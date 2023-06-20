@@ -96,12 +96,13 @@ public class HotelServiceTest {
         }
 
     }
-   @Disabled
+
+    @Disabled
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class UpdateHotel{
+    class UpdateHotel {
         Map<Object, Object> attrMap = new HashMap<>();
-        Map<Object,Object> keyMap= new HashMap<>();
+        Map<Object, Object> keyMap = new HashMap<>();
 
         @Test
         void updateHotel_validHotel_hotelIsUpdated() {
@@ -109,9 +110,9 @@ public class HotelServiceTest {
             attrMap.put(HotelDAO.NUMBER_OF_FLOORS, 6);
             attrMap.put(HotelDAO.NAME, "Hotel Estrella");
 
-            keyMap.put(HotelDAO.ID,1);
+            keyMap.put(HotelDAO.ID, 1);
             EntityResult hotelEntityResult = new EntityResultMapImpl();
-            hotelEntityResult.addRecord(new HashMap<>(2,2));
+            hotelEntityResult.addRecord(new HashMap<>(2, 2));
             when(hotelService.hotelQuery(anyMap(), eq(anyList()))).thenReturn(hotelEntityResult);
 
             EntityResult hotelRoomsEntityResult = new EntityResultMapImpl();
