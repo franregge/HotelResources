@@ -28,7 +28,7 @@ public class EmployeeService implements IEmployeeService {
     public EntityResult employeeQuery(Map<?, ?> keyMap, List<?> attrList) {
 
 
-        return null;
+        return ;
     }
 
 
