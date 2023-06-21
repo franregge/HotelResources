@@ -5,6 +5,7 @@ import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.service.HotelService;
 import com.ontimize.hr.model.core.service.RoomService;
+import com.ontimize.hr.model.core.util.RoomUtils;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
@@ -36,6 +37,9 @@ public class HotelServiceTest {
     HotelDAO hotelDAO;
     @Mock
     RoomService roomService;
+
+    @Mock
+    RoomUtils roomUtils;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -115,11 +119,13 @@ public class HotelServiceTest {
 
 
             EntityResult hotelRoomsEntityResult = new EntityResultMapImpl();
-            hotelRoomsEntityResult.addRecord(new HashMap());
+            hotelRoomsEntityResult.put(RoomDAO.ROOM_NUMBER, List.of(101));
+            when(roomUtils.getFloorNumber(101)).thenReturn(1);
             when(roomService.roomQuery(anyMap(), anyList())).thenReturn(hotelRoomsEntityResult);
 
             EntityResult updateResult = new EntityResultMapImpl();
             updateResult.put(HotelDAO.ID,List.of(1));
+            updateResult.put(HotelDAO.NUMBER_OF_FLOORS, List.of(7));
 
 
             when(daoHelper.query(any(),(any()),any())).thenReturn(updateResult);
