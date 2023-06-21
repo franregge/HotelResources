@@ -105,5 +105,6 @@
 					]]>
             </Sentence>
         </Query>
+
     </Queries>
 </JdbcEntitySetup>

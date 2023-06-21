@@ -6,7 +6,6 @@ import com.ontimize.hr.api.core.service.exception.HotelDoesNotExistException;
 import com.ontimize.hr.api.core.service.exception.InvalidFloorNumberException;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfFloorsException;
 
-import com.ontimize.hr.model.core.dao.BookingDAO;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -27,9 +26,6 @@ public class HotelService implements IHotelService {
 
     @Autowired
     private HotelDAO hotelDAO;
-
-    @Autowired
-    private BookingDAO bookingDAO;
 
     @Autowired
     private DefaultOntimizeDaoHelper daoHelper;
@@ -78,7 +74,8 @@ public class HotelService implements IHotelService {
 
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception {
+    @SuppressWarnings("unchecked")
+    public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
         Map<String, Integer> filter = new HashMap<>();
         Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
         EntityResult result;
@@ -137,23 +134,19 @@ public class HotelService implements IHotelService {
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
         } catch (Exception e) {
-            e.printStackTrace();
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
         }
+
         return result;
     }
 
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult hotelDelete(Map<?, ?> keyMap) throws Exception {
+    public EntityResult hotelDelete(Map<?, ?> keyMap) {
         Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
         EntityResult result;
-
-        //if (!this.daoHelper.query(hotelDAO, keyMap, List.of("hotel_id"),HotelDAO.QUERY_BOOKINGS_IN_HOTEL).isEmpty()){
-        //    throw new Exception("This hotel has booked rooms");
-        //}
 
         if (this.daoHelper.query(hotelDAO, keyMap, List.of(HotelDAO.ID)).isEmpty()) {
             result = this.daoHelper.delete(hotelDAO, keyMap);

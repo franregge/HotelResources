@@ -64,7 +64,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(NameRoles.EMPLOYEE);
+            List<String> result = List.of(RoleNames.EMPLOYEE);
             when(userService.getUserRoles(any())).thenReturn(result);
             when(userService.userUpdate(attrMap, keyMap)).thenReturn(er);
 
@@ -88,7 +88,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_WRONG);
-            List<String> result = List.of(NameRoles.MANAGER);
+            List<String> result = List.of(RoleNames.MANAGER);
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -112,7 +112,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(NameRoles.EMPLOYEE);
+            List<String> result = List.of(RoleNames.EMPLOYEE);
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -128,7 +128,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(NameRoles.ClIENT);
+            List<String> result = List.of(RoleNames.CLIENT);
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -137,6 +137,31 @@ public class EmployeeServiceTest {
             assertThrows(Exception.class, () -> employeeService.employeeDelete(keymap), "Cannot delete this user");
         }
 
+
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class QueryEmployee{
+
+        Map<Object, Object> keymap = new HashMap<>();
+
+        @Test
+        void queryEmployee_employeeIsReturned() {
+            keymap.put(UserDAO.LOGIN_NAME,"empleado1");
+
+            EntityResult er = new EntityResultMapImpl();
+            er.setCode(EntityResult.OPERATION_SUCCESSFUL);
+
+            er.put(UserDAO.LOGIN_NAME,List.of("empleado1"));
+            when(userService.userIdentifiedQuery(any(),any(),any())).thenReturn(er);
+
+            EntityResult result;
+            result=employeeService.employeeQuery(new HashMap<>(),List.of("shift"));
+
+            assertDoesNotThrow(() -> employeeService.employeeQuery(new HashMap<>(),List.of("shift")));
+            assertEquals("empleado1",result.getRecordValues(0).get(UserDAO.LOGIN_NAME));
+        }
 
     }
 }

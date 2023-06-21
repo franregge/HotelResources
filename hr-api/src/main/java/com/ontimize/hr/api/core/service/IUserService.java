@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Map;
 
 import com.ontimize.jee.common.dto.EntityResult;
-import com.ontimize.jee.common.security.PermissionsProviderSecured;
-import org.springframework.security.access.annotation.Secured;
 
 
 public interface IUserService {
 
-    public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList);
+    EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList);
 
-    public EntityResult userInsert(Map<? super Object, ? super Object> attrMap);
+    EntityResult userInsert(Map<? super Object, ? super Object> attrMap);
 
-    public EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap);
+    EntityResult userUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap);
 
-    public EntityResult userDelete(Map<?, ?> keyMap);
+    EntityResult userDelete(Map<?, ?> keyMap);
+
+    EntityResult userIdentifiedQuery(Map<?, ?> filter, List<?> attrList, String queryId);
 
     String INVALID_DNI = "The DNI is not valid";
 

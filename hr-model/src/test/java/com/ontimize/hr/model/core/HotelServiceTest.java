@@ -5,10 +5,10 @@ import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.service.HotelService;
 import com.ontimize.hr.model.core.service.RoomService;
+import com.ontimize.hr.model.core.util.RoomUtils;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,9 +33,10 @@ public class HotelServiceTest {
     @Mock
     DefaultOntimizeDaoHelper daoHelper;
     @Mock
-    HotelDAO hotelDAO;
-    @Mock
     RoomService roomService;
+
+    @Mock
+    RoomUtils roomUtils;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -97,7 +98,7 @@ public class HotelServiceTest {
 
     }
 
-    @Disabled
+
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class UpdateHotel {
@@ -109,33 +110,33 @@ public class HotelServiceTest {
 
             attrMap.put(HotelDAO.NUMBER_OF_FLOORS, 6);
             attrMap.put(HotelDAO.NAME, "Hotel Estrella");
-
             keyMap.put(HotelDAO.ID, 1);
-            EntityResult hotelEntityResult = new EntityResultMapImpl();
-            hotelEntityResult.addRecord(new HashMap<>(2, 2));
-            when(hotelService.hotelQuery(anyMap(), eq(anyList()))).thenReturn(hotelEntityResult);
 
             EntityResult hotelRoomsEntityResult = new EntityResultMapImpl();
-            hotelRoomsEntityResult.addRecord(new HashMap());
+            hotelRoomsEntityResult.put(RoomDAO.ROOM_NUMBER, List.of(101));
+            when(roomUtils.getFloorNumber(101)).thenReturn(1);
             when(roomService.roomQuery(anyMap(), anyList())).thenReturn(hotelRoomsEntityResult);
 
-            EntityResult updateResult = new EntityResultMapImpl();
-            when(hotelDAO.update(anyMap(), anyMap())).thenReturn(updateResult);
+            EntityResult hotelToUpdateEntityResult = new EntityResultMapImpl();
+            hotelToUpdateEntityResult.put(HotelDAO.ID, List.of(1));
+            hotelToUpdateEntityResult.put(HotelDAO.NUMBER_OF_FLOORS, List.of(7));
 
-            EntityResult result = null;
+
+            when(daoHelper.query(any(), (any()), any())).thenReturn(hotelToUpdateEntityResult);
+            EntityResult updateResult = new EntityResultMapImpl();
+            updateResult.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+            updateResult.setMessage("Hotel updated successfully");
+            when(daoHelper.update(any(), any(), any())).thenReturn(updateResult);
+
+            EntityResult result;
             try {
                 result = hotelService.hotelUpdate(attrMap, keyMap);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
-
-            verify(hotelDAO, times(1)).update(eq(attrMap), eq(keyMap));
             assertEquals("Hotel updated successfully", result.getMessage());
             assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
         }
-
-
     }
-
 }

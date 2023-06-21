@@ -2,7 +2,7 @@ package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IUserService;
-import com.ontimize.hr.api.core.service.exception.InvalidBookingDNIException;
+import com.ontimize.hr.api.core.service.exception.InvalidIdDocumentException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.UserDAO;
@@ -69,7 +69,6 @@ public class UserService implements IUserService {
         return !phoneNumber.isBlank() && !phoneNumber.isEmpty();
     };
 
-
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userQuery(Map<?, ?> keyMap, List<?> attrList) {
@@ -77,9 +76,13 @@ public class UserService implements IUserService {
     }
 
 
-    private void validateUser(Map<?, ?> attrMap) throws Exception {
-        if (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
-            throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
+    public EntityResult userIdentifiedQuery(Map<?, ?> filter, List<?> attrList, String queryId) {
+        return this.daoHelper.query(userDAO, filter, attrList, queryId);
+    }
+
+    private void validateUser(Map<?, ?> attrMap) throws UserDataException {
+        if (invalidDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
+            throw new InvalidIdDocumentException(IBookingService.INVALID_ID_DOCUMENT);
         }
 
         validatePassword(attrMap);
@@ -119,55 +122,56 @@ public class UserService implements IUserService {
         }
     }
 
-    private void validateUserUpdate(Map<?, ?> attrMap) throws Exception {
+    private void validateUserUpdate(Map<?, ?> attrMap) throws UserDataException {
         if (attrMap.get(UserDAO.USER_PASSWORD) != null) {
             validatePassword(attrMap);
         }
 
-        if (attrMap.get(UserDAO.ID_DOCUMENT) != null && (!validateDNI((String) attrMap.get(UserDAO.ID_DOCUMENT)))) {
-                throw new InvalidBookingDNIException(IBookingService.INVALID_ID_DOCUMENT);
+        if (attrMap.get(UserDAO.ID_DOCUMENT) != null && (invalidDNI((String) attrMap.get(UserDAO.ID_DOCUMENT)))) {
+            throw new InvalidIdDocumentException(IBookingService.INVALID_ID_DOCUMENT);
 
         }
 
         if (attrMap.get(UserDAO.EMAIL) != null && (!emailIsValid.test(attrMap))) {
-                throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+            throw new InvalidEmailException(IUserService.INVALID_EMAIL);
 
         }
 
         if (attrMap.get(UserDAO.PHONE_NUMBER) != null && (!phoneNumberIsValid.test(attrMap))) {
-                throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+            throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
 
         }
     }
 
 
-    private boolean validateDNI(String dni) {
+    private boolean invalidDNI(String dni) {
         List<Character> letters = List.of(
                 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H',
                 'L', 'C', 'K', 'E'
         );
 
         if (dni.length() != 9) {
-            return false;
+            return true;
         }
 
         dni = dni.toUpperCase();
 
         if (!dni.matches("\\d{8}[A-HJ-NP-TV-Z]")) {
-            return false;
+            return true;
         }
 
         int numberSegment = Integer.parseInt(dni.substring(0, 8));
         char letter = dni.charAt(8);
 
-        return letters.get(numberSegment % 23) == letter;
+        return letters.get(numberSegment % 23) != letter;
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getUserRoles(String loginName) throws UserDoesNotExistException {
         Map<String, String> filter = new HashMap<>();
         filter.put(UserDAO.LOGIN_NAME, loginName);
         List<String> queriedAtributeList = List.of(UserRoleDAO.NAME);
-        EntityResult result = this.daoHelper.query(userDAO, filter, queriedAtributeList, UserDAO.ROLES_INFO);
+        EntityResult result = this.daoHelper.query(userDAO, filter, queriedAtributeList, UserDAO.Q_ROLES_INFO);
 
         if (result.isEmpty()) {
             throw new UserDoesNotExistException(IUserService.NO_USER_FOUND);

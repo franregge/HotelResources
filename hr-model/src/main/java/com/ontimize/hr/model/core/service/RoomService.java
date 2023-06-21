@@ -34,7 +34,7 @@ public class RoomService implements IRoomService {
     private HotelService hotelService;
     @Autowired
     private RoomUtils roomUtils;
-    private final int FIRST_ROOM_NUMBER = 101;
+    private static final int FIRST_ROOM_NUMBER = 101;
 
     @Override
     public EntityResult roomQuery(Map<?, ?> keymap, List<?> attrList) {
@@ -87,6 +87,7 @@ public class RoomService implements IRoomService {
 
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
+    @SuppressWarnings("unchecked")
     public EntityResult roomInsert(Map<?, ?> attrMap) {
         EntityResult result;
 
@@ -126,10 +127,6 @@ public class RoomService implements IRoomService {
         try {
             Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
 
-            //if (!this.daoHelper.query(hotelDAO, keyMap, List.of("hotel_id"),HotelDAO.QUERY_BOOKINGS_IN_HOTEL).isEmpty()){
-            //    throw new Exception("This hotel has booked rooms");
-            //}
-
             if (this.daoHelper.query(roomDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()) {
                 result = this.daoHelper.delete(roomDAO, keyMap);
                 result.setMessage("No rooms with this id");
@@ -151,6 +148,7 @@ public class RoomService implements IRoomService {
 
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
+    @SuppressWarnings("unchecked")
     public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
 
         EntityResult result;
