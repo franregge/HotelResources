@@ -9,7 +9,6 @@ import com.ontimize.hr.model.core.util.RoomUtils;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,8 +32,6 @@ public class HotelServiceTest {
     HotelService hotelService;
     @Mock
     DefaultOntimizeDaoHelper daoHelper;
-    @Mock
-    HotelDAO hotelDAO;
     @Mock
     RoomService roomService;
 
@@ -114,9 +111,6 @@ public class HotelServiceTest {
             attrMap.put(HotelDAO.NUMBER_OF_FLOORS, 6);
             attrMap.put(HotelDAO.NAME, "Hotel Estrella");
             keyMap.put(HotelDAO.ID, 1);
-            EntityResult hotelEntityResult = new EntityResultMapImpl();
-            hotelEntityResult.addRecord(new HashMap<>(2, 2));
-
 
             EntityResult hotelRoomsEntityResult = new EntityResultMapImpl();
             hotelRoomsEntityResult.put(RoomDAO.ROOM_NUMBER, List.of(101));
