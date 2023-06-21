@@ -10,10 +10,10 @@ import java.util.Map;
 
 public interface IRoomService {
 
-    public EntityResult roomQuery(Map<?, ?> keymap, List<?> attrList);
+    EntityResult roomQuery(Map<?, ?> keymap, List<?> attrList);
 
-    public EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
+    EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
 
-    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
+    EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
 
 }

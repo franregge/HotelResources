@@ -1,7 +1,6 @@
 package com.ontimize.hr.ws.core.rest;
 
 
-import com.ontimize.hr.model.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,9 +26,8 @@ public class UserRestController extends ORestController<IUserService> {
         return this.userSrv;
     }
 
-    @RequestMapping(
+    @PostMapping(
             value = "/login",
-            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityResult> login() {
         return new ResponseEntity<>(HttpStatus.OK);
@@ -40,4 +38,5 @@ public class UserRestController extends ORestController<IUserService> {
     public ResponseEntity<EntityResult> addUser(@RequestBody Map<? super Object, ? super Object> attrMap) {
         return new ResponseEntity<>(userSrv.userInsert(attrMap), HttpStatus.OK);
     }
+
 }

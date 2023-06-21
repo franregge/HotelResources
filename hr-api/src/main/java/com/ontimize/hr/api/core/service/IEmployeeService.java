@@ -11,8 +11,8 @@ public interface IEmployeeService {
 
     EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap);
 
-    EntityResult employeeDelete(Map<?, ?> keyMap) throws Exception;
+    EntityResult employeeDelete(Map<?, ?> keyMap);
 
-    EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) throws Exception;
+    EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap);
 
 }

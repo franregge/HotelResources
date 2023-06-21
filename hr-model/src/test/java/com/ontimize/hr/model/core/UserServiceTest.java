@@ -79,7 +79,7 @@ public class UserServiceTest {
             attrMap.put(UserDAO.PHONE_NUMBER, "666666666");
             attrMap.put(UserDAO.SURNAME2, "Martinez");
             attrMap.put(UserDAO.EMAIL, "manolo.martinez@mymail.com");
-            attrMap.put(UserDAO.ROLE_NAME, NameRoles.ClIENT);
+            attrMap.put(UserDAO.ROLE_NAME, RoleNames.CLIENT);
             attrMap.put(UserDAO.LOGIN_NAME, "SoyManolo");
 
             EntityResult actualResult = userService.userInsert(attrMap);

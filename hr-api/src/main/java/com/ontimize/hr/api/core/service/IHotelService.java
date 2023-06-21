@@ -9,13 +9,13 @@ import java.util.Map;
 
 public interface IHotelService {
 
-    public EntityResult hotelQuery(Map<?, ?> keyMap, List<?> attrList);
+    EntityResult hotelQuery(Map<?, ?> keyMap, List<?> attrList);
 
-    public EntityResult hotelInsert(Map<?, ?> attrMap) throws HotelAlreadyExistsException, InvalidNumberOfFloorsException;
+    EntityResult hotelInsert(Map<?, ?> attrMap) throws HotelAlreadyExistsException, InvalidNumberOfFloorsException;
 
-    public EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws Exception;
+    EntityResult hotelUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap);
 
-    EntityResult hotelDelete(Map<?, ?> keyMap) throws Exception;
+    EntityResult hotelDelete(Map<?, ?> keyMap);
 
     String HOTEL_ALREADY_EXISTS_ERROR = "This hotel already exists";
 
