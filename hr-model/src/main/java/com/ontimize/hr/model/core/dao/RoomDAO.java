@@ -20,5 +20,4 @@ public class RoomDAO extends OntimizeJdbcDaoSupport {
 
     public static final String BASE_PRICE = "base_price";
 
-
 }

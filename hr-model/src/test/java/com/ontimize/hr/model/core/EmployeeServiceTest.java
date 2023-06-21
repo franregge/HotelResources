@@ -64,7 +64,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(NameRoles.EMPLOYEE);
+            List<String> result = List.of(RoleNames.EMPLOYEE);
             when(userService.getUserRoles(any())).thenReturn(result);
             when(userService.userUpdate(attrMap, keyMap)).thenReturn(er);
 
@@ -88,7 +88,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_WRONG);
-            List<String> result = List.of(NameRoles.MANAGER);
+            List<String> result = List.of(RoleNames.MANAGER);
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -112,7 +112,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(NameRoles.EMPLOYEE);
+            List<String> result = List.of(RoleNames.EMPLOYEE);
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -128,7 +128,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(NameRoles.ClIENT);
+            List<String> result = List.of(RoleNames.CLIENT);
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -142,12 +142,12 @@ public class EmployeeServiceTest {
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class queryEmployee{
+    class QueryEmployee{
 
         Map<Object, Object> keymap = new HashMap<>();
 
         @Test
-        void queryEmployee() {
+        void queryEmployee_employeeIsReturned() {
             keymap.put(UserDAO.LOGIN_NAME,"empleado1");
 
             EntityResult er = new EntityResultMapImpl();

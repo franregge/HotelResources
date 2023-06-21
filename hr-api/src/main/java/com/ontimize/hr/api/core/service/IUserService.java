@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.ontimize.jee.common.dto.EntityResult;
-import com.ontimize.jee.common.security.PermissionsProviderSecured;
-import org.springframework.security.access.annotation.Secured;
 
 
 public interface IUserService {
