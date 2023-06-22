@@ -149,7 +149,7 @@ public class RoomService implements IRoomService {
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     @SuppressWarnings("unchecked")
-    public EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) {
+    public EntityResult roomUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> keyMap) {
 
         EntityResult result;
         try {
@@ -160,15 +160,19 @@ public class RoomService implements IRoomService {
             Map<String, Integer> filter = new HashMap<>();
             filter.put(RoomDAO.HOTEL_ID, assignedHotelId);
 
-            EntityResult assignedHotelEntityResult =
-                    hotelService.hotelQuery(filter, List.of(HotelDAO.NUMBER_OF_FLOORS));
+            if (attrMap.get(RoomDAO.ROOM_NUMBER) != null) {
+                EntityResult assignedHotelEntityResult =
+                        hotelService.hotelQuery(filter, List.of(HotelDAO.NUMBER_OF_FLOORS));
+                validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0));
+            }
 
-            validateRoomNumber((int) attrMap.get(RoomDAO.ROOM_NUMBER), ((List<Integer>) assignedHotelEntityResult.get(HotelDAO.NUMBER_OF_FLOORS)).get(0));
-            validateNumberOfBeds((int) attrMap.get(RoomDAO.NUMBER_OF_BEDS));
+            if (attrMap.get(RoomDAO.NUMBER_OF_BEDS) != null) {
+                validateNumberOfBeds((int) attrMap.get(RoomDAO.NUMBER_OF_BEDS));
+            }
 
             result = this.daoHelper.update(this.roomDAO, attrMap, keyMap);
             result.put("updated_id", keyMap.get(RoomDAO.ID));
-            result.setMessage("Room updated successfully");
+            result.setMessage(M_UPDATE_SUCCESS);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         } catch (Exception e) {
             result = new EntityResultMapImpl();

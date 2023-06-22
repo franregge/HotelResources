@@ -14,6 +14,8 @@ public interface IRoomService {
 
     EntityResult roomInsert(Map<?, ?> attrMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
 
-    EntityResult roomUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
+    EntityResult roomUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> keyMap) throws InvalidRoomNumberException, InvalidNumberOfBeds, InvalidPriceException;
+
+    String M_UPDATE_SUCCESS = "Room updated successfully";
 
 }
