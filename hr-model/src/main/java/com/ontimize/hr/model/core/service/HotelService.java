@@ -145,20 +145,27 @@ public class HotelService implements IHotelService {
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult hotelDelete(Map<?, ?> keyMap) {
-        Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
         EntityResult result;
+        try {
+            Integer hotelId = (Integer) keyMap.get(HotelDAO.ID);
 
-        if (this.daoHelper.query(hotelDAO, keyMap, List.of(HotelDAO.ID)).isEmpty()) {
+
+            if (this.daoHelper.query(hotelDAO, keyMap, List.of(HotelDAO.ID)).isEmpty()) {
+                result = this.daoHelper.delete(hotelDAO, keyMap);
+                result.setMessage("No hotels with this id");
+                result.setCode(EntityResult.OPERATION_WRONG);
+                return result;
+            }
+
             result = this.daoHelper.delete(hotelDAO, keyMap);
-            result.setMessage("No hotels with this id");
+            result.setMessage("Hotel deleted successfully");
+            result.put("deleted_id", hotelId);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
-            return result;
+            result.setMessage(e.getMessage());
         }
-
-        result = this.daoHelper.delete(hotelDAO, keyMap);
-        result.setMessage("Hotel deleted successfully");
-        result.put("deleted_id", hotelId);
-        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         return result;
 
     }

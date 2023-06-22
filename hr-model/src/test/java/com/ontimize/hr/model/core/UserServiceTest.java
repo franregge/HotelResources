@@ -1,9 +1,11 @@
 package com.ontimize.hr.model.core;
 
+import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,11 +20,11 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-
 
     @InjectMocks
     UserService userService;
@@ -87,6 +89,24 @@ public class UserServiceTest {
             assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
         }
 
+    }
+
+    @Nested
+    @Disabled // este test pertenece a una historia que aún no hemos realizado
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class deleteUser {
+
+        Map<Object, Object> keyMap = new HashMap<>();
+
+        @Test
+        void deleteUser_validUser_userIsDeleted() {
+            keyMap.put(UserDAO.LOGIN_NAME, "empleado1");
+
+
+            assertDoesNotThrow(() -> userService.userDelete(keyMap));
+
+
+        }
     }
 
     @Nested
