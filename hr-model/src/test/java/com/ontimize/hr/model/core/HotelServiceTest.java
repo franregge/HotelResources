@@ -98,6 +98,24 @@ public class HotelServiceTest {
 
     }
 
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class deleteHotel{
+
+        Map<Object, Object> keymap = new HashMap<>();
+
+        @Test
+        void deleteHotel_validHotel_HotelIsDeleted(){
+
+            keymap.put(HotelDAO.ID, 1);
+
+            EntityResult er = new EntityResultMapImpl();
+            er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+
+            when(hotelService.hotelDelete(keymap)).thenReturn(er);
+            assertDoesNotThrow(() -> hotelService.hotelDelete(keymap));
+        }
+    }
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
