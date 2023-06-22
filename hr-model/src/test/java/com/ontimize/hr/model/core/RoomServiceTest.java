@@ -155,7 +155,8 @@ public class RoomServiceTest {
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
-            when(roomService.roomDelete(keymap)).thenReturn(er);
+            when(daoHelper.delete(any(),any())).thenReturn(er);
+            when(daoHelper.query(any(),any(),any())).thenReturn(new EntityResultMapImpl());
             assertDoesNotThrow(() -> roomService.roomDelete(keymap));
 
         }

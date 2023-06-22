@@ -112,8 +112,28 @@ public class HotelServiceTest {
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
-            when(hotelService.hotelDelete(keymap)).thenReturn(er);
+            when(daoHelper.delete(any(),any())).thenReturn(er);
+            when(daoHelper.query(any(),any(),any())).thenReturn(new EntityResultMapImpl());
+
             assertDoesNotThrow(() -> hotelService.hotelDelete(keymap));
+        }
+
+        @Test
+        void deleteHotel_HotelIsNotDeleted(){
+
+            keymap.put(HotelDAO.ID, 1);
+
+            EntityResult er = new EntityResultMapImpl();
+            er.setCode(EntityResult.OPERATION_WRONG);
+            er.setMessage("No hotels with this id");
+
+
+            when(daoHelper.delete(any(),any())).thenReturn(er);
+            when(daoHelper.query(any(),any(),any())).thenReturn(new EntityResultMapImpl());
+
+            EntityResult result = hotelService.hotelDelete(keymap);
+            assertEquals(EntityResult.OPERATION_WRONG, result.getCode());
+            assertEquals("No hotels with this id", result.getMessage());
         }
     }
 
