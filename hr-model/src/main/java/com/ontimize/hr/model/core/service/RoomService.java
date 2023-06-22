@@ -124,25 +124,20 @@ public class RoomService implements IRoomService {
     public EntityResult roomDelete(Map<?, ?> keyMap) {
 
         EntityResult result;
-        try {
-            Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
 
-            if (this.daoHelper.query(roomDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()) {
-                result = this.daoHelper.delete(roomDAO, keyMap);
-                result.setMessage("No rooms with this id");
-                result.setCode(EntityResult.OPERATION_WRONG);
-                return result;
-            }
+        Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
 
+        if (this.daoHelper.query(roomDAO, keyMap, List.of(RoomDAO.ID)).isEmpty()) {
             result = this.daoHelper.delete(roomDAO, keyMap);
-            result.setMessage("Room deleted successfully");
-            result.put("deleted_id", roomId);
-            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-        } catch (Exception e) {
-            result = new EntityResultMapImpl();
+            result.setMessage("No rooms with this id");
             result.setCode(EntityResult.OPERATION_WRONG);
-            result.setMessage(e.getMessage());
+            return result;
         }
+
+        result = this.daoHelper.delete(roomDAO, keyMap);
+        result.setMessage("Room deleted successfully");
+        result.put("deleted_id", roomId);
+        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
         return result;
     }
 
