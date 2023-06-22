@@ -60,13 +60,24 @@ public class UserService implements IUserService {
     };
 
     Predicate<Map<?, ?>> emailIsValid = userMap -> {
-        String email = (String) userMap.get(UserDAO.EMAIL);
-        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+        Object mapContent = userMap.get(UserDAO.EMAIL);
+
+        if (mapContent instanceof String) {
+            String email = (String) mapContent;
+            return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+        }
+
+        return false;
     };
 
     Predicate<Map<?, ?>> phoneNumberIsValid = userMap -> {
-        String phoneNumber = (String) userMap.get(UserDAO.PHONE_NUMBER);
-        return !phoneNumber.isBlank() && !phoneNumber.isEmpty();
+        Object mapValue = userMap.get(UserDAO.PHONE_NUMBER);
+        if (mapValue instanceof String) {
+            String phoneNumber = (String) mapValue;
+            return !phoneNumber.isBlank() && !phoneNumber.isEmpty();
+        }
+
+        return false;
     };
 
     @Secured({PermissionsProviderSecured.SECURED})
@@ -82,21 +93,21 @@ public class UserService implements IUserService {
 
     private void validateUser(Map<?, ?> attrMap) throws UserDataException {
         if (invalidDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
-            throw new InvalidIdDocumentException(IBookingService.INVALID_ID_DOCUMENT);
+            throw new InvalidIdDocumentException(IUserService.ERR_INVALID_ID_DOCUMENT);
         }
 
         validatePassword(attrMap);
 
-        if (attrMap.get(UserDAO.COUNTRY_ID) == null) {
-            throw new InvalidCountryException(IUserService.EMPTY_COUNTRY_ID);
+        if (!(attrMap.get(UserDAO.COUNTRY_ID) instanceof Integer)) {
+            throw new InvalidCountryException(IUserService.ERR_INVALID_COUNTRY_ID);
         }
 
         if (!phoneNumberIsValid.test(attrMap)) {
-            throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+            throw new InvalidPhoneNumberException(IUserService.ERR_INVALID_PHONE_NUMBER);
         }
 
         if (!emailIsValid.test(attrMap)) {
-            throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+            throw new InvalidEmailException(IUserService.ERR_INVALID_EMAIL);
         }
     }
 
@@ -128,17 +139,17 @@ public class UserService implements IUserService {
         }
 
         if (attrMap.get(UserDAO.ID_DOCUMENT) != null && (invalidDNI((String) attrMap.get(UserDAO.ID_DOCUMENT)))) {
-            throw new InvalidIdDocumentException(IBookingService.INVALID_ID_DOCUMENT);
+            throw new InvalidIdDocumentException(IUserService.ERR_INVALID_ID_DOCUMENT);
 
         }
 
-        if (attrMap.get(UserDAO.EMAIL) != null && (!emailIsValid.test(attrMap))) {
-            throw new InvalidEmailException(IUserService.INVALID_EMAIL);
+        if (!emailIsValid.test(attrMap)) {
+            throw new InvalidEmailException(IUserService.ERR_INVALID_EMAIL);
 
         }
 
         if (attrMap.get(UserDAO.PHONE_NUMBER) != null && (!phoneNumberIsValid.test(attrMap))) {
-            throw new InvalidPhoneNumberException(IUserService.EMPTY_PHONE_NUMBER);
+            throw new InvalidPhoneNumberException(IUserService.ERR_INVALID_PHONE_NUMBER);
 
         }
     }

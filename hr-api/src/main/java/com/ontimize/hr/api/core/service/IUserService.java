@@ -19,7 +19,7 @@ public interface IUserService {
 
     EntityResult userIdentifiedQuery(Map<?, ?> filter, List<?> attrList, String queryId);
 
-    String INVALID_DNI = "The DNI is not valid";
+    String ERR_INVALID_ID_DOCUMENT = "The id document is not valid";
 
     String NO_USER_WITH_ID = "No user with this id";
 
@@ -42,9 +42,9 @@ public interface IUserService {
     String NO_USER_FOUND = "Can't find users with this login name";
     String WRONG_ROLE = "You cant update users with this role";
 
-    String INVALID_EMAIL = "The email is not valid";
+    String ERR_INVALID_EMAIL = "You must provide a valid email";
 
-    String EMPTY_PHONE_NUMBER = "The phone number can't be empty";
+    String ERR_INVALID_PHONE_NUMBER = "You must provide a valid phone number";
 
-    String EMPTY_COUNTRY_ID = "The country id can't be empty";
+    String ERR_INVALID_COUNTRY_ID = "You must provide a valid country id";
 }
