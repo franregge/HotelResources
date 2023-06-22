@@ -1,5 +1,6 @@
 package com.ontimize.hr.model.core;
 
+import com.ontimize.hr.api.core.service.IEmployeeService;
 import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.service.EmployeeService;
@@ -32,10 +33,6 @@ public class EmployeeServiceTest {
 
     @InjectMocks
     EmployeeService employeeService;
-    @Mock
-    DefaultOntimizeDaoHelper daoHelper;
-    @Mock
-    UserDAO userDAO;
     @Mock
     UserService userService;
 
@@ -106,7 +103,6 @@ public class EmployeeServiceTest {
 
         @Test
         void deleteEmployee_employeeDeleted() throws UserDoesNotExistException {
-
             keymap.put(UserDAO.LOGIN_NAME, "empleado1");
 
 
@@ -125,16 +121,16 @@ public class EmployeeServiceTest {
         void deleteEmployee_notEmployee_notDeleted() throws UserDoesNotExistException {
             keymap.put(UserDAO.LOGIN_NAME, "empleado1");
 
-
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(RoleNames.CLIENT);
+            List<String> userRoles = List.of(RoleNames.CLIENT);
 
-            when(userService.getUserRoles(any())).thenReturn(result);
+            when(userService.getUserRoles(any())).thenReturn(userRoles);
 
-            when(userService.userDelete(keymap)).thenReturn(er);
+            EntityResult result = employeeService.employeeDelete(keymap);
 
-            assertThrows(Exception.class, () -> employeeService.employeeDelete(keymap), "Cannot delete this user");
+            assertEquals(EntityResult.OPERATION_WRONG, result.getCode());
+            assertEquals(IEmployeeService.ERR_CANNOT_DELETE_USER, result.getMessage());
         }
 
 
@@ -164,4 +160,36 @@ public class EmployeeServiceTest {
         }
 
     }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class EmployeeInsert {
+
+        private final Map<? super Object, ? super Object> attrMap = new HashMap<>();
+
+        @Test
+        void employeeInsert_validEmployee_operationSuccessful() {
+            attrMap.put(UserDAO.LOGIN_NAME, "test");
+            attrMap.put(UserDAO.USER_NAME, "test");
+            attrMap.put(UserDAO.EMAIL, "test@example.org");
+            attrMap.put(UserDAO.USER_PASSWORD, "Test1234");
+            attrMap.put(UserDAO.ID_DOCUMENT, "35581834Y");
+            attrMap.put(UserDAO.SURNAME1, "test");
+            attrMap.put(UserDAO.PHONE_NUMBER, "666555444");
+            attrMap.put(UserDAO.COUNTRY_ID, 1);
+
+            EntityResult userInsertResult = new EntityResultMapImpl();
+            userInsertResult.setMessage(IUserService.USER_INSERT_SUCCESS);
+            userInsertResult.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+
+            when(userService.userInsert(any())).thenReturn(userInsertResult);
+
+            EntityResult result = employeeService.employeeInsert(attrMap);
+
+            assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
+            assertEquals(IUserService.USER_INSERT_SUCCESS, result.getMessage());
+        }
+
+    }
+
 }
