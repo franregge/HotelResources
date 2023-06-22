@@ -209,27 +209,21 @@ public class UserService implements IUserService {
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult userDelete(Map<?, ?> keyMap) {
-
         EntityResult result;
 
-        try{
-            String loginName = (String) keyMap.get(UserDAO.LOGIN_NAME);
-            if (this.daoHelper.query(userDAO, keyMap, List.of(UserDAO.LOGIN_NAME)).isEmpty()) {
-                result = new EntityResultMapImpl();
-                result.setMessage(IUserService.NO_USER_WITH_ID);
-                result.setCode(EntityResult.OPERATION_WRONG);
-                return result;
-            }
-
-            result = this.daoHelper.delete(userDAO, keyMap);
-            result.setMessage(IUserService.DELETION_SUCCESS);
-            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            result.put("deleted_id", loginName);
-        } catch (Exception e) {
+        String loginName = (String) keyMap.get(UserDAO.LOGIN_NAME);
+        if (this.daoHelper.query(userDAO, keyMap, List.of(UserDAO.LOGIN_NAME)).isEmpty()) {
             result = new EntityResultMapImpl();
+            result.setMessage(IUserService.NO_USER_WITH_ID);
             result.setCode(EntityResult.OPERATION_WRONG);
-            result.setMessage(e.getMessage());
+            return result;
         }
+
+        result = this.daoHelper.delete(userDAO, keyMap);
+        result.setMessage(IUserService.DELETION_SUCCESS);
+        result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+        result.put("deleted_id", loginName);
+
         return result;
     }
 
