@@ -1,0 +1,655 @@
+{
+	"info": {
+		"_postman_id": "5d44a32c-8e15-44b0-827b-bd59d2e89da0",
+		"name": "ProxectoBootcamp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "27243479"
+	},
+	"item": [
+		{
+			"name": "Ontimize",
+			"item": [
+				{
+					"name": "Hotel",
+					"item": [
+						{
+							"name": "Insert Hotel",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": {
+										"username": "manager",
+										"password": "Manager1234"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\": {\r\n        \"name\": \"testt\",\r\n        \"number_of_floors\": 8\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/hotel"
+							},
+							"response": []
+						},
+						{
+							"name": "Get hotels",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "localhost:30030/hotels/hotel?columns=name",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"hotel"
+									],
+									"query": [
+										{
+											"key": "columns",
+											"value": "name"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get hotel by id",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\": {\r\n        \"id\": 2\r\n    },\r\n    \"columns\": [\"id\", \"name\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/hotel/search"
+							},
+							"response": []
+						},
+						{
+							"name": "delete hotel",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\": {\r\n        \"id\": 1\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/hotel"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Room",
+					"item": [
+						{
+							"name": "Post room",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\": {\r\n        \"room_number\": 413,\r\n        \"hotel_id\": 1,\r\n        \"number_of_beds\": 3,\r\n        \"base_price\": 150\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/room"
+							},
+							"response": []
+						},
+						{
+							"name": "Update room",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\":{\r\n        \"id\":1\r\n    },\r\n    \"data\": {\r\n        \"room_number\": 202,\r\n        \"hotel_id\": 1,\r\n        \"number_of_beds\": 1,\r\n        \"base_price\": 100\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/room"
+							},
+							"response": []
+						},
+						{
+							"name": "Update room Error",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\":{\r\n        \"id\":4\r\n    },\r\n    \"data\": {\r\n        \"room_number\": 500,\r\n        \"hotel_id\": 1,\r\n        \"number_of_beds\": -2,\r\n        \"base_price\": 70\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/room"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete room",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\":{\r\n        \"id\":4\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/room"
+							},
+							"response": []
+						},
+						{
+							"name": "Search room",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\":{\r\n        \"@basic_expression\": {\r\n            \"lop\": \"number_of_beds\",\r\n            \"op\": \">=\",\r\n            \"rop\": 2\r\n        }\r\n    },\r\n    \"columns\": [\r\n        \"id\",\r\n        \"room_number\",\r\n        \"hotel_id\",\r\n        \"number_of_beds\",\r\n        \"base_price\"\r\n    ]\r\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/room/search"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Booking",
+					"item": [
+						{
+							"name": "Get booking by id",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\": {\r\n        \"id\": 4\r\n    },\r\n    \"columns\": [\"arrival_date\", \"departure_date\"]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/bookings/booking/search"
+							},
+							"response": []
+						},
+						{
+							"name": "Get booking by id Copy",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\":{\r\n        \"id\":38\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/bookings/booking"
+							},
+							"response": []
+						},
+						{
+							"name": "Update booking",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"filter\":{\r\n        \"id\":53\r\n    },\r\n     \"data\": {\r\n        \"room_id\": 19,\r\n        \"departure_date\":\"2023-11-14\",\r\n        \"arrival_date\": \"2023-11-12\",\r\n        \"user_id\":1\r\n    }\r\n   \r\n}\r\n\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/bookings/booking"
+							},
+							"response": []
+						},
+						{
+							"name": "Post Booking",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": {
+										"username": "manager",
+										"password": "Manager1234"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\": {\r\n        \"room_id\": 19,\r\n        \"departure_date\":\"2023-12-17\",\r\n        \"arrival_date\": \"2023-12-13\",\r\n        \"user_id\":1\r\n    }\r\n}\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/bookings/booking"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Post user",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": {
+										"username": "manager",
+										"password": "Manager1234"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"data\":{\r\n        \"login_name\":\"JuanasPerez66\",\r\n        \"role_id\":6,\r\n        \"id_document\":\"66955662V\",\r\n        \"user_name\":\"Juan\",\r\n        \"surname1\":\"Perez\",\r\n        \"country_id\":1,\r\n        \"phone_number\":666666666,\r\n        \"email\":\"nojuanitas@micorreo.com\",\r\n        \"user_password\":\"Juana1234\"\r\n        \r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/users/user"
+							},
+							"response": []
+						},
+						{
+							"name": "Post user error email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\": {\r\n        \"role_id\": 1,\r\n        \"user_name\": \"empleado1\",\r\n        \"surname1\": \"ff\",\r\n        \"id_document\": \"35581834Y\",\r\n        \"country_id\":1,\r\n        \"phone_number\":666555444,\r\n        \"email\": \"manager12333@example.com\",\r\n        \"user_password\": \"Hola1234\"\r\n\r\n\r\n\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/users/user"
+							},
+							"response": []
+						},
+						{
+							"name": "Post user error id document",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\": {\r\n        \"role_id\": 1,\r\n        \"user_name\": \"empleado1\",\r\n        \"surname1\": \"ff\",\r\n        \"id_document\": \"35581834P\",\r\n        \"country_id\":1,\r\n        \"phone_number\":666555444,\r\n        \"email\": \"manager656566@example.com\",\r\n        \"user_password\": \"Hola1234\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/users/user"
+							},
+							"response": []
+						},
+						{
+							"name": "Post user error id  password",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\": {\r\n        \"role_id\": 1,\r\n        \"user_name\": \"empleado1\",\r\n        \"surname1\": \"ff\",\r\n        \"id_document\": \"35581834Y\",\r\n        \"country_id\":1,\r\n        \"phone_number\":666555444,\r\n        \"email\": \"manager777@example.com\",\r\n        \"user_password\": \"a\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/users/user"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Employees",
+					"item": [
+						{
+							"name": "Update Employee",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": {
+										"password": "Manager1234",
+										"username": "manager"
+									}
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"filter\":{\r\n        \"login_name\":\"empleado1\" \r\n    },\r\n    \"data\":{\r\n        \"login_name\":\"empleado1\",\r\n        \"id_document\":\"35581834Y\",\r\n        \"user_password\":\"Hola1234\"\r\n    \r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/employees/employee"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Spring Boot",
+			"item": [
+				{
+					"name": "Room",
+					"item": [
+						{
+							"name": "Add room",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"roomNumber\": 101,\r\n    \"hotelId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/add"
+							},
+							"response": []
+						},
+						{
+							"name": "Add room error (hotel id)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"roomNumber\": 106,\r\n    \"hotelId\": -1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/add"
+							},
+							"response": []
+						},
+						{
+							"name": "Add room error (room number)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"roomNumber\": 100,\r\n    \"hotelId\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/add"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete room",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/delete"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete room error",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": -1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/rooms/delete"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Hotel",
+					"item": [
+						{
+							"name": "Add hotel",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Overlook Hotel\",\r\n    \"numberOfFloors\": 6\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/add"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete hotel error",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": -1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/remove"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete hotel",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/remove"
+							},
+							"response": []
+						},
+						{
+							"name": "Add hotel error (number of floors)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Test\",\r\n    \"numberOfFloors\": 0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/add"
+							},
+							"response": []
+						},
+						{
+							"name": "Add hotel error (name)",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"\",\r\n    \"numberOfFloors\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/add"
+							},
+							"response": []
+						},
+						{
+							"name": "Update hotel (name)",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Updated Overlook Hotel\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/update"
+							},
+							"response": []
+						},
+						{
+							"name": "Update hotel (number of floors)",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1,\r\n    \"numberOfFloors\": 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/update"
+							},
+							"response": []
+						},
+						{
+							"name": "Update hotel (number of floors and name)",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"New Hotel Overlook\",\r\n    \"numberOfFloors\": 8\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:30030/hotels/update"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
