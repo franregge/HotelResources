@@ -186,7 +186,6 @@ public class UserService implements IUserService {
         EntityResult result;
 
         try {
-            // TODO error checking
             validateUser(attrMap);
 
             result = this.daoHelper.insert(this.userDAO, attrMap);
