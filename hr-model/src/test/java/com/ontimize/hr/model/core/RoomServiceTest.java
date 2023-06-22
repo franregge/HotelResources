@@ -1,7 +1,10 @@
 package com.ontimize.hr.model.core;
 
 import com.ontimize.hr.model.core.dao.RoomDAO;
+import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.service.RoomService;
+import com.ontimize.hr.model.core.service.UserService;
+import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,11 +40,56 @@ public class RoomServiceTest {
             attrMap.put(RoomDAO.NUMBER_OF_BEDS,2);
             attrMap.put(RoomDAO.BASE_PRICE, 105);
 
-
-
            assertDoesNotThrow(()->roomService.roomInsert(attrMap));
 
+        }
 
+        @Test
+        void insertRoom_idError(){
+            attrMap.put(RoomDAO.HOTEL_ID,-1);
+            EntityResult actualResult = null;
+            actualResult = roomService.roomInsert(attrMap);
+
+            assertNotNull(actualResult);
+            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
+        }
+
+        @Test
+        void insertRoom_roomNumberError(){
+            attrMap.put(RoomDAO.ROOM_NUMBER, 24);
+            EntityResult actualResult = null;
+            actualResult = roomService.roomInsert(attrMap);
+
+            assertNotNull(actualResult);
+            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
+        }
+
+        @Test
+        void insertRoom_numberOfBedsError(){
+            attrMap.put(RoomDAO.NUMBER_OF_BEDS,7);
+            EntityResult actualResult = null;
+            actualResult = roomService.roomInsert(attrMap);
+
+            assertNotNull(actualResult);
+            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
+        }
+
+        @Test
+        void insertRoom_basePriceError(){
+            attrMap.put(RoomDAO.BASE_PRICE, -105);
+            EntityResult actualResult = null;
+            actualResult = roomService.roomInsert(attrMap);
+
+            assertNotNull(actualResult);
+            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
+        }
+        void insertRoom_hotelIdError(){
+            attrMap.put(RoomDAO.HOTEL_ID, -12);
+            EntityResult actualResult = null;
+            actualResult = roomService.roomInsert(attrMap);
+
+            assertNotNull(actualResult);
+            assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
         }
     }
 }
