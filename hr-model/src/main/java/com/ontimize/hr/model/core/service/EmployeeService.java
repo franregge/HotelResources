@@ -65,7 +65,7 @@ public class EmployeeService implements IEmployeeService {
 
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult employeeUpdate(Map<? super Object, ? super Object> filter, Map<? super Object, ? super Object> attrMap) {
+    public EntityResult employeeUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> filter) {
 
         EntityResult result;
 

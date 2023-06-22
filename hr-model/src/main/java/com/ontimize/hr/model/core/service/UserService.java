@@ -143,7 +143,7 @@ public class UserService implements IUserService {
 
         }
 
-        if (!emailIsValid.test(attrMap)) {
+        if (attrMap.get(UserDAO.EMAIL) != null && !emailIsValid.test(attrMap)) {
             throw new InvalidEmailException(IUserService.ERR_INVALID_EMAIL);
 
         }
