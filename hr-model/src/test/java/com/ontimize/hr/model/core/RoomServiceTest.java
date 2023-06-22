@@ -83,6 +83,7 @@ public class RoomServiceTest {
             assertNotNull(actualResult);
             assertEquals(EntityResult.OPERATION_WRONG, actualResult.getCode());
         }
+        @Test
         void insertRoom_hotelIdError(){
             attrMap.put(RoomDAO.HOTEL_ID, -12);
             EntityResult actualResult = null;
