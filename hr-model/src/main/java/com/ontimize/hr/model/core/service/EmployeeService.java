@@ -33,21 +33,9 @@ public class EmployeeService implements IEmployeeService {
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap) {
-        EntityResult result;
-
         attrMap.put(UserDAO.ROLE_NAME, RoleNames.EMPLOYEE);
-        try {
-            result = userService.userInsert(attrMap);
-            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            result.setMessage(IUserService.USER_INSERT_SUCCESS);
-        } catch (Exception e) {
-            result = new EntityResultMapImpl();
-            result.setMessage(e.getMessage());
-            result.setCode(EntityResult.OPERATION_WRONG);
-            e.printStackTrace();
-        }
 
-        return result;
+        return userService.userInsert(attrMap);
     }
 
     @Override
@@ -62,7 +50,7 @@ public class EmployeeService implements IEmployeeService {
             }
 
             if (!userService.getUserRoles(loginName).contains(RoleNames.EMPLOYEE)) {
-                throw new AccessDeniedException("Cannot delete this user");
+                throw new AccessDeniedException(ERR_CANNOT_DELETE_USER);
             }
 
             result = userService.userDelete(keyMap);
@@ -77,7 +65,7 @@ public class EmployeeService implements IEmployeeService {
 
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) {
+    public EntityResult employeeUpdate(Map<? super Object, ? super Object> filter, Map<? super Object, ? super Object> attrMap) {
 
         EntityResult result;
 
