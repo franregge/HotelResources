@@ -201,7 +201,6 @@ public class UserService implements IUserService {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
-            e.printStackTrace();
         }
 
         return result;
