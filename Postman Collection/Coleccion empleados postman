@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "5d44a32c-8e15-44b0-827b-bd59d2e89da0",
-		"name": "ProxectoBootcamp",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "27243479"
+		"_postman_id": "b0ecbbc8-9159-4b71-9f9c-39e4734901d6",
+		"name": "ProxectoBootcamp Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27447544"
 	},
 	"item": [
 		{
@@ -17,10 +17,18 @@
 							"request": {
 								"auth": {
 									"type": "basic",
-									"basic": {
-										"username": "manager",
-										"password": "Manager1234"
-									}
+									"basic": [
+										{
+											"key": "username",
+											"value": "manager",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "Manager1234",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -33,7 +41,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/hotel"
+								"url": {
+									"raw": "localhost:30030/hotels/hotel",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"hotel"
+									]
+								}
 							},
 							"response": []
 						},
@@ -83,7 +101,18 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/hotel/search"
+								"url": {
+									"raw": "localhost:30030/hotels/hotel/search",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"hotel",
+										"search"
+									]
+								}
 							},
 							"response": []
 						},
@@ -101,7 +130,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/hotel"
+								"url": {
+									"raw": "localhost:30030/hotels/hotel",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"hotel"
+									]
+								}
 							},
 							"response": []
 						}
@@ -124,7 +163,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/room"
+								"url": {
+									"raw": "localhost:30030/rooms/room",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"room"
+									]
+								}
 							},
 							"response": []
 						},
@@ -142,7 +191,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/room"
+								"url": {
+									"raw": "localhost:30030/rooms/room",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"room"
+									]
+								}
 							},
 							"response": []
 						},
@@ -160,7 +219,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/room"
+								"url": {
+									"raw": "localhost:30030/rooms/room",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"room"
+									]
+								}
 							},
 							"response": []
 						},
@@ -178,7 +247,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/room"
+								"url": {
+									"raw": "localhost:30030/rooms/room",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"room"
+									]
+								}
 							},
 							"response": []
 						},
@@ -196,7 +275,18 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/room/search"
+								"url": {
+									"raw": "localhost:30030/rooms/room/search",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"room",
+										"search"
+									]
+								}
 							},
 							"response": []
 						}
@@ -219,7 +309,18 @@
 										}
 									}
 								},
-								"url": "localhost:30030/bookings/booking/search"
+								"url": {
+									"raw": "localhost:30030/bookings/booking/search",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"bookings",
+										"booking",
+										"search"
+									]
+								}
 							},
 							"response": []
 						},
@@ -237,7 +338,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/bookings/booking"
+								"url": {
+									"raw": "localhost:30030/bookings/booking",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"bookings",
+										"booking"
+									]
+								}
 							},
 							"response": []
 						},
@@ -255,7 +366,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/bookings/booking"
+								"url": {
+									"raw": "localhost:30030/bookings/booking",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"bookings",
+										"booking"
+									]
+								}
 							},
 							"response": []
 						},
@@ -264,10 +385,18 @@
 							"request": {
 								"auth": {
 									"type": "basic",
-									"basic": {
-										"username": "manager",
-										"password": "Manager1234"
-									}
+									"basic": [
+										{
+											"key": "username",
+											"value": "manager",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "Manager1234",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -280,7 +409,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/bookings/booking"
+								"url": {
+									"raw": "localhost:30030/bookings/booking",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"bookings",
+										"booking"
+									]
+								}
 							},
 							"response": []
 						}
@@ -294,23 +433,41 @@
 							"request": {
 								"auth": {
 									"type": "basic",
-									"basic": {
-										"username": "manager",
-										"password": "Manager1234"
-									}
+									"basic": [
+										{
+											"key": "username",
+											"value": "manager",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "Manager1234",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n   \"data\":{\r\n        \"login_name\":\"JuanasPerez66\",\r\n        \"role_id\":6,\r\n        \"id_document\":\"66955662V\",\r\n        \"user_name\":\"Juan\",\r\n        \"surname1\":\"Perez\",\r\n        \"country_id\":1,\r\n        \"phone_number\":666666666,\r\n        \"email\":\"nojuanitas@micorreo.com\",\r\n        \"user_password\":\"Juana1234\"\r\n        \r\n    }\r\n}",
+									"raw": "{\r\n   \"data\":{\r\n        \"login_name\":\"JuanasPerez66\",\r\n        \"role_id\":6,\r\n        \"id_document\":\"66955662V\",\r\n        \"user_name\":\"Juan\",\r\n        \"surname1\":\"Perez\",\r\n        \"country_id\":1,\r\n        \"phone_number\":\"666666666\",\r\n        \"email\":\"nojuanitas@micorreo.com\",\r\n        \"user_password\":\"Juana1234\"\r\n        \r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "localhost:30030/users/user"
+								"url": {
+									"raw": "localhost:30030/users/user",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"users",
+										"user"
+									]
+								}
 							},
 							"response": []
 						},
@@ -328,7 +485,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/users/user"
+								"url": {
+									"raw": "localhost:30030/users/user",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"users",
+										"user"
+									]
+								}
 							},
 							"response": []
 						},
@@ -346,7 +513,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/users/user"
+								"url": {
+									"raw": "localhost:30030/users/user",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"users",
+										"user"
+									]
+								}
 							},
 							"response": []
 						},
@@ -364,7 +541,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/users/user"
+								"url": {
+									"raw": "localhost:30030/users/user",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"users",
+										"user"
+									]
+								}
 							},
 							"response": []
 						}
@@ -378,23 +565,122 @@
 							"request": {
 								"auth": {
 									"type": "basic",
-									"basic": {
-										"password": "Manager1234",
-										"username": "manager"
-									}
+									"basic": [
+										{
+											"key": "password",
+											"value": "Manager1234",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "manager",
+											"type": "string"
+										}
+									]
 								},
 								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n   \"filter\":{\r\n        \"login_name\":\"empleado1\" \r\n    },\r\n    \"data\":{\r\n        \"login_name\":\"empleado1\",\r\n        \"id_document\":\"35581834Y\",\r\n        \"user_password\":\"Hola1234\"\r\n    \r\n    }\r\n}",
+									"raw": "{\r\n   \"filter\":{\r\n        \"login_name\":\"empleado1\" \r\n    },\r\n    \"data\":{\r\n        \"login_name\":\"empleado1\",\r\n        \"id_document\":\"35581834Y\",\r\n        \"user_password\":\"Hola12345\"\r\n    \r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "localhost:30030/employees/employee"
+								"url": {
+									"raw": "localhost:30030/employees/employee",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"employees",
+										"employee"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete employee",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "Manager1234",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "manager",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"filter\":{\r\n        \"login_name\":\"empleado1\" \r\n    },\r\n    \"data\":{\r\n        \"login_name\":\"empleado1\",\r\n        \"id_document\":\"35581834Y\",\r\n        \"user_password\":\"Hola1234\"\r\n    \r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "localhost:30030/employees/employee",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"employees",
+										"employee"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "insert employee",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "Manager1234",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "manager",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"data\":{\r\n        \"login_name\":\"JuanPerez8\",\r\n        \"role_id\":6,\r\n        \"id_document\":\"66955662V\",\r\n        \"user_name\":\"Juan\",\r\n        \"surname1\":\"Perez\",\r\n        \"country_id\":1,\r\n        \"phone_number\":\"666666666\",\r\n        \"email\":\"sijuanitas@micorreo.com\",\r\n        \"user_password\":\"Juana1234\",\r\n        \"shift\": \"first\"\r\n        \r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:30030/employees/employee",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"employees",
+										"employee"
+									]
+								}
 							},
 							"response": []
 						}
@@ -422,7 +708,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/add"
+								"url": {
+									"raw": "localhost:30030/rooms/add",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"add"
+									]
+								}
 							},
 							"response": []
 						},
@@ -440,7 +736,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/add"
+								"url": {
+									"raw": "localhost:30030/rooms/add",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"add"
+									]
+								}
 							},
 							"response": []
 						},
@@ -458,7 +764,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/add"
+								"url": {
+									"raw": "localhost:30030/rooms/add",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"add"
+									]
+								}
 							},
 							"response": []
 						},
@@ -476,7 +792,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/delete"
+								"url": {
+									"raw": "localhost:30030/rooms/delete",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"delete"
+									]
+								}
 							},
 							"response": []
 						},
@@ -494,7 +820,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/rooms/delete"
+								"url": {
+									"raw": "localhost:30030/rooms/delete",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"rooms",
+										"delete"
+									]
+								}
 							},
 							"response": []
 						}
@@ -517,7 +853,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/add"
+								"url": {
+									"raw": "localhost:30030/hotels/add",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"add"
+									]
+								}
 							},
 							"response": []
 						},
@@ -535,7 +881,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/remove"
+								"url": {
+									"raw": "localhost:30030/hotels/remove",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"remove"
+									]
+								}
 							},
 							"response": []
 						},
@@ -553,7 +909,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/remove"
+								"url": {
+									"raw": "localhost:30030/hotels/remove",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"remove"
+									]
+								}
 							},
 							"response": []
 						},
@@ -571,7 +937,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/add"
+								"url": {
+									"raw": "localhost:30030/hotels/add",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"add"
+									]
+								}
 							},
 							"response": []
 						},
@@ -589,7 +965,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/add"
+								"url": {
+									"raw": "localhost:30030/hotels/add",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"add"
+									]
+								}
 							},
 							"response": []
 						},
@@ -607,7 +993,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/update"
+								"url": {
+									"raw": "localhost:30030/hotels/update",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"update"
+									]
+								}
 							},
 							"response": []
 						},
@@ -625,7 +1021,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/update"
+								"url": {
+									"raw": "localhost:30030/hotels/update",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"update"
+									]
+								}
 							},
 							"response": []
 						},
@@ -643,7 +1049,17 @@
 										}
 									}
 								},
-								"url": "localhost:30030/hotels/update"
+								"url": {
+									"raw": "localhost:30030/hotels/update",
+									"host": [
+										"localhost"
+									],
+									"port": "30030",
+									"path": [
+										"hotels",
+										"update"
+									]
+								}
 							},
 							"response": []
 						}
