@@ -43,7 +43,8 @@ public class EmployeeService implements IEmployeeService {
         Map<String, String> filter = new HashMap<>();
         filter.put(UserRoleDAO.NAME, RoleNames.EMPLOYEE);
         List<String> queriedAttrs = List.of(UserRoleDAO.ID);
-        Integer roleId = (Integer) daoHelper.query(userRoleDAO, filter, queriedAttrs).getRecordValues(0).get(UserRoleDAO.ID);
+        EntityResult roleQueryEntityResult = daoHelper.query(userRoleDAO, filter, queriedAttrs);
+        Integer roleId = (Integer) roleQueryEntityResult.getRecordValues(0).get(UserRoleDAO.ID);
         attrMap.put(UserDAO.ROLE_ID, roleId);
 
         return userService.userInsert(attrMap);
