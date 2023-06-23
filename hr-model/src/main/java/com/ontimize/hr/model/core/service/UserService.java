@@ -203,7 +203,7 @@ public class UserService implements IUserService {
 
             Map<String, ? super Object> roleInsertAttributes = new HashMap<>();
             roleInsertAttributes.put(UsersRolesDAO.LOGIN_NAME, attrMap.get(UserDAO.LOGIN_NAME));
-            roleInsertAttributes.put(UsersRolesDAO.ROLE_NAME, attrMap.get(UserDAO.ROLE_NAME));
+            roleInsertAttributes.put(UsersRolesDAO.ROLE_ID, attrMap.get(UserDAO.ROLE_ID));
 
             this.daoHelper.insert(usersRolesDAO, roleInsertAttributes);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);

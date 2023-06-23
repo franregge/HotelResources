@@ -17,4 +17,5 @@ public class UsersRolesDAO extends OntimizeJdbcDaoSupport {
     public static final String LOGIN_NAME = "login_name";
     public static final String ROLE_NAME = "rolename";
 
+    public static final String ROLE_ID = "role_id";
 }
