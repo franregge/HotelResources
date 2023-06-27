@@ -12,14 +12,16 @@ import org.springframework.stereotype.Repository;
         configurationFilePlaceholder = "dao/placeholders.properties")
 public class ShiftDAO extends OntimizeJdbcDaoSupport {
 
-    public final String ID = "id";
-    public final String ROLE_ID = "role_id";
-    public final String MON = "mon";
-    public final String TUE = "tue";
-    public final String WED = "wed";
-    public final String THU = "thu";
-    public final String FRI = "fri";
-    public final String SAT = "sat";
-    public final String SUN = "sun";
+    public static final String ID = "id";
+    public static final String ROLE_ID = "role_id";
+    public static final String MON = "mon";
+    public static final String TUE = "tue";
+    public static final String WED = "wed";
+    public static final String THU = "thu";
+    public static final String FRI = "fri";
+    public static final String SAT = "sat";
+    public static final String SUN = "sun";
+    public static final String LOGIN_NAMES = "login_names";
+    public static final String ROLE_NAME = "role_name";
 
 }
