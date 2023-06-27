@@ -23,6 +23,7 @@
                 <Column>phone_number</Column>
                 <Column>email</Column>
                 <Column>user_password</Column>
+                <Column>shift_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -45,6 +46,7 @@
                 <Column>phone_number</Column>
                 <Column>email</Column>
                 <Column>user_password</Column>
+                <Column>shift_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[

@@ -8,6 +8,9 @@ DROP TABLE IF EXISTS public.roles CASCADE;
 DROP TABLE IF EXISTS public.countries;
 DROP TABLE IF EXISTS public.countries;
 DROP TABLE IF EXISTS public.roles_users;
+DROP TABLE IF EXISTS public.shifts;
+DROP TABLE IF EXISTS public.users_days_off;
+
 
 CREATE TABLE public.hotels
 (
@@ -44,8 +47,12 @@ CREATE TABLE public.users
     phone_number  VARCHAR(255) NOT NULL,
     email         VARCHAR(255) NOT NULL UNIQUE,
     user_password VARCHAR(255) NOT NULL,
+    shift_id INT,
     foreign key (country_id) references public.countries (id)
         on delete restrict
+        on update cascade,
+    foreign key(shift_id) references public.shifts(id)
+        on delete set null
         on update cascade
 );
 
@@ -105,3 +112,36 @@ create TABLE public.users_shifts
     shift      shift        not null,
     FOREIGN KEY (login_name) REFERENCES users (login_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+create TABLE public.shifts
+(
+	id SERIAL primary key,
+	role_id int,
+	mon char(23),
+	tue char(23),
+	wed char(23),
+	thu char(23),
+	fri char(23),
+	sat char(23),
+	sun char(23),
+
+	foreign key (role_id) references public.roles(role_id) ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+create type day as enum ('monday','tuesday','wednesday','thursday','friday','saturday','sunday');
+
+create table public.users_days_off
+(
+	id serial not null primary key,
+	login_name varchar(255) not null,
+	day day not null,
+	foreign key(login_name) references public.users(login_name) ON DELETE RESTRICT ON UPDATE CASCADE
+	);
+
+CREATE UNIQUE INDEX CONCURRENTLY u_login_name_day
+    ON users_days_off (login_name, day);
+
+ALTER TABLE users_days_off
+    ADD CONSTRAINT u_login_name_day
+        UNIQUE USING INDEX u_login_name_day;
+
