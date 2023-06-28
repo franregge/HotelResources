@@ -79,6 +79,7 @@
             <AmbiguousColumns>
                 <AmbiguousColumn name="login_name" prefix="u" />
                 <AmbiguousColumn name="role_id" prefix="r" />
+                <AmbiguousColumn name="rolename" prefix="r" />
             </AmbiguousColumns>
             <Sentence>
                 <![CDATA[
