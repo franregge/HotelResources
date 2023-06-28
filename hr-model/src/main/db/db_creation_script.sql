@@ -117,13 +117,13 @@ create TABLE public.shifts
 (
 	id SERIAL primary key,
 	role_id int,
-	mon char(23),
-	tue char(23),
-	wed char(23),
-	thu char(23),
-	fri char(23),
-	sat char(23),
-	sun char(23),
+	mon varchar(23),
+	tue varchar(23),
+	wed varchar(23),
+	thu varchar(23),
+	fri varchar(23),
+	sat varchar(23),
+	sun varchar(23),
 
 	foreign key (role_id) references public.roles(role_id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
