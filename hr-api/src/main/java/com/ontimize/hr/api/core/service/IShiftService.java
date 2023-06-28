@@ -15,7 +15,7 @@ public interface IShiftService {
 
     EntityResult shiftDelete(Map<?, ?> keyMap);
 
-    String E_MORE_THAN_40H = "Employees cannot work more than 40 hours in a week";
+    String E_MORE_THAN_40H = "This employee cannot work more than 40 hours in a week : ";
     String E_EMPLOYEE_ROLE_MISMATCH = "Employee role has to match shift role";
     String OPERATION_SUCCESS = "Shift inserted successfully";
 
@@ -26,5 +26,6 @@ public interface IShiftService {
     String INVALID_DAY_OFF = "This day off is not valid";
 
     String ALL_DAYS_OFF = "Employees can't have all days off";
+    String E_INVALID_DAY_OFF_SAVED = "Employee has invalid day off";
 
 }
