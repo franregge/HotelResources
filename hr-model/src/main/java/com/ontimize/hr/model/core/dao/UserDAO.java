@@ -29,4 +29,6 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
 
     public static final String SHIFT_ID = "shift_id";
 
+    public static final String DAYS_OFF = "days_off";
+
 }

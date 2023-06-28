@@ -1,10 +1,7 @@
 package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IShiftService;
-import com.ontimize.hr.api.core.service.exception.EmployeeNotFoundException;
-import com.ontimize.hr.api.core.service.exception.InvalidWeeklyHoursException;
-import com.ontimize.hr.api.core.service.exception.UserDataException;
-import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
+import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.ShiftDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
@@ -203,7 +200,7 @@ public class ShiftService implements IShiftService {
         return null;
     }
 
-    private void validateWeeklyHours(Map<?, ?> attrMap) throws InvalidWeeklyHoursException {
+    private void validateWeeklyHours(Map<?, ?> attrMap) throws InvalidShiftException {
         Map<?, ?> monday = (Map) attrMap.get(shiftDAO.MON);
         String mondayStart = (String) monday.get("start");
         String mondayEnd = (String) monday.get("end");
@@ -255,10 +252,17 @@ public class ShiftService implements IShiftService {
         Integer sundayDuration = Integer.valueOf((int) Duration.between(sundayStartTime, sundayEndTime).toHours());
 
         if (mondayDuration + tuesdayDuration + wednesdayDuration + thursdayDuration + fridayDuration + saturdayDuration + sundayDuration > 40) {
-            throw new InvalidWeeklyHoursException(IShiftService.E_MORE_THAN_40H);
+            throw new InvalidShiftException(IShiftService.E_MORE_THAN_40H);
+        }
+
+        if (mondayEndTime.isBefore(mondayStartTime) || tuesdayEndTime.isBefore(tuesdayStartTime) || wednesdayEndTime.isBefore(wednesdayStartTime) ||
+            thursdayEndTime.isBefore(thursdayStartTime) || fridayEndTime.isBefore(fridayStartTime) || saturdayEndTime.isBefore(saturdayStartTime)||
+            sundayEndTime.isBefore(sundayStartTime)){
+            throw new InvalidShiftException(END_BEFORE_START);
         }
     }
     //Comprobar que o empregado ten o rol propio do turno
+
 
     private void roleMatcher(Map<?, ?> attrMap) throws Exception {
         List<String> employeeLoginNames = (List) attrMap.get(ShiftDAO.LOGIN_NAMES);
