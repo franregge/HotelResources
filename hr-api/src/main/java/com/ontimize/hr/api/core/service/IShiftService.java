@@ -17,7 +17,9 @@ public interface IShiftService {
 
     String E_MORE_THAN_40H = "This employee cannot work more than 40 hours in a week : ";
     String E_EMPLOYEE_ROLE_MISMATCH = "Employee role has to match shift role";
-    String OPERATION_SUCCESS = "Shift inserted successfully";
+    String INSERTION_SUCCESS = "Shift inserted successfully";
+    String UPDATE_SUCCESS = "Shift updated successfully";
+
 
     String END_BEFORE_START = "Shift end time must be after the start time";
 
