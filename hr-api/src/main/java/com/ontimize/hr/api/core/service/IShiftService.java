@@ -30,4 +30,6 @@ public interface IShiftService {
     String ALL_DAYS_OFF = "Employees can't have all days off";
     String E_INVALID_DAY_OFF_SAVED = "Employee has invalid day off";
 
+    String MULTIPLE_SHIFTS = "The employee has more than one shift";
+
 }

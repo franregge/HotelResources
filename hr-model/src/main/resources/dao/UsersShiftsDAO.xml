@@ -6,19 +6,16 @@
         catalog="" schema="${mainschema}" table="users_shifts"
         datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
     <DeleteKeys>
-        <Column>id</Column>
+        <Column>login_name</Column>
     </DeleteKeys>
     <UpdateKeys>
-        <Column>id</Column>
+        <Column>login_name</Column>
     </UpdateKeys>
-    <GeneratedKey>id</GeneratedKey>
     <Queries>
         <Query id="default">
             <ValidColumns>
                 <Column>shift_id</Column>
                 <Column>login_name</Column>
-                 <Column>id</Column>
-
             </ValidColumns>
             <Sentence>
                 <![CDATA[

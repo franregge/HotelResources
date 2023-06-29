@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -128,11 +129,16 @@ public class ShiftService implements IShiftService {
             result = this.daoHelper.insert(this.shiftDAO, attrMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IShiftService.INSERTION_SUCCESS);
-        } catch (Exception e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(IShiftService.MULTIPLE_SHIFTS);
+            result.setCode(EntityResult.OPERATION_WRONG);
+        }  catch (Exception e){
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
         }
+
         return result;
     }
 
