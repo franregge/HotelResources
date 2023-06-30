@@ -22,6 +22,8 @@ public class ShiftDAO extends OntimizeJdbcDaoSupport {
     public static final String SAT = "saturday";
     public static final String SUN = "sunday";
     public static final String LOGIN_NAMES = "login_names";
+
+    public static final String LOGIN_NAME = "login_name";
     public static final String ROLE_NAME = "role_name";
 
     public static final String ROLENAME = "rolename";

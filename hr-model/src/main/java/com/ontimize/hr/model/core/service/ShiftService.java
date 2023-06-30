@@ -1,15 +1,19 @@
 package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IShiftService;
+import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.*;
 import com.ontimize.hr.model.core.dao.*;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -33,8 +37,13 @@ public class ShiftService implements IShiftService {
     private UserRoleDAO userRoleDAO;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmployeeService employeeService;
     @Autowired
     private UsersDaysOffDAO usersDaysOffDao;
+    @Autowired
+    private UserDAO userDAO;
     @Autowired
     private UsersShiftsDAO usersShiftsDAO;
     @Secured({PermissionsProviderSecured.SECURED})
@@ -145,18 +154,28 @@ public class ShiftService implements IShiftService {
 
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
-    public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) {
+    public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) throws UserDoesNotExistException {
 
         //TODO: el campo de empleados en el turno puede ser nulo
 
         EntityResult result;
         try {
 
-            List<String> attrbuteQueriedList = List.of(ShiftDAO.MON, ShiftDAO.SUN, ShiftDAO.SAT, ShiftDAO.FRI, ShiftDAO.THU, ShiftDAO.WED, ShiftDAO.TUE, ShiftDAO.LOGIN_NAMES);
+            List<String> attrbuteQueriedList = List.of(ShiftDAO.MON, ShiftDAO.SUN, ShiftDAO.SAT, ShiftDAO.FRI, ShiftDAO.THU, ShiftDAO.WED, ShiftDAO.TUE, ShiftDAO.LOGIN_NAMES, ShiftDAO.ROLE_ID);
 
             Map<?, ?> originalShiftDays = new HashMap<>();
             originalShiftDays = daoHelper.query(shiftDAO, keyMap, attrbuteQueriedList).getRecordValues(0);
 
+            //Map<? super Object,? super Object> roleEmployeesFilterValidateExistence = new HashMap<>();
+            //roleEmployeesFilterValidateExistence.put(ShiftDAO.ROLE_ID,originalShiftDays.get(ShiftDAO.ROLE_ID));
+//
+            //EntityResult userQueryResult = daoHelper.query(userDAO, roleEmployeesFilterValidateExistence,List.of(UserDAO.LOGIN_NAME));
+            //userQueryResult.getRecordValues(0).get(ShiftDAO.LOGIN_NAMES);
+            //if(!(userQueryResult).contains(attrMap.get(ShiftDAO.LOGIN_NAMES))){
+            //    throw new UserDoesNotExistException(IUserService.NO_USER_FOUND);
+            //}
+//
+//
             Map<String, String> monday = (Map<String, String>) attrMap.get(shiftDAO.MON);
             if (monday == null) {
                 monday = new HashMap<>();
@@ -235,9 +254,11 @@ public class ShiftService implements IShiftService {
             String sundayStart = (String) sunday.get("start");
             String sundayEnd = (String) sunday.get("end");
 
+            if(attrMap.get(ShiftDAO.ROLE_ID)==null){
+                attrMap.put(ShiftDAO.ROLE_ID,originalShiftDays.get(ShiftDAO.ROLE_ID));
+            }
 
             validateUpdateShift(attrMap, keyMap);
-
 
             updateRoleMatcher(attrMap);
 
@@ -287,6 +308,11 @@ public class ShiftService implements IShiftService {
             result = this.daoHelper.update(this.shiftDAO, attrMap, keyMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IShiftService.UPDATE_SUCCESS);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(IShiftService.MULTIPLE_SHIFTS);
+            result.setCode(EntityResult.OPERATION_WRONG);
+
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
@@ -294,6 +320,7 @@ public class ShiftService implements IShiftService {
             e.printStackTrace();
 
         }
+
         return result;
     }
 

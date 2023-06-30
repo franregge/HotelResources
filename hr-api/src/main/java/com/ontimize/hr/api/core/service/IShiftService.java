@@ -1,5 +1,6 @@
 package com.ontimize.hr.api.core.service;
 
+import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.jee.common.dto.EntityResult;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface IShiftService {
 
     EntityResult shiftInsert(Map<? super Object, ? super Object> attrMap);
 
-    EntityResult shiftUpdate(Map<? super Object, ? super  Object> attrMap, Map<?, ?> keyMap);
+    EntityResult shiftUpdate(Map<? super Object, ? super  Object> attrMap, Map<?, ?> keyMap) throws UserDoesNotExistException;
 
     EntityResult shiftDelete(Map<?, ?> keyMap);
 
