@@ -137,6 +137,7 @@ public class ShiftService implements IShiftService {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
+            e.printStackTrace();
         }
 
         return result;
@@ -190,12 +191,12 @@ public class ShiftService implements IShiftService {
             String wednesdayStart = (String) wednesday.get("start");
             String wednesdayEnd = (String) wednesday.get("end");
 
-            Map<?, ?> thursday = (Map) attrMap.get(shiftDAO.THU);
+            Map<String, String> thursday = (Map) attrMap.get(shiftDAO.THU);
             if (thursday == null) {
                 thursday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.THU))).split("-");
-                wednesday.put("start", arrayHours[0]);
-                wednesday.put("end", arrayHours[1]);
+                thursday.put("start", arrayHours[0]);
+                thursday.put("end", arrayHours[1]);
                 attrMap.put(ShiftDAO.THU, thursday);
             }
             String thursdayStart = (String) thursday.get("start");
@@ -261,7 +262,7 @@ public class ShiftService implements IShiftService {
 
             if (shiftEmployees != null) {
                 Map<String, String> roleEmployeesFilter = new HashMap<>();
-                roleEmployeesFilter.put(UserDAO.ROLE_NAME, (String) attrMap.get(ShiftDAO.ROLE_NAME));
+                roleEmployeesFilter.put(UserDAO.ROLE_NAME, (String) attrMap.get(ShiftDAO.ROLENAME));
 
                 List<String> roleEmployees = (List<String>) userService
                         .userIdentifiedQuery(
@@ -549,7 +550,8 @@ public class ShiftService implements IShiftService {
     private void roleMatcher(Map<?, ?> attrMap) throws Exception {
         List<String> employeeLoginNames = (List) attrMap.get(ShiftDAO.LOGIN_NAMES);
         for (String employeeLoginName : employeeLoginNames) {
-            if (!(userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLE_NAME))) {
+            if (!((userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLE_NAME)))) {
+
                 throw new Exception(IShiftService.E_EMPLOYEE_ROLE_MISMATCH + ", " + employeeLoginName + " does not match");
             }
         }
@@ -560,10 +562,10 @@ public class ShiftService implements IShiftService {
         Map<?super Object,?super Object>keymapRoleId= new HashMap<>();
         keymapRoleId.put(ShiftDAO.ROLE_ID,attrMap.get(ShiftDAO.ROLE_ID));
         EntityResult employeeRolename = this.daoHelper.query(userRoleDAO,keymapRoleId, List.of(UserRoleDAO.NAME));
-        attrMap.put(ShiftDAO.ROLE_NAME,(employeeRolename.getRecordValues(0)).get(ShiftDAO.ROLE_NAME));
+        attrMap.put(ShiftDAO.ROLENAME,(employeeRolename.getRecordValues(0)).get(ShiftDAO.ROLENAME));
 
         for (String employeeLoginName : employeeLoginNames) {
-            if (!(userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLE_NAME))) {
+            if (!((userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLENAME)))) {
                 throw new Exception(IShiftService.E_EMPLOYEE_ROLE_MISMATCH + ", " + employeeLoginName + " does not match");
             }
         }
