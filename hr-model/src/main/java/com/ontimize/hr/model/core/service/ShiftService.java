@@ -519,7 +519,7 @@ public class ShiftService implements IShiftService {
             employeeLoginNames = new ArrayList<>();
             List<String> queriedAtributeList = List.of(UserDAO.LOGIN_NAME,ShiftDAO.ROLE_ID);
             Map<? super Object, ? super Object> originalEmployeeLoginNames = new HashMap<>();
-            EntityResult usersInOriginalShiftResult = new EntityResultMapImpl();
+            EntityResult usersInOriginalShiftResult;
             usersInOriginalShiftResult = this.daoHelper.query(usersShiftsDAO, keyMap, queriedAtributeList, UsersShiftsDAO.Q_USERS_SHIFTS);
             originalEmployeeLoginNames.put(ShiftDAO.LOGIN_NAMES, (usersInOriginalShiftResult.get(UsersShiftsDAO.LOGIN_NAME)));
 
@@ -538,6 +538,10 @@ public class ShiftService implements IShiftService {
             employeeLoginNameFilter.put(UserDAO.LOGIN_NAME, employeeLoginNames.get(i));
 
             EntityResult daysOffPerEmployee = this.daoHelper.query(usersDaysOffDao, employeeLoginNameFilter, queriedAtributeList);
+
+            if (daysOffPerEmployee.isEmpty()) {
+                throw new EmployeeNotFoundException(ShiftDAO.E_EMPLOYEES_NOT_FOUND + employeeLoginNameFilter.get(UserDAO.LOGIN_NAME));
+            }
 
             List<String> daysOffListPerEmployee = (List<String>) daysOffPerEmployee.get(UsersDaysOffDAO.DAY);
             for (String day : daysOffListPerEmployee) {
