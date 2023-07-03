@@ -138,6 +138,17 @@ public class ShiftService implements IShiftService {
             assert roleId != null;
             attrMap.put(ShiftDAO.ROLE_ID, roleId);
             result = this.daoHelper.insert(this.shiftDAO, attrMap);
+
+            if (shiftEmployees != null) {
+                Map<String, Object> employeesShiftsRelationship = new HashMap<>();
+                employeesShiftsRelationship.put(UsersShiftsDAO.SHIFT_ID, result.get(ShiftDAO.ID));
+
+                for (String loginName : shiftEmployees) {
+                    employeesShiftsRelationship.put(UsersShiftsDAO.LOGIN_NAME, loginName);
+                    daoHelper.insert(usersShiftsDAO, employeesShiftsRelationship);
+                }
+            }
+
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IShiftService.INSERTION_SUCCESS);
         } catch (SQLIntegrityConstraintViolationException e) {
