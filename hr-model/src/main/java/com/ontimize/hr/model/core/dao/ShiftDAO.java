@@ -14,15 +14,19 @@ public class ShiftDAO extends OntimizeJdbcDaoSupport {
 
     public static final String ID = "id";
     public static final String ROLE_ID = "role_id";
-    public static final String MON = "mon";
-    public static final String TUE = "tue";
-    public static final String WED = "wed";
-    public static final String THU = "thu";
-    public static final String FRI = "fri";
-    public static final String SAT = "sat";
-    public static final String SUN = "sun";
+    public static final String MON = "monday";
+    public static final String TUE = "tuesday";
+    public static final String WED = "wednesday";
+    public static final String THU = "thursday";
+    public static final String FRI = "friday";
+    public static final String SAT = "saturday";
+    public static final String SUN = "sunday";
     public static final String LOGIN_NAMES = "login_names";
-    public static final String ROLE_NAME = "rolename";
+
+    public static final String LOGIN_NAME = "login_name";
+    public static final String ROLE_NAME = "role_name";
+
+    public static final String ROLENAME = "rolename";
     public static final String E_EMPLOYEES_NOT_FOUND = "The following employees were not found: ";
 
 }

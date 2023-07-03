@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
         configurationFilePlaceholder = "dao/placeholders.properties")
 public class UsersDaysOffDAO extends OntimizeJdbcDaoSupport {
 
-    public final String ID = "id";
-    public final String LOGIN_NAME = "login_name";
-    public final String DAY = "day";
+    public static final String ID = "id";
+    public static final String LOGIN_NAME = "login_name";
+    public static final String DAY = "day";
 }

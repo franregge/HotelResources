@@ -17,13 +17,13 @@
             <ValidColumns>
                 <Column>id</Column>
                 <Column>role_id</Column>
-                <Column>mon</Column>
-                <Column>tue</Column>
-                <Column>wed</Column>
-                <Column>thu</Column>
-                <Column>fri</Column>
-                <Column>sat</Column>
-                <Column>sun</Column>
+                <Column>monday</Column>
+                <Column>tuesday</Column>
+                <Column>wednesday</Column>
+                <Column>thursday</Column>
+                <Column>friday</Column>
+                <Column>saturday</Column>
+                <Column>sunday</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JdbcEntitySetup
+        xmlns="http://www.ontimize.com/schema/jdbc"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ontimize.com/schema/jdbc http://www.ontimize.com/schema/jdbc/ontimize-jdbc-dao.xsd"
+        catalog="" schema="${mainschema}" table="users_shifts"
+        datasource="mainDataSource" sqlhandler="dbSQLStatementHandler">
+    <DeleteKeys>
+        <Column>login_name</Column>
+    </DeleteKeys>
+    <UpdateKeys>
+        <Column>login_name</Column>
+    </UpdateKeys>
+    <Queries>
+        <Query id="default">
+            <ValidColumns>
+                <Column>shift_id</Column>
+                <Column>login_name</Column>
+            </ValidColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.users_shifts
+                    #WHERE#
+                ]]>
+            </Sentence>
+        </Query>
+        <Query id="login">
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM ${mainschema}.users_shifts
+                    #WHERE#
+                    #ORDER#
+                ]]>
+            </Sentence>
+        </Query>
+        <Query id="userShift">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="login_name" prefix="us" />
+                <AmbiguousColumn name="id" prefix="s" />
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+					select
+						#COLUMNS#
+					from
+						${mainschema}.users u
+						JOIN ${mainschema}.users_shifts us ON u.login_name = us.login_name
+						JOIN ${mainschema}.shifts s ON us.shift_id = s.id
+					#WHERE#
+					#ORDER#
+					]]>
+            </Sentence>
+        </Query>
+    </Queries>
+</JdbcEntitySetup>
