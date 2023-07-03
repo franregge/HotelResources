@@ -25,8 +25,7 @@ public class ShiftDAO extends OntimizeJdbcDaoSupport {
 
     public static final String LOGIN_NAME = "login_name";
     public static final String ROLE_NAME = "role_name";
-
+    public static final String DELETE_SHIFT_EMPLOYEES = "delete_login_names";
     public static final String ROLENAME = "rolename";
     public static final String E_EMPLOYEES_NOT_FOUND = "The following employees were not found: ";
-
 }

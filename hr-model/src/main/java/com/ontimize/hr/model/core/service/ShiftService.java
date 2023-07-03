@@ -11,6 +11,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.User;
@@ -140,13 +141,7 @@ public class ShiftService implements IShiftService {
             result = this.daoHelper.insert(this.shiftDAO, attrMap);
 
             if (shiftEmployees != null) {
-                Map<String, Object> employeesShiftsRelationship = new HashMap<>();
-                employeesShiftsRelationship.put(UsersShiftsDAO.SHIFT_ID, result.get(ShiftDAO.ID));
-
-                for (String loginName : shiftEmployees) {
-                    employeesShiftsRelationship.put(UsersShiftsDAO.LOGIN_NAME, loginName);
-                    daoHelper.insert(usersShiftsDAO, employeesShiftsRelationship);
-                }
+                insertShiftEmployees(result, shiftEmployees);
             }
 
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
@@ -165,6 +160,16 @@ public class ShiftService implements IShiftService {
         return result;
     }
 
+    private void insertShiftEmployees(EntityResult result, List<String> shiftEmployees) {
+        Map<String, Object> employeesShiftsRelationship = new HashMap<>();
+        employeesShiftsRelationship.put(UsersShiftsDAO.SHIFT_ID, result.get(ShiftDAO.ID));
+
+        for (String loginName : shiftEmployees) {
+            employeesShiftsRelationship.put(UsersShiftsDAO.LOGIN_NAME, loginName);
+            daoHelper.insert(usersShiftsDAO, employeesShiftsRelationship);
+        }
+    }
+
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) throws UserDoesNotExistException {
@@ -176,7 +181,7 @@ public class ShiftService implements IShiftService {
 
             List<String> attrbuteQueriedList = List.of(ShiftDAO.MON, ShiftDAO.SUN, ShiftDAO.SAT, ShiftDAO.FRI, ShiftDAO.THU, ShiftDAO.WED, ShiftDAO.TUE, ShiftDAO.LOGIN_NAMES, ShiftDAO.ROLE_ID);
 
-            Map<?, ?> originalShiftDays = new HashMap<>();
+            Map<?, ?> originalShiftDays;
             originalShiftDays = daoHelper.query(shiftDAO, keyMap, attrbuteQueriedList).getRecordValues(0);
 
             //Map<? super Object,? super Object> roleEmployeesFilterValidateExistence = new HashMap<>();
@@ -319,6 +324,18 @@ public class ShiftService implements IShiftService {
 
 
             result = this.daoHelper.update(this.shiftDAO, attrMap, keyMap);
+            result.put(ShiftDAO.ID, keyMap.get(ShiftDAO.ID));
+
+            List<String> deleteShiftEmployees = (List<String>) attrMap.get(ShiftDAO.DELETE_SHIFT_EMPLOYEES);
+            boolean shiftEmployeesIsNull = shiftEmployees == null;
+            boolean deleteShiftEmployeesIsNull = deleteShiftEmployees == null;
+
+            if (!shiftEmployeesIsNull || !deleteShiftEmployeesIsNull) {
+                shiftEmployees = shiftEmployeesIsNull ? new ArrayList<>() : shiftEmployees;
+                deleteShiftEmployees = deleteShiftEmployeesIsNull ? new ArrayList<>() : deleteShiftEmployees;
+                updateShiftEmployees(result, shiftEmployees, deleteShiftEmployees);
+            }
+
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IShiftService.UPDATE_SUCCESS);
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -331,17 +348,31 @@ public class ShiftService implements IShiftService {
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
             e.printStackTrace();
-
         }
 
         return result;
+    }
+
+    private void updateShiftEmployees(EntityResult result, List<String> shiftEmployees, List<String> shiftDeleteEmployees) {
+        Map<String, Integer> employeesShiftsRelationship = new HashMap<>();
+        employeesShiftsRelationship.put(UsersShiftsDAO.SHIFT_ID, (Integer) result.get(ShiftDAO.ID));
+        Map<String, String> employeesShiftsFilter = new HashMap<>();
+
+        for (String loginName : shiftEmployees) {
+            employeesShiftsFilter.put(UsersShiftsDAO.LOGIN_NAME, loginName);
+            daoHelper.update(usersShiftsDAO, employeesShiftsRelationship, employeesShiftsFilter);
+        }
+
+        for (String loginName : shiftDeleteEmployees) {
+            employeesShiftsFilter.put(UsersShiftsDAO.LOGIN_NAME, loginName);
+            daoHelper.delete(usersShiftsDAO, employeesShiftsFilter);
+        }
     }
 
     @Override
     public EntityResult shiftDelete(Map<?, ?> keyMap) {
         return null;
     }
-
 
     private void validateWeeklyHours(Map<?, ?> attrMap) throws Exception {
         //TODO: separar resta de días libres
