@@ -37,6 +37,8 @@ public class ShiftService implements IShiftService {
     private UserRoleDAO userRoleDAO;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UsersRolesDAO usersRolesDAO;
 
     @Autowired
     private EmployeeService employeeService;
@@ -104,12 +106,12 @@ public class ShiftService implements IShiftService {
                 Map<String, String> roleEmployeesFilter = new HashMap<>();
                 roleEmployeesFilter.put(UserDAO.ROLE_NAME, (String) attrMap.get(ShiftDAO.ROLE_NAME));
 
-                List<String> roleEmployees = (List<String>) userService
-                        .userIdentifiedQuery(
+                List<String> roleEmployees = (List<String>) daoHelper
+                        .query(
+                                usersRolesDAO,
                                 roleEmployeesFilter,
-                                List.of(UserDAO.LOGIN_NAME),
-                                UserDAO.Q_EMPLOYEE_QUERY)
-                        .get(UserDAO.LOGIN_NAME);
+                                List.of(UserDAO.LOGIN_NAME)
+                        ).get(UserDAO.LOGIN_NAME);
 
                 List<String> invalidEmployees = shiftEmployees
                         .stream()
@@ -285,12 +287,12 @@ public class ShiftService implements IShiftService {
                 Map<String, String> roleEmployeesFilter = new HashMap<>();
                 roleEmployeesFilter.put(UserDAO.ROLE_NAME, (String) attrMap.get(ShiftDAO.ROLENAME));
 
-                List<String> roleEmployees = (List<String>) userService
-                        .userIdentifiedQuery(
+                List<String> roleEmployees = (List<String>) daoHelper
+                        .query(
+                                usersShiftsDAO,
                                 roleEmployeesFilter,
-                                List.of(UserDAO.LOGIN_NAME),
-                                UserDAO.Q_EMPLOYEE_QUERY)
-                        .get(UserDAO.LOGIN_NAME);
+                                List.of(UserDAO.LOGIN_NAME)
+                        ).get(UserDAO.LOGIN_NAME);
 
                 List<String> invalidEmployees = shiftEmployees
                         .stream()
