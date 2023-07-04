@@ -81,6 +81,13 @@
                 <AmbiguousColumn name="role_id" prefix="r" />
                 <AmbiguousColumn name="rolename" prefix="r" />
             </AmbiguousColumns>
+            <ValidColumns>
+                <Column>u.login_name</Column>
+                <Column>rolename</Column>
+                <Column>shift</Column>
+                <Column>id_document</Column>
+                <Column>role_id</Column>
+            </ValidColumns>
             <Sentence>
                 <![CDATA[
 					select

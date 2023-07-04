@@ -14,6 +14,8 @@ public interface IEmployeeService {
 
     EntityResult employeeDelete(Map<?, ?> keyMap);
 
-    EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap);
+    EntityResult employeeUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> filter);
+
+    String ERR_CANNOT_DELETE_USER = "Cannot delete this user";
 
 }

@@ -7,6 +7,7 @@ import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UsersDaysOffDAO;
+import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -28,6 +29,10 @@ public class EmployeeService implements IEmployeeService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private DefaultOntimizeDaoHelper daoHelper;
+    @Autowired
+    private UserRoleDAO userRoleDAO;
 
     @Autowired
     private UsersDaysOffDAO usersDaysOffDAO;
@@ -83,6 +88,13 @@ public class EmployeeService implements IEmployeeService {
         }
 
         try {
+            Map<String, String> filter = new HashMap<>();
+            filter.put(UserRoleDAO.NAME, RoleNames.EMPLOYEE);
+            List<String> queriedAttrs = List.of(UserRoleDAO.ID);
+            EntityResult roleQueryEntityResult = daoHelper.query(userRoleDAO, filter, queriedAttrs);
+            Integer roleId = (Integer) roleQueryEntityResult.getRecordValues(0).get(UserRoleDAO.ID);
+            attrMap.put(UserDAO.ROLE_ID, roleId);
+
             result = userService.userInsert(attrMap);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
@@ -108,7 +120,7 @@ public class EmployeeService implements IEmployeeService {
             }
 
             if (!userService.getUserRoles(loginName).contains(RoleNames.EMPLOYEE)) {
-                throw new AccessDeniedException("Cannot delete this user");
+                throw new AccessDeniedException(ERR_CANNOT_DELETE_USER);
             }
 
             result = userService.userDelete(keyMap);
@@ -123,7 +135,7 @@ public class EmployeeService implements IEmployeeService {
 
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult employeeUpdate(Map<?, ?> filter, Map<?, ?> attrMap) {
+    public EntityResult employeeUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> filter) {
 
         EntityResult result;
 
