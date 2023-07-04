@@ -36,8 +36,6 @@ public class EmployeeService implements IEmployeeService {
 
     @Autowired
     private UsersDaysOffDAO usersDaysOffDAO;
-    @Autowired
-    private DefaultOntimizeDaoHelper daoHelper;
 
 
 
