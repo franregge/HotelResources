@@ -1,23 +1,19 @@
 package com.ontimize.hr.model.core.service;
 
 import com.ontimize.hr.api.core.service.IShiftService;
-import com.ontimize.hr.api.core.service.IUserService;
-import com.ontimize.hr.api.core.service.exception.*;
+import com.ontimize.hr.api.core.service.exception.EmployeeNotFoundException;
+import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.dao.*;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -40,15 +36,13 @@ public class ShiftService implements IShiftService {
     private UserService userService;
     @Autowired
     private UsersRolesDAO usersRolesDAO;
-
-    @Autowired
-    private EmployeeService employeeService;
     @Autowired
     private UsersDaysOffDAO usersDaysOffDao;
     @Autowired
-    private UserDAO userDAO;
-    @Autowired
     private UsersShiftsDAO usersShiftsDAO;
+    private static final String WORK_DAY_START = "start";
+    private static final String WORK_DAY_END = "end";
+
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult shiftQuery(Map<?, ?> keyMap, List<?> attrList) {
@@ -62,27 +56,27 @@ public class ShiftService implements IShiftService {
         EntityResult result;
         try {
             validateWeeklyHours(attrMap);
-            Map<?, ?> monday = (Map) attrMap.get(shiftDAO.MON);
-            String mondayStart = (String) monday.get("start");
-            String mondayEnd = (String) monday.get("end");
-            Map<?, ?> tuesday = (Map) attrMap.get(shiftDAO.TUE);
-            String tuesdayStart = (String) tuesday.get("start");
-            String tuesdayEnd = (String) tuesday.get("end");
-            Map<?, ?> wednesday = (Map) attrMap.get(shiftDAO.WED);
-            String wednesdayStart = (String) wednesday.get("start");
-            String wednesdayEnd = (String) wednesday.get("end");
-            Map<?, ?> thursday = (Map) attrMap.get(shiftDAO.THU);
-            String thursdayStart = (String) thursday.get("start");
-            String thursdayEnd = (String) thursday.get("end");
-            Map<?, ?> friday = (Map) attrMap.get(shiftDAO.FRI);
-            String fridayStart = (String) friday.get("start");
-            String fridayEnd = (String) friday.get("end");
-            Map<?, ?> saturday = (Map) attrMap.get(shiftDAO.SAT);
-            String saturdayStart = (String) saturday.get("start");
-            String saturdayEnd = (String) saturday.get("end");
-            Map<?, ?> sunday = (Map) attrMap.get(shiftDAO.SUN);
-            String sundayStart = (String) sunday.get("start");
-            String sundayEnd = (String) sunday.get("end");
+            Map<?, ?> monday = (Map<?, ?>) attrMap.get(ShiftDAO.MON);
+            String mondayStart = (String) monday.get(WORK_DAY_START);
+            String mondayEnd = (String) monday.get(WORK_DAY_END);
+            Map<?, ?> tuesday = (Map<?, ?>) attrMap.get(ShiftDAO.TUE);
+            String tuesdayStart = (String) tuesday.get(WORK_DAY_START);
+            String tuesdayEnd = (String) tuesday.get(WORK_DAY_END);
+            Map<?, ?> wednesday = (Map<?, ?>) attrMap.get(ShiftDAO.WED);
+            String wednesdayStart = (String) wednesday.get(WORK_DAY_START);
+            String wednesdayEnd = (String) wednesday.get(WORK_DAY_END);
+            Map<?, ?> thursday = (Map<?, ?>) attrMap.get(ShiftDAO.THU);
+            String thursdayStart = (String) thursday.get(WORK_DAY_START);
+            String thursdayEnd = (String) thursday.get(WORK_DAY_END);
+            Map<?, ?> friday = (Map<?, ?>) attrMap.get(ShiftDAO.FRI);
+            String fridayStart = (String) friday.get(WORK_DAY_START);
+            String fridayEnd = (String) friday.get(WORK_DAY_END);
+            Map<?, ?> saturday = (Map<?, ?>) attrMap.get(ShiftDAO.SAT);
+            String saturdayStart = (String) saturday.get(WORK_DAY_START);
+            String saturdayEnd = (String) saturday.get(WORK_DAY_END);
+            Map<?, ?> sunday = (Map<?, ?>) attrMap.get(ShiftDAO.SUN);
+            String sundayStart = (String) sunday.get(WORK_DAY_START);
+            String sundayEnd = (String) sunday.get(WORK_DAY_END);
 
             roleMatcher(attrMap);
             String monShift = mondayStart + "-" + mondayEnd;
@@ -150,7 +144,7 @@ public class ShiftService implements IShiftService {
             result = new EntityResultMapImpl();
             result.setMessage(IShiftService.MULTIPLE_SHIFTS);
             result.setCode(EntityResult.OPERATION_WRONG);
-        }  catch (Exception e){
+        } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
@@ -170,12 +164,10 @@ public class ShiftService implements IShiftService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
-    public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) throws UserDoesNotExistException {
-
-        //TODO: el campo de empleados en el turno puede ser nulo
-
+    public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) {
         EntityResult result;
         try {
 
@@ -184,96 +176,86 @@ public class ShiftService implements IShiftService {
             Map<?, ?> originalShiftDays;
             originalShiftDays = daoHelper.query(shiftDAO, keyMap, attrbuteQueriedList).getRecordValues(0);
 
-            //Map<? super Object,? super Object> roleEmployeesFilterValidateExistence = new HashMap<>();
-            //roleEmployeesFilterValidateExistence.put(ShiftDAO.ROLE_ID,originalShiftDays.get(ShiftDAO.ROLE_ID));
-//
-            //EntityResult userQueryResult = daoHelper.query(userDAO, roleEmployeesFilterValidateExistence,List.of(UserDAO.LOGIN_NAME));
-            //userQueryResult.getRecordValues(0).get(ShiftDAO.LOGIN_NAMES);
-            //if(!(userQueryResult).contains(attrMap.get(ShiftDAO.LOGIN_NAMES))){
-            //    throw new UserDoesNotExistException(IUserService.NO_USER_FOUND);
-            //}
-//
-//
-            Map<String, String> monday = (Map<String, String>) attrMap.get(shiftDAO.MON);
+            Map<String, String> monday = (Map<String, String>) attrMap.get(ShiftDAO.MON);
             if (monday == null) {
                 monday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.MON))).split("-");
-                monday.put("start", arrayHours[0]);
-                monday.put("end", arrayHours[1]);
+                monday.put(WORK_DAY_START, arrayHours[0]);
+                monday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.MON, monday);
 
             }
-            String mondayStart = monday.get("start");
-            String mondayEnd = monday.get("end");
+            String mondayStart = monday.get(WORK_DAY_START);
+            String mondayEnd = monday.get(WORK_DAY_END);
 
-            Map<String, String> tuesday = (Map<String, String>) attrMap.get(shiftDAO.TUE);
+            Map<String, String> tuesday = (Map<String, String>) attrMap.get(ShiftDAO.TUE);
             if (tuesday == null) {
                 tuesday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.TUE))).split("-");
-                tuesday.put("start", arrayHours[0]);
-                tuesday.put("end", arrayHours[1]);
+                tuesday.put(WORK_DAY_START, arrayHours[0]);
+                tuesday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.TUE, tuesday);
             }
-            String tuesdayStart = (String) tuesday.get("start");
-            String tuesdayEnd = (String) tuesday.get("end");
+            String tuesdayStart = tuesday.get(WORK_DAY_START);
+            String tuesdayEnd = tuesday.get(WORK_DAY_END);
 
-            Map<String, String> wednesday = (Map<String, String>) attrMap.get(shiftDAO.WED);
+            Map<String, String> wednesday = (Map<String, String>) attrMap.get(ShiftDAO.WED);
             if (wednesday == null) {
                 wednesday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.WED))).split("-");
-                wednesday.put("start", arrayHours[0]);
-                wednesday.put("end", arrayHours[1]);
+                wednesday.put(WORK_DAY_START, arrayHours[0]);
+                wednesday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.WED, wednesday);
             }
-            String wednesdayStart = (String) wednesday.get("start");
-            String wednesdayEnd = (String) wednesday.get("end");
+            String wednesdayStart = wednesday.get(WORK_DAY_START);
+            String wednesdayEnd = wednesday.get(WORK_DAY_END);
 
-            Map<String, String> thursday = (Map) attrMap.get(shiftDAO.THU);
+            Map<String, String> thursday = (Map<String, String>) attrMap.get(ShiftDAO.THU);
             if (thursday == null) {
                 thursday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.THU))).split("-");
-                thursday.put("start", arrayHours[0]);
-                thursday.put("end", arrayHours[1]);
+                thursday.put(WORK_DAY_START, arrayHours[0]);
+                thursday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.THU, thursday);
             }
-            String thursdayStart = (String) thursday.get("start");
-            String thursdayEnd = (String) thursday.get("end");
+            String thursdayStart = thursday.get(WORK_DAY_START);
+            String thursdayEnd = thursday.get(WORK_DAY_END);
 
-            Map<String, String> friday = (Map) attrMap.get(shiftDAO.FRI);
+            Map<String, String> friday = (Map<String, String>) attrMap.get(ShiftDAO.FRI);
             if (friday == null) {
                 friday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.FRI))).split("-");
-                friday.put("start", arrayHours[0]);
-                friday.put("end", arrayHours[1]);
+                friday.put(WORK_DAY_START, arrayHours[0]);
+                friday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.FRI, friday);
             }
-            String fridayStart = (String) friday.get("start");
-            String fridayEnd = (String) friday.get("end");
+            String fridayStart = friday.get(WORK_DAY_START);
+            String fridayEnd = friday.get(WORK_DAY_END);
 
-            Map<String, String> saturday = (Map) attrMap.get(shiftDAO.SAT);
+            Map<String, String> saturday = (Map<String, String>) attrMap.get(ShiftDAO.SAT);
             if (saturday == null) {
                 saturday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.SAT))).split("-");
-                saturday.put("start", arrayHours[0]);
-                saturday.put("end", arrayHours[1]);
+                saturday.put(WORK_DAY_START, arrayHours[0]);
+                saturday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.SAT, saturday);
             }
-            String saturdayStart = (String) saturday.get("start");
-            String saturdayEnd = (String) saturday.get("end");
+            String saturdayStart = saturday.get(WORK_DAY_START);
+            String saturdayEnd = saturday.get(WORK_DAY_END);
 
-            Map<String, String> sunday = (Map) attrMap.get(shiftDAO.SUN);
+            Map<String, String> sunday = (Map<String, String>) attrMap.get(ShiftDAO.SUN);
             if (sunday == null) {
                 sunday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.SUN))).split("-");
-                sunday.put("start", arrayHours[0]);
-                sunday.put("end", arrayHours[1]);
+                sunday.put(WORK_DAY_START, arrayHours[0]);
+                sunday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.SUN, sunday);
             }
-            String sundayStart = (String) sunday.get("start");
-            String sundayEnd = (String) sunday.get("end");
+            String sundayStart = sunday.get(WORK_DAY_START);
+            String sundayEnd = sunday.get(WORK_DAY_END);
 
-            if(attrMap.get(ShiftDAO.ROLE_ID)==null){
-                attrMap.put(ShiftDAO.ROLE_ID,originalShiftDays.get(ShiftDAO.ROLE_ID));
+            if (attrMap.get(ShiftDAO.ROLE_ID) == null) {
+                attrMap.put(ShiftDAO.ROLE_ID, originalShiftDays.get(ShiftDAO.ROLE_ID));
             }
 
             validateUpdateShift(attrMap, keyMap);
@@ -374,74 +356,66 @@ public class ShiftService implements IShiftService {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private void validateWeeklyHours(Map<?, ?> attrMap) throws Exception {
         //TODO: separar resta de días libres
-        Map<?, ?> monday = (Map) attrMap.get(shiftDAO.MON);
-        String mondayStart = (String) monday.get("start");
-        String mondayEnd = (String) monday.get("end");
-        Map<?, ?> tuesday = (Map) attrMap.get(shiftDAO.TUE);
-        String tuesdayStart = (String) tuesday.get("start");
-        String tuesdayEnd = (String) tuesday.get("end");
-        Map<?, ?> wednesday = (Map) attrMap.get(shiftDAO.WED);
-        String wednesdayStart = (String) wednesday.get("start");
-        String wednesdayEnd = (String) wednesday.get("end");
-        Map<?, ?> thursday = (Map) attrMap.get(shiftDAO.THU);
-        String thursdayStart = (String) thursday.get("start");
-        String thursdayEnd = (String) thursday.get("end");
-        Map<?, ?> friday = (Map) attrMap.get(shiftDAO.FRI);
-        String fridayStart = (String) friday.get("start");
-        String fridayEnd = (String) friday.get("end");
-        Map<?, ?> saturday = (Map) attrMap.get(shiftDAO.SAT);
-        String SaturdayStart = (String) saturday.get("start");
-        String saturdayEnd = (String) saturday.get("end");
-        Map<?, ?> sunday = (Map) attrMap.get(shiftDAO.SUN);
-        String sundayStart = (String) sunday.get("start");
-        String sundayEnd = (String) sunday.get("end");
+        Map<?, ?> monday = (Map<?, ?>) attrMap.get(ShiftDAO.MON);
+        String mondayStart = (String) monday.get(WORK_DAY_START);
+        String mondayEnd = (String) monday.get(WORK_DAY_END);
+        Map<?, ?> tuesday = (Map<?, ?>) attrMap.get(ShiftDAO.TUE);
+        String tuesdayStart = (String) tuesday.get(WORK_DAY_START);
+        String tuesdayEnd = (String) tuesday.get(WORK_DAY_END);
+        Map<?, ?> wednesday = (Map<?, ?>) attrMap.get(ShiftDAO.WED);
+        String wednesdayStart = (String) wednesday.get(WORK_DAY_START);
+        String wednesdayEnd = (String) wednesday.get(WORK_DAY_END);
+        Map<?, ?> thursday = (Map<?, ?>) attrMap.get(ShiftDAO.THU);
+        String thursdayStart = (String) thursday.get(WORK_DAY_START);
+        String thursdayEnd = (String) thursday.get(WORK_DAY_END);
+        Map<?, ?> friday = (Map<?, ?>) attrMap.get(ShiftDAO.FRI);
+        String fridayStart = (String) friday.get(WORK_DAY_START);
+        String fridayEnd = (String) friday.get(WORK_DAY_END);
+        Map<?, ?> saturday = (Map<?, ?>) attrMap.get(ShiftDAO.SAT);
+        String saturdayStart = (String) saturday.get(WORK_DAY_START);
+        String saturdayEnd = (String) saturday.get(WORK_DAY_END);
+        Map<?, ?> sunday = (Map<?, ?>) attrMap.get(ShiftDAO.SUN);
+        String sundayStart = (String) sunday.get(WORK_DAY_START);
+        String sundayEnd = (String) sunday.get(WORK_DAY_END);
 
         LocalTime mondayStartTime = LocalTime.parse(mondayStart);
         LocalTime mondayEndTime = LocalTime.parse(mondayEnd);
-        Integer mondayDuration = Integer.valueOf((int) Duration.between(mondayStartTime, mondayEndTime).toMinutes());
+        int mondayDuration = (int) Duration.between(mondayStartTime, mondayEndTime).toMinutes();
 
         LocalTime tuesdayStartTime = LocalTime.parse(tuesdayStart);
         LocalTime tuesdayEndTime = LocalTime.parse(tuesdayEnd);
-        Integer tuesdayDuration = Integer.valueOf((int) Duration.between(tuesdayStartTime, tuesdayEndTime).toMinutes());
+        int tuesdayDuration = (int) Duration.between(tuesdayStartTime, tuesdayEndTime).toMinutes();
 
         LocalTime wednesdayStartTime = LocalTime.parse(wednesdayStart);
         LocalTime wednesdayEndTime = LocalTime.parse(wednesdayEnd);
-        Integer wednesdayDuration = Integer.valueOf((int) Duration.between(wednesdayStartTime, wednesdayEndTime).toMinutes());
+        int wednesdayDuration = (int) Duration.between(wednesdayStartTime, wednesdayEndTime).toMinutes();
 
         LocalTime thursdayStartTime = LocalTime.parse(thursdayStart);
         LocalTime thursdayEndTime = LocalTime.parse(thursdayEnd);
-        Integer thursdayDuration = Integer.valueOf((int) Duration.between(thursdayStartTime, thursdayEndTime).toMinutes());
+        int thursdayDuration = (int) Duration.between(thursdayStartTime, thursdayEndTime).toMinutes();
 
         LocalTime fridayStartTime = LocalTime.parse(fridayStart);
         LocalTime fridayEndTime = LocalTime.parse(fridayEnd);
-        Integer fridayDuration = Integer.valueOf((int) Duration.between(fridayStartTime, fridayEndTime).toMinutes());
+        int fridayDuration = (int) Duration.between(fridayStartTime, fridayEndTime).toMinutes();
 
-        LocalTime saturdayStartTime = LocalTime.parse(SaturdayStart);
+        LocalTime saturdayStartTime = LocalTime.parse(saturdayStart);
         LocalTime saturdayEndTime = LocalTime.parse(saturdayEnd);
-        Integer saturdayDuration = Integer.valueOf((int) Duration.between(saturdayStartTime, saturdayEndTime).toMinutes());
+        int saturdayDuration = (int) Duration.between(saturdayStartTime, saturdayEndTime).toMinutes();
 
         LocalTime sundayStartTime = LocalTime.parse(sundayStart);
         LocalTime sundayEndTime = LocalTime.parse(sundayEnd);
-        Integer sundayDuration = Integer.valueOf((int) Duration.between(sundayStartTime, sundayEndTime).toMinutes());
+        int sundayDuration = (int) Duration.between(sundayStartTime, sundayEndTime).toMinutes();
 
         if (mondayEndTime.isBefore(mondayStartTime) || tuesdayEndTime.isBefore(tuesdayStartTime) || wednesdayEndTime.isBefore(wednesdayStartTime) ||
                 thursdayEndTime.isBefore(thursdayStartTime) || fridayEndTime.isBefore(fridayStartTime) || saturdayEndTime.isBefore(saturdayStartTime) ||
                 sundayEndTime.isBefore(sundayStartTime)) {
             throw new InvalidShiftException(END_BEFORE_START);
         }
-        Map<? super Object, ? super Object> dayDurations = new HashMap<>();
-        dayDurations.put(ShiftDAO.MON, mondayDuration);
-        dayDurations.put(ShiftDAO.TUE, tuesdayDuration);
-        dayDurations.put(ShiftDAO.WED, wednesdayDuration);
-        dayDurations.put(ShiftDAO.THU, thursdayDuration);
-        dayDurations.put(ShiftDAO.FRI, fridayDuration);
-        dayDurations.put(ShiftDAO.SAT, saturdayDuration);
-        dayDurations.put(ShiftDAO.SUN, sundayDuration);
 
-
-        List<String> employeeLoginNames = (List) attrMap.get(ShiftDAO.LOGIN_NAMES);
+        List<String> employeeLoginNames = (List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
         int weeklyMinutes = mondayDuration + tuesdayDuration + wednesdayDuration + thursdayDuration + fridayDuration + saturdayDuration + sundayDuration;
         if (employeeLoginNames == null) {
             throw new Exception("No employees assigned");
@@ -491,77 +465,68 @@ public class ShiftService implements IShiftService {
         }
     }
 
-    private void validateUpdateShift(Map<? super Object, ?super Object> attrMap, Map<?, ?> keyMap) throws Exception {
-        Map<?, ?> monday = (Map) attrMap.get(shiftDAO.MON);
-        String mondayStart = (String) monday.get("start");
-        String mondayEnd = (String) monday.get("end");
-        Map<?, ?> tuesday = (Map) attrMap.get(shiftDAO.TUE);
-        String tuesdayStart = (String) tuesday.get("start");
-        String tuesdayEnd = (String) tuesday.get("end");
-        Map<?, ?> wednesday = (Map) attrMap.get(shiftDAO.WED);
-        String wednesdayStart = (String) wednesday.get("start");
-        String wednesdayEnd = (String) wednesday.get("end");
-        Map<?, ?> thursday = (Map) attrMap.get(shiftDAO.THU);
-        String thursdayStart = (String) thursday.get("start");
-        String thursdayEnd = (String) thursday.get("end");
-        Map<?, ?> friday = (Map) attrMap.get(shiftDAO.FRI);
-        String fridayStart = (String) friday.get("start");
-        String fridayEnd = (String) friday.get("end");
-        Map<?, ?> saturday = (Map) attrMap.get(shiftDAO.SAT);
-        String SaturdayStart = (String) saturday.get("start");
-        String saturdayEnd = (String) saturday.get("end");
-        Map<?, ?> sunday = (Map) attrMap.get(shiftDAO.SUN);
-        String sundayStart = (String) sunday.get("start");
-        String sundayEnd = (String) sunday.get("end");
+    @SuppressWarnings("unchecked")
+    private void validateUpdateShift(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) throws Exception {
+        Map<?, ?> monday = (Map<?, ?>) attrMap.get(ShiftDAO.MON);
+        String mondayStart = (String) monday.get(WORK_DAY_START);
+        String mondayEnd = (String) monday.get(WORK_DAY_END);
+        Map<?, ?> tuesday = (Map<?, ?>) attrMap.get(ShiftDAO.TUE);
+        String tuesdayStart = (String) tuesday.get(WORK_DAY_START);
+        String tuesdayEnd = (String) tuesday.get(WORK_DAY_END);
+        Map<?, ?> wednesday = (Map<?, ?>) attrMap.get(ShiftDAO.WED);
+        String wednesdayStart = (String) wednesday.get(WORK_DAY_START);
+        String wednesdayEnd = (String) wednesday.get(WORK_DAY_END);
+        Map<?, ?> thursday = (Map<?, ?>) attrMap.get(ShiftDAO.THU);
+        String thursdayStart = (String) thursday.get(WORK_DAY_START);
+        String thursdayEnd = (String) thursday.get(WORK_DAY_END);
+        Map<?, ?> friday = (Map<?, ?>) attrMap.get(ShiftDAO.FRI);
+        String fridayStart = (String) friday.get(WORK_DAY_START);
+        String fridayEnd = (String) friday.get(WORK_DAY_END);
+        Map<?, ?> saturday = (Map<?, ?>) attrMap.get(ShiftDAO.SAT);
+        String saturdayStart = (String) saturday.get(WORK_DAY_START);
+        String saturdayEnd = (String) saturday.get(WORK_DAY_END);
+        Map<?, ?> sunday = (Map<?, ?>) attrMap.get(ShiftDAO.SUN);
+        String sundayStart = (String) sunday.get(WORK_DAY_START);
+        String sundayEnd = (String) sunday.get(WORK_DAY_END);
 
         LocalTime mondayStartTime = LocalTime.parse(mondayStart);
         LocalTime mondayEndTime = LocalTime.parse(mondayEnd);
-        Integer mondayDuration = Integer.valueOf((int) Duration.between(mondayStartTime, mondayEndTime).toMinutes());
+        int mondayDuration = (int) Duration.between(mondayStartTime, mondayEndTime).toMinutes();
 
         LocalTime tuesdayStartTime = LocalTime.parse(tuesdayStart);
         LocalTime tuesdayEndTime = LocalTime.parse(tuesdayEnd);
-        Integer tuesdayDuration = Integer.valueOf((int) Duration.between(tuesdayStartTime, tuesdayEndTime).toMinutes());
+        int tuesdayDuration = (int) Duration.between(tuesdayStartTime, tuesdayEndTime).toMinutes();
 
         LocalTime wednesdayStartTime = LocalTime.parse(wednesdayStart);
         LocalTime wednesdayEndTime = LocalTime.parse(wednesdayEnd);
-        Integer wednesdayDuration = Integer.valueOf((int) Duration.between(wednesdayStartTime, wednesdayEndTime).toMinutes());
+        int wednesdayDuration = (int) Duration.between(wednesdayStartTime, wednesdayEndTime).toMinutes();
 
         LocalTime thursdayStartTime = LocalTime.parse(thursdayStart);
         LocalTime thursdayEndTime = LocalTime.parse(thursdayEnd);
-        Integer thursdayDuration = Integer.valueOf((int) Duration.between(thursdayStartTime, thursdayEndTime).toMinutes());
+        int thursdayDuration = (int) Duration.between(thursdayStartTime, thursdayEndTime).toMinutes();
 
         LocalTime fridayStartTime = LocalTime.parse(fridayStart);
         LocalTime fridayEndTime = LocalTime.parse(fridayEnd);
-        Integer fridayDuration = Integer.valueOf((int) Duration.between(fridayStartTime, fridayEndTime).toMinutes());
+        int fridayDuration = (int) Duration.between(fridayStartTime, fridayEndTime).toMinutes();
 
-        LocalTime saturdayStartTime = LocalTime.parse(SaturdayStart);
+        LocalTime saturdayStartTime = LocalTime.parse(saturdayStart);
         LocalTime saturdayEndTime = LocalTime.parse(saturdayEnd);
-        Integer saturdayDuration = Integer.valueOf((int) Duration.between(saturdayStartTime, saturdayEndTime).toMinutes());
+        int saturdayDuration = (int) Duration.between(saturdayStartTime, saturdayEndTime).toMinutes();
 
         LocalTime sundayStartTime = LocalTime.parse(sundayStart);
         LocalTime sundayEndTime = LocalTime.parse(sundayEnd);
-        Integer sundayDuration = Integer.valueOf((int) Duration.between(sundayStartTime, sundayEndTime).toMinutes());
+        int sundayDuration = (int) Duration.between(sundayStartTime, sundayEndTime).toMinutes();
 
         if (mondayEndTime.isBefore(mondayStartTime) || tuesdayEndTime.isBefore(tuesdayStartTime) || wednesdayEndTime.isBefore(wednesdayStartTime) ||
                 thursdayEndTime.isBefore(thursdayStartTime) || fridayEndTime.isBefore(fridayStartTime) || saturdayEndTime.isBefore(saturdayStartTime) ||
                 sundayEndTime.isBefore(sundayStartTime)) {
             throw new InvalidShiftException(END_BEFORE_START);
         }
-        Map<? super Object, ? super Object> dayDurations = new HashMap<>();
-        dayDurations.put(ShiftDAO.MON, mondayDuration);
-        dayDurations.put(ShiftDAO.TUE, tuesdayDuration);
-        dayDurations.put(ShiftDAO.WED, wednesdayDuration);
-        dayDurations.put(ShiftDAO.THU, thursdayDuration);
-        dayDurations.put(ShiftDAO.FRI, fridayDuration);
-        dayDurations.put(ShiftDAO.SAT, saturdayDuration);
-        dayDurations.put(ShiftDAO.SUN, sundayDuration);
 
-
-        List<String> employeeLoginNames = (List) attrMap.get(ShiftDAO.LOGIN_NAMES);
+        List<String> employeeLoginNames = (List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
         int weeklyMinutes = mondayDuration + tuesdayDuration + wednesdayDuration + thursdayDuration + fridayDuration + saturdayDuration + sundayDuration;
         if (employeeLoginNames == null) {
-            employeeLoginNames = new ArrayList<>();
-            List<String> queriedAtributeList = List.of(UserDAO.LOGIN_NAME,ShiftDAO.ROLE_ID);
+            List<String> queriedAtributeList = List.of(UserDAO.LOGIN_NAME, ShiftDAO.ROLE_ID);
             Map<? super Object, ? super Object> originalEmployeeLoginNames = new HashMap<>();
             EntityResult usersInOriginalShiftResult;
             usersInOriginalShiftResult = this.daoHelper.query(usersShiftsDAO, keyMap, queriedAtributeList, UsersShiftsDAO.Q_USERS_SHIFTS);
@@ -569,17 +534,17 @@ public class ShiftService implements IShiftService {
 
             List<String> loginNames = (List<String>) originalEmployeeLoginNames.get(ShiftDAO.LOGIN_NAMES);
 
-            employeeLoginNames.addAll(loginNames);
-            attrMap.put(ShiftDAO.LOGIN_NAMES,employeeLoginNames);
-            attrMap.put(ShiftDAO.ROLE_ID,((List)usersInOriginalShiftResult.get(ShiftDAO.ROLE_ID)).get(0));
+            employeeLoginNames = new ArrayList<>(loginNames);
+            attrMap.put(ShiftDAO.LOGIN_NAMES, employeeLoginNames);
+            attrMap.put(ShiftDAO.ROLE_ID, ((List<String>) usersInOriginalShiftResult.get(ShiftDAO.ROLE_ID)).get(0));
         }
-        for (int i=0;i<employeeLoginNames.size();i++) {
 
+        for (String employeeLoginName : employeeLoginNames) {
             int employeeWeeklyMinutes = weeklyMinutes;
 
             List<String> queriedAtributeList = List.of(UsersDaysOffDAO.DAY);
             Map<String, String> employeeLoginNameFilter = new HashMap<>();
-            employeeLoginNameFilter.put(UserDAO.LOGIN_NAME, employeeLoginNames.get(i));
+            employeeLoginNameFilter.put(UserDAO.LOGIN_NAME, employeeLoginName);
 
             EntityResult daysOffPerEmployee = this.daoHelper.query(usersDaysOffDao, employeeLoginNameFilter, queriedAtributeList);
 
@@ -616,14 +581,15 @@ public class ShiftService implements IShiftService {
                 }
             }
             if (weeklyMinutes > 2400) {
-                throw new InvalidShiftException(IShiftService.E_MORE_THAN_40H + " " + employeeLoginNames.get(i));
+                throw new InvalidShiftException(IShiftService.E_MORE_THAN_40H + " " + employeeLoginName);
             }
         }
     }
 
 
+    @SuppressWarnings("unchecked")
     private void roleMatcher(Map<?, ?> attrMap) throws Exception {
-        List<String> employeeLoginNames = (List) attrMap.get(ShiftDAO.LOGIN_NAMES);
+        List<String> employeeLoginNames = (List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
         for (String employeeLoginName : employeeLoginNames) {
             if (!((userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLE_NAME)))) {
 
@@ -631,16 +597,18 @@ public class ShiftService implements IShiftService {
             }
         }
     }
-    private void updateRoleMatcher(Map<?super Object,?super Object>attrMap) throws Exception {
-        List<String> employeeLoginNames = (List) attrMap.get(ShiftDAO.LOGIN_NAMES);
 
-        Map<?super Object,?super Object>keymapRoleId= new HashMap<>();
-        keymapRoleId.put(ShiftDAO.ROLE_ID,attrMap.get(ShiftDAO.ROLE_ID));
-        EntityResult employeeRolename = this.daoHelper.query(userRoleDAO,keymapRoleId, List.of(UserRoleDAO.NAME));
-        attrMap.put(ShiftDAO.ROLENAME,(employeeRolename.getRecordValues(0)).get(ShiftDAO.ROLENAME));
+    @SuppressWarnings("unchecked")
+    private void updateRoleMatcher(Map<? super Object, ? super Object> attrMap) throws Exception {
+        List<String> employeeLoginNames = (List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
+
+        Map<? super Object, ? super Object> keymapRoleId = new HashMap<>();
+        keymapRoleId.put(ShiftDAO.ROLE_ID, attrMap.get(ShiftDAO.ROLE_ID));
+        EntityResult employeeRolename = this.daoHelper.query(userRoleDAO, keymapRoleId, List.of(UserRoleDAO.NAME));
+        attrMap.put(ShiftDAO.ROLENAME, (employeeRolename.getRecordValues(0)).get(ShiftDAO.ROLENAME));
 
         for (String employeeLoginName : employeeLoginNames) {
-            if (!((userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLENAME)))) {
+            if (!(userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLENAME))) {
                 throw new Exception(IShiftService.E_EMPLOYEE_ROLE_MISMATCH + ", " + employeeLoginName + " does not match");
             }
         }
