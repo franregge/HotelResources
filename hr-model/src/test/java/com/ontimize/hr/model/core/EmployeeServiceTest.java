@@ -1,15 +1,18 @@
 package com.ontimize.hr.model.core;
 
+import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.IEmployeeService;
+import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
 import com.ontimize.hr.model.core.dao.UserDAO;
+import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.hr.model.core.service.EmployeeService;
 
-import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -35,6 +38,8 @@ public class EmployeeServiceTest {
     EmployeeService employeeService;
     @Mock
     UserService userService;
+    @Mock
+    DefaultOntimizeDaoHelper daoHelper;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -114,7 +119,7 @@ public class EmployeeServiceTest {
 
             when(userService.userDelete(keymap)).thenReturn(er);
 
-            assertDoesNotThrow(() -> employeeService.employeeDelete(keymap));
+            assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, employeeService.employeeDelete(keymap).getCode());
         }
 
         @Test
@@ -168,7 +173,7 @@ public class EmployeeServiceTest {
         private final Map<? super Object, ? super Object> attrMap = new HashMap<>();
 
         @Test
-        void employeeInsert_validEmployee_operationSuccessful() {
+        void employeeInsert_validEmployee_operationSuccessful() throws InvalidShiftException {
             attrMap.put(UserDAO.LOGIN_NAME, "test");
             attrMap.put(UserDAO.USER_NAME, "test");
             attrMap.put(UserDAO.EMAIL, "test@example.org");
@@ -177,12 +182,17 @@ public class EmployeeServiceTest {
             attrMap.put(UserDAO.SURNAME1, "test");
             attrMap.put(UserDAO.PHONE_NUMBER, "666555444");
             attrMap.put(UserDAO.COUNTRY_ID, 1);
+            attrMap.put(UserDAO.DAYS_OFF, List.of("monday"));
 
             EntityResult userInsertResult = new EntityResultMapImpl();
             userInsertResult.setMessage(IUserService.USER_INSERT_SUCCESS);
             userInsertResult.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
+            EntityResult roleQueryEntityResult = new EntityResultMapImpl();
+            roleQueryEntityResult.put(UserRoleDAO.ID, List.of(1));
+
             when(userService.userInsert(any())).thenReturn(userInsertResult);
+            when(daoHelper.query(any(), any(), any())).thenReturn(roleQueryEntityResult);
 
             EntityResult result = employeeService.employeeInsert(attrMap);
 
