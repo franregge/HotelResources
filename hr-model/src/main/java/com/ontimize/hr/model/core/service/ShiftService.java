@@ -146,7 +146,7 @@ public class ShiftService implements IShiftService {
 
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IShiftService.INSERTION_SUCCESS);
-        } catch (SQLIntegrityConstraintViolationException e) {
+        } catch (DuplicateKeyException e) {
             result = new EntityResultMapImpl();
             result.setMessage(IShiftService.MULTIPLE_SHIFTS);
             result.setCode(EntityResult.OPERATION_WRONG);
