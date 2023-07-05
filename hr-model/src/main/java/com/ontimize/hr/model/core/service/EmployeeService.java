@@ -38,7 +38,6 @@ public class EmployeeService implements IEmployeeService {
     private UsersDaysOffDAO usersDaysOffDAO;
 
 
-
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeQuery(Map<?, ?> filter, List<?> attrList) {
@@ -56,16 +55,16 @@ public class EmployeeService implements IEmployeeService {
         List<String> daysOff = (List<String>) attrMap.get(UserDAO.DAYS_OFF);
 
         List<String> days = List.of(
-                "monday","tuesday","wednesday","thursday","friday","saturday","sunday"
+                "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
         );
 
-        if (daysOff !=null) {
+        if (daysOff != null) {
 
-            if (daysOff.isEmpty()){
+            if (daysOff.isEmpty()) {
                 throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
             }
 
-            if(new HashSet<>(daysOff).containsAll(days)){
+            if (new HashSet<>(daysOff).containsAll(days)) {
                 throw new InvalidShiftException(IShiftService.ALL_DAYS_OFF);
             }
 
@@ -73,15 +72,13 @@ public class EmployeeService implements IEmployeeService {
 
             for (String dayOff : daysOff) {
 
-                if(!days.contains(dayOff)){
+                if (!days.contains(dayOff)) {
                     throw new InvalidShiftException(IShiftService.INVALID_DAY_OFF);
                 }
                 daysOffToInsert.put(UserDAO.LOGIN_NAME, dayOff);
                 daoHelper.insert(this.usersDaysOffDAO, daysOffToInsert);
             }
-
-
-        }else{
+        } else {
             throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
         }
 

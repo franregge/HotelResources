@@ -16,7 +16,7 @@
         <Query id="default">
             <ValidColumns>
                 <Column>id</Column>
-                <Column>role_id</Column>
+                <Column>rolename</Column>
                 <Column>monday</Column>
                 <Column>tuesday</Column>
                 <Column>wednesday</Column>
@@ -31,6 +31,29 @@
                         #COLUMNS#
                     FROM
                         ${mainschema}.shifts
+                    #WHERE#
+                ]]>
+            </Sentence>
+        </Query>
+        <Query id="shiftWithRole">
+            <ValidColumns>
+                <Column>rolename</Column>
+                <Column>id</Column>
+                <Column>monday</Column>
+                <Column>tuesday</Column>
+                <Column>wednesday</Column>
+                <Column>thursday</Column>
+                <Column>friday</Column>
+                <Column>saturday</Column>
+                <Column>sunday</Column>
+            </ValidColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.shifts s
+                        JOIN ${mainschema}.roles r ON s.role_id = r.role_id
                     #WHERE#
                 ]]>
             </Sentence>
