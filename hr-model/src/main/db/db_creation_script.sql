@@ -105,14 +105,6 @@ CREATE TABLE public.roles_users
     FOREIGN KEY (role_id) references public.roles (role_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-create TABLE public.users_shifts
-(
-    login_name varchar(255) not null primary key,
-    shift_id int not null,
-    FOREIGN KEY (login_name) REFERENCES users (login_name) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (shift_id) REFERENCES shifts (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 create TABLE public.shifts
 (
 	id SERIAL primary key,

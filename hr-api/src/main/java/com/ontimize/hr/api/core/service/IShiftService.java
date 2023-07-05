@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface IShiftService {
 
-    EntityResult shiftQuery(Map<?, ?> keyMap, List<?> attrList);
+    EntityResult shiftQuery(Map<? super Object, ? super Object> filter, List<? super Object> attrList);
 
     EntityResult shiftInsert(Map<? super Object, ? super Object> attrMap);
 
@@ -20,17 +20,15 @@ public interface IShiftService {
     String E_EMPLOYEE_ROLE_MISMATCH = "Employee role has to match shift role";
     String INSERTION_SUCCESS = "Shift inserted successfully";
     String UPDATE_SUCCESS = "Shift updated successfully";
-
-
     String END_BEFORE_START = "Shift end time must be after the start time";
-
     String NO_DAYS_OFF = "Employees must have at least one day off";
-
     String INVALID_DAY_OFF = "This day off is not valid";
-
     String ALL_DAYS_OFF = "Employees can't have all days off";
     String E_INVALID_DAY_OFF_SAVED = "Employee has invalid day off";
-
+    String E_NOT_FOUND = "No shift with the specified id was found";
     String MULTIPLE_SHIFTS = "The employee has more than one shift";
+    String EMPLOYEE_FILTER = "employee";
+    String EMPLOYEE_COLUMNS = "columns";
+    String SHIFT_EMPLOYEES = "employees";
 
 }
