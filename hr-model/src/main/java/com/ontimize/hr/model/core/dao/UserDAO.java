@@ -28,6 +28,7 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
     public static final String Q_EMPLOYEE_QUERY = "userShiftRole";
     public static final String SHIFT_ID = "shift_id";
     public static final String DAYS_OFF = "days_off";
-    public static final String ROLE_ID = "role_id";
-  
+    public static final String ROLE_IDS = "role_ids";
+
+    public static final String EMPLOYEE_ROLE = "role_name";
 }

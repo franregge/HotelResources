@@ -1,6 +1,5 @@
 package com.ontimize.hr.model.core.service;
 
-import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidIdDocumentException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
@@ -201,11 +200,16 @@ public class UserService implements IUserService {
 
             result = this.daoHelper.insert(this.userDAO, attrMap);
 
+            List<Integer> roleIds = (List<Integer>) attrMap.get(UserDAO.ROLE_IDS);
             Map<String, ? super Object> roleInsertAttributes = new HashMap<>();
             roleInsertAttributes.put(UsersRolesDAO.LOGIN_NAME, attrMap.get(UserDAO.LOGIN_NAME));
-            roleInsertAttributes.put(UsersRolesDAO.ROLE_ID, attrMap.get(UserDAO.ROLE_ID));
 
-            this.daoHelper.insert(usersRolesDAO, roleInsertAttributes);
+            for (int roleId : roleIds) {
+                roleInsertAttributes.put(UsersRolesDAO.ROLE_ID, roleId);
+
+                this.daoHelper.insert(usersRolesDAO, roleInsertAttributes);
+            }
+
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
         } catch (Exception e) {

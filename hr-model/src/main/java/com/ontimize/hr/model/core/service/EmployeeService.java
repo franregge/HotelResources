@@ -44,7 +44,7 @@ public class EmployeeService implements IEmployeeService {
 
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
-    public EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap) throws InvalidShiftException {
+    public EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap) {
         EntityResult result;
 
         attrMap.put(UserDAO.ROLE_NAME, RoleNames.EMPLOYEE);
@@ -60,8 +60,24 @@ public class EmployeeService implements IEmployeeService {
             filter.put(UserRoleDAO.NAME, RoleNames.EMPLOYEE);
             List<String> queriedAttrs = List.of(UserRoleDAO.ID);
             EntityResult roleQueryEntityResult = daoHelper.query(userRoleDAO, filter, queriedAttrs);
-            Integer roleId = (Integer) roleQueryEntityResult.getRecordValues(0).get(UserRoleDAO.ID);
-            attrMap.put(UserDAO.ROLE_ID, roleId);
+            Integer employeeRoleId = (Integer) roleQueryEntityResult.getRecordValues(0).get(UserRoleDAO.ID);
+            String specificRoleName = (String) attrMap.get(UserDAO.EMPLOYEE_ROLE);
+
+            // TODO: ufffffffffff.... quitar isto pronto, uso de enums
+            if (
+                    specificRoleName.equals(RoleNames.CLIENT)
+                            || specificRoleName.equals(RoleNames.MANAGER)
+                            || specificRoleName.equals(RoleNames.GUEST)
+                            || specificRoleName.equals(RoleNames.ROOT)
+            ) {
+                throw new Exception("Invalid role");
+            }
+
+            filter.put(UserRoleDAO.NAME, specificRoleName);
+            roleQueryEntityResult = daoHelper.query(userRoleDAO, filter, queriedAttrs);
+            Integer specificRoleId = (Integer) roleQueryEntityResult.getRecordValues(0).get(UserRoleDAO.ID);
+
+            attrMap.put(UserDAO.ROLE_IDS, List.of(employeeRoleId, specificRoleId));
 
             result = userService.userInsert(attrMap);
 
