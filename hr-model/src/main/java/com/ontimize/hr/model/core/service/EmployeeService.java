@@ -80,34 +80,20 @@ public class EmployeeService implements IEmployeeService {
 
             attrMap.put(UserDAO.ROLE_IDS, List.of(employeeRoleId, specificRoleId));
 
+            validateDaysOff(daysOff, days);
+
             result = userService.userInsert(attrMap);
+
+            Map<String, String> daysOffToInsert = new HashMap<>();
+            daysOffToInsert.put(UsersDaysOffDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));
+
+            for (String dayOff : daysOff) {
+                daysOffToInsert.put(UsersDaysOffDAO.DAY, dayOff);
+                daoHelper.insert(this.usersDaysOffDAO, daysOffToInsert);
+            }
 
             if (result.getCode() == EntityResult.OPERATION_WRONG) {
                 return result;
-            }
-
-            if (daysOff != null) {
-                if (daysOff.isEmpty()) {
-                    throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
-                }
-
-                if (!days.containsAll(daysOff)) {
-                    throw new InvalidShiftException(IShiftService.INVALID_DAY_OFF);
-                }
-
-                if (daysOff.containsAll(days)) {
-                    throw new InvalidShiftException(IShiftService.ALL_DAYS_OFF);
-                }
-
-                Map<String, String> daysOffToInsert = new HashMap<>();
-                daysOffToInsert.put(UsersDaysOffDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));
-
-                for (String dayOff : daysOff) {
-                    daysOffToInsert.put(UsersDaysOffDAO.DAY, dayOff);
-                    daoHelper.insert(this.usersDaysOffDAO, daysOffToInsert);
-                }
-            } else {
-                throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
             }
 
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
@@ -120,6 +106,24 @@ public class EmployeeService implements IEmployeeService {
         }
 
         return result;
+    }
+
+    private void validateDaysOff(Set<String> daysOff, Set<String> days) throws InvalidShiftException {
+        if (daysOff != null) {
+            if (daysOff.isEmpty()) {
+                throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
+            }
+
+            if (!days.containsAll(daysOff)) {
+                throw new InvalidShiftException(IShiftService.INVALID_DAY_OFF);
+            }
+
+            if (daysOff.containsAll(days)) {
+                throw new InvalidShiftException(IShiftService.ALL_DAYS_OFF);
+            }
+        } else {
+            throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
+        }
     }
 
     @Override
