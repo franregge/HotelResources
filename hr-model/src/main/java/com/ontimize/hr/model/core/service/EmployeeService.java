@@ -42,6 +42,7 @@ public class EmployeeService implements IEmployeeService {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeInsert(Map<? super Object, ? super Object> attrMap) {
@@ -70,7 +71,7 @@ public class EmployeeService implements IEmployeeService {
                             || specificRoleName.equals(RoleNames.GUEST)
                             || specificRoleName.equals(RoleNames.ROOT)
             ) {
-                throw new Exception("Invalid role");
+                throw new Exception("Invalid employee type");
             }
 
             filter.put(UserRoleDAO.NAME, specificRoleName);

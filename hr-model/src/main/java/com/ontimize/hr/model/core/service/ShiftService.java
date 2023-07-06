@@ -11,6 +11,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.SQLWarningException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
@@ -242,117 +243,85 @@ public class ShiftService implements IShiftService {
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) {
+        Map<? super Object, ? super Object> originalAttrMap = new HashMap<>(attrMap);
         EntityResult result;
         try {
 
             List<String> attrbuteQueriedList = List.of(ShiftDAO.MON, ShiftDAO.SUN, ShiftDAO.SAT, ShiftDAO.FRI, ShiftDAO.THU, ShiftDAO.WED, ShiftDAO.TUE, ShiftDAO.LOGIN_NAMES, ShiftDAO.ROLE_ID);
 
             Map<?, ?> originalShiftDays;
-            originalShiftDays = daoHelper.query(shiftDAO, keyMap, attrbuteQueriedList).getRecordValues(0);
+            originalShiftDays = daoHelper.query(shiftDAO, keyMap, attrbuteQueriedList, ShiftDAO.Q_SHIFT_WITH_ROLE).getRecordValues(0);
+            attrMap.put(ShiftDAO.ROLE_ID, originalShiftDays.get(ShiftDAO.ROLE_ID));
 
             Map<String, String> monday = (Map<String, String>) attrMap.get(ShiftDAO.MON);
-            if (monday == null) {
+            if (monday == null && originalShiftDays.get(ShiftDAO.MON) != null) {
                 monday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.MON))).split("-");
                 monday.put(WORK_DAY_START, arrayHours[0]);
                 monday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.MON, monday);
-
             }
-            String mondayStart = monday.get(WORK_DAY_START);
-            String mondayEnd = monday.get(WORK_DAY_END);
 
             Map<String, String> tuesday = (Map<String, String>) attrMap.get(ShiftDAO.TUE);
-            if (tuesday == null) {
+            if (tuesday == null && originalShiftDays.get(ShiftDAO.TUE) != null) {
                 tuesday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.TUE))).split("-");
                 tuesday.put(WORK_DAY_START, arrayHours[0]);
                 tuesday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.TUE, tuesday);
             }
-            String tuesdayStart = tuesday.get(WORK_DAY_START);
-            String tuesdayEnd = tuesday.get(WORK_DAY_END);
 
             Map<String, String> wednesday = (Map<String, String>) attrMap.get(ShiftDAO.WED);
-            if (wednesday == null) {
+            if (wednesday == null && originalShiftDays.get(ShiftDAO.WED) != null) {
                 wednesday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.WED))).split("-");
                 wednesday.put(WORK_DAY_START, arrayHours[0]);
                 wednesday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.WED, wednesday);
             }
-            String wednesdayStart = wednesday.get(WORK_DAY_START);
-            String wednesdayEnd = wednesday.get(WORK_DAY_END);
 
             Map<String, String> thursday = (Map<String, String>) attrMap.get(ShiftDAO.THU);
-            if (thursday == null) {
+            if (thursday == null && originalShiftDays.get(ShiftDAO.THU) != null) {
                 thursday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.THU))).split("-");
                 thursday.put(WORK_DAY_START, arrayHours[0]);
                 thursday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.THU, thursday);
             }
-            String thursdayStart = thursday.get(WORK_DAY_START);
-            String thursdayEnd = thursday.get(WORK_DAY_END);
 
             Map<String, String> friday = (Map<String, String>) attrMap.get(ShiftDAO.FRI);
-            if (friday == null) {
+            if (friday == null && originalShiftDays.get(ShiftDAO.FRI) != null) {
                 friday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.FRI))).split("-");
                 friday.put(WORK_DAY_START, arrayHours[0]);
                 friday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.FRI, friday);
             }
-            String fridayStart = friday.get(WORK_DAY_START);
-            String fridayEnd = friday.get(WORK_DAY_END);
 
             Map<String, String> saturday = (Map<String, String>) attrMap.get(ShiftDAO.SAT);
-            if (saturday == null) {
+            if (saturday == null && originalShiftDays.get(ShiftDAO.SAT) != null) {
                 saturday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.SAT))).split("-");
                 saturday.put(WORK_DAY_START, arrayHours[0]);
                 saturday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.SAT, saturday);
             }
-            String saturdayStart = saturday.get(WORK_DAY_START);
-            String saturdayEnd = saturday.get(WORK_DAY_END);
 
             Map<String, String> sunday = (Map<String, String>) attrMap.get(ShiftDAO.SUN);
-            if (sunday == null) {
+            if (sunday == null && originalShiftDays.get(ShiftDAO.SUN) != null) {
                 sunday = new HashMap<>();
                 String[] arrayHours = ((String) (originalShiftDays.get(ShiftDAO.SUN))).split("-");
                 sunday.put(WORK_DAY_START, arrayHours[0]);
                 sunday.put(WORK_DAY_END, arrayHours[1]);
                 attrMap.put(ShiftDAO.SUN, sunday);
             }
-            String sundayStart = sunday.get(WORK_DAY_START);
-            String sundayEnd = sunday.get(WORK_DAY_END);
 
-            if (attrMap.get(ShiftDAO.ROLE_ID) == null) {
-                attrMap.put(ShiftDAO.ROLE_ID, originalShiftDays.get(ShiftDAO.ROLE_ID));
-            }
+            attrMap.put(ShiftDAO.ROLE_ID, originalShiftDays.get(ShiftDAO.ROLE_ID));
 
             validateUpdateShift(attrMap, keyMap);
-
             updateRoleMatcher(attrMap);
 
-            String monShift = mondayStart + "-" + mondayEnd;
-            String tueShift = tuesdayStart + "-" + tuesdayEnd;
-            String wedShift = wednesdayStart + "-" + wednesdayEnd;
-            String thurShift = thursdayStart + "-" + thursdayEnd;
-            String fridShift = fridayStart + "-" + fridayEnd;
-            String satShift = saturdayStart + "-" + saturdayEnd;
-            String sunShift = sundayStart + "-" + sundayEnd;
-
-            attrMap.put(ShiftDAO.MON, monShift);
-            attrMap.put(ShiftDAO.TUE, tueShift);
-            attrMap.put(ShiftDAO.WED, wedShift);
-            attrMap.put(ShiftDAO.THU, thurShift);
-            attrMap.put(ShiftDAO.FRI, fridShift);
-            attrMap.put(ShiftDAO.SAT, satShift);
-            attrMap.put(ShiftDAO.SUN, sunShift);
-
-            List<String> shiftEmployees = (List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
+            Set<String> shiftEmployees = (Set<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
 
             if (shiftEmployees != null) {
                 Map<String, String> roleEmployeesFilter = new HashMap<>();
@@ -377,15 +346,18 @@ public class ShiftService implements IShiftService {
                 }
             }
 
-            result = this.daoHelper.update(this.shiftDAO, attrMap, keyMap);
+            try {
+                result = this.daoHelper.update(this.shiftDAO, originalAttrMap, keyMap);
+            } catch (SQLWarningException ignored) {
+                result = new EntityResultMapImpl();
+            }
             result.put(ShiftDAO.ID, keyMap.get(ShiftDAO.ID));
-
             List<String> deleteShiftEmployees = (List<String>) attrMap.get(ShiftDAO.DELETE_SHIFT_EMPLOYEES);
             boolean shiftEmployeesIsNull = shiftEmployees == null;
             boolean deleteShiftEmployeesIsNull = deleteShiftEmployees == null;
 
             if (!shiftEmployeesIsNull || !deleteShiftEmployeesIsNull) {
-                shiftEmployees = shiftEmployeesIsNull ? new ArrayList<>() : shiftEmployees;
+                shiftEmployees = shiftEmployeesIsNull ? new HashSet<>() : shiftEmployees;
                 deleteShiftEmployees = deleteShiftEmployeesIsNull ? new ArrayList<>() : deleteShiftEmployees;
                 updateShiftEmployees(result, shiftEmployees, deleteShiftEmployees);
             }
@@ -407,7 +379,7 @@ public class ShiftService implements IShiftService {
         return result;
     }
 
-    private void updateShiftEmployees(EntityResult result, List<String> shiftEmployees, List<String> shiftDeleteEmployees) {
+    private void updateShiftEmployees(EntityResult result, Set<String> shiftEmployees, List<String> shiftDeleteEmployees) {
         Map<String, Integer> employeesShiftsRelationship = new HashMap<>();
         employeesShiftsRelationship.put(UserDAO.SHIFT_ID, (Integer) result.get(ShiftDAO.ID));
         Map<String, String> employeesShiftsFilter = new HashMap<>();
@@ -666,10 +638,12 @@ public class ShiftService implements IShiftService {
         Set<String> employeeLoginNames = attrMap.get(ShiftDAO.LOGIN_NAMES) == null ? new HashSet<>() : new HashSet<>((List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES));
         int weeklyMinutes = mondayDuration + tuesdayDuration + wednesdayDuration + thursdayDuration + fridayDuration + saturdayDuration + sundayDuration;
 
-        List<String> queriedAtributeList = List.of(UserDAO.LOGIN_NAME, ShiftDAO.ROLE_ID);
+        List<String> queriedAtributeList = List.of(UserDAO.LOGIN_NAME);
         Map<? super Object, ? super Object> originalEmployeesInShift = new HashMap<>();
         EntityResult usersInOriginalShiftResult;
-        usersInOriginalShiftResult = this.daoHelper.query(usersShiftsDAO, keyMap, queriedAtributeList, UsersShiftsDAO.Q_USERS_SHIFTS);
+        Map<String, Integer> usersInShiftFilter = new HashMap<>();
+        usersInShiftFilter.put(UserDAO.SHIFT_ID, (Integer) keyMap.get(ShiftDAO.ID));
+        usersInOriginalShiftResult = this.daoHelper.query(userDAO, usersInShiftFilter, queriedAtributeList);
         originalEmployeesInShift.put(ShiftDAO.LOGIN_NAMES, (usersInOriginalShiftResult.get(UsersShiftsDAO.LOGIN_NAME)));
 
         List<String> previousLoginNames = (List<String>) originalEmployeesInShift.get(ShiftDAO.LOGIN_NAMES);
@@ -685,7 +659,7 @@ public class ShiftService implements IShiftService {
         workDurationsByDay.put(ShiftDAO.SUN, sundayDuration);
 
         attrMap.put(ShiftDAO.LOGIN_NAMES, employeeLoginNames);
-        attrMap.put(ShiftDAO.ROLE_ID, ((List<String>) usersInOriginalShiftResult.get(ShiftDAO.ROLE_ID)).get(0));
+        attrMap.put(ShiftDAO.ROLE_ID, attrMap.get(ShiftDAO.ROLE_ID));
 
         validateEmployeeWorkHours(employeeLoginNames, weeklyMinutes, workDurationsByDay, (int) keyMap.get(ShiftDAO.ID));
     }
@@ -770,7 +744,7 @@ public class ShiftService implements IShiftService {
 
     @SuppressWarnings("unchecked")
     private void updateRoleMatcher(Map<? super Object, ? super Object> attrMap) throws Exception {
-        List<String> employeeLoginNames = (List<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
+        Set<String> employeeLoginNames = (Set<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
 
         Map<? super Object, ? super Object> keymapRoleId = new HashMap<>();
         keymapRoleId.put(ShiftDAO.ROLE_ID, attrMap.get(ShiftDAO.ROLE_ID));
@@ -778,7 +752,7 @@ public class ShiftService implements IShiftService {
         attrMap.put(ShiftDAO.ROLENAME, (employeeRolename.getRecordValues(0)).get(ShiftDAO.ROLENAME));
 
         for (String employeeLoginName : employeeLoginNames) {
-            if (!(userService.getUserRoles(employeeLoginName)).contains(attrMap.get(ShiftDAO.ROLENAME))) {
+            if (!userService.getUserRoles(employeeLoginName).contains(attrMap.get(ShiftDAO.ROLENAME))) {
                 throw new Exception(IShiftService.E_EMPLOYEE_ROLE_MISMATCH + ", " + employeeLoginName + " does not match");
             }
         }

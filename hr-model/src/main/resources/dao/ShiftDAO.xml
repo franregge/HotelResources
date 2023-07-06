@@ -36,8 +36,12 @@
             </Sentence>
         </Query>
         <Query id="shiftWithRole">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="role_id" prefix="r"/>
+            </AmbiguousColumns>
             <ValidColumns>
                 <Column>rolename</Column>
+                <Column>role_id</Column>
                 <Column>id</Column>
                 <Column>monday</Column>
                 <Column>tuesday</Column>
