@@ -339,7 +339,9 @@ public class ShiftService implements IShiftService {
                 }
             }
 
-            Set<String> shiftEmployees = (Set<String>) originalAttrMap.get(ShiftDAO.LOGIN_NAMES);
+            Set<String> shiftEmployees = originalAttrMap.get(ShiftDAO.LOGIN_NAMES) == null
+                    ? null
+                    : new HashSet<>((List<String>) originalAttrMap.get(ShiftDAO.LOGIN_NAMES));
 
             if (shiftEmployees != null) {
                 Map<String, String> roleEmployeesFilter = new HashMap<>();
@@ -665,7 +667,7 @@ public class ShiftService implements IShiftService {
         originalEmployeesInShift.put(ShiftDAO.LOGIN_NAMES, (usersInOriginalShiftResult.get(UsersShiftsDAO.LOGIN_NAME)));
 
         List<String> previousLoginNames = (List<String>) originalEmployeesInShift.get(ShiftDAO.LOGIN_NAMES);
-        employeeLoginNames.addAll(previousLoginNames);
+        employeeLoginNames.addAll(previousLoginNames == null ? new HashSet<>() : previousLoginNames);
 
         Map<String, Integer> workDurationsByDay = new HashMap<>(7);
         workDurationsByDay.put(ShiftDAO.MON, mondayDuration);
