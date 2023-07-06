@@ -12,11 +12,11 @@ public interface IShiftService {
 
     EntityResult shiftInsert(Map<? super Object, ? super Object> attrMap);
 
-    EntityResult shiftUpdate(Map<? super Object, ? super  Object> attrMap, Map<?, ?> keyMap) throws UserDoesNotExistException;
+    EntityResult shiftUpdate(Map<? super Object, ? super  Object> attrMap, Map<? super Object, ? super Object> keyMap) throws UserDoesNotExistException;
 
     EntityResult shiftDelete(Map<?, ?> keyMap);
 
-    String E_MORE_THAN_40H = "This employee cannot work more than 40 hours in a week : ";
+    String E_MORE_THAN_40H = "This employee cannot work more than 40 hours in a week: ";
     String E_EMPLOYEE_ROLE_MISMATCH = "Employee role has to match shift role";
     String INSERTION_SUCCESS = "Shift inserted successfully";
     String UPDATE_SUCCESS = "Shift updated successfully";

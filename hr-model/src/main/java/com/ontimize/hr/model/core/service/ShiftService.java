@@ -38,11 +38,7 @@ public class ShiftService implements IShiftService {
     @Autowired
     private UsersDaysOffDAO usersDaysOffDao;
     @Autowired
-    private UsersShiftsDAO usersShiftsDAO;
-    @Autowired
     private UserDAO userDAO;
-    @Autowired
-    private EmployeeService employeeService;
     private static final String WORK_DAY_START = "start";
     private static final String WORK_DAY_END = "end";
     private static final int NO_SHIFT_ID_YET = -1;
@@ -241,9 +237,15 @@ public class ShiftService implements IShiftService {
     @SuppressWarnings("unchecked")
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
-    public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<?, ?> keyMap) {
+    public EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> keyMap) {
         Map<? super Object, ? super Object> originalAttrMap = new HashMap<>(attrMap);
         EntityResult result;
+        if (shiftQuery(keyMap, Collections.singletonList(ShiftDAO.ID)).isEmpty()) {
+            result = new EntityResultMapImpl();
+            result.setMessage("This shift does not exist");
+            result.setCode(EntityResult.OPERATION_WRONG);
+            return result;
+        }
         try {
 
             List<String> attrbuteQueriedList = List.of(ShiftDAO.MON, ShiftDAO.SUN, ShiftDAO.SAT, ShiftDAO.FRI, ShiftDAO.THU, ShiftDAO.WED, ShiftDAO.TUE, ShiftDAO.LOGIN_NAMES, ShiftDAO.ROLE_ID);
@@ -418,8 +420,32 @@ public class ShiftService implements IShiftService {
     }
 
     @Override
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult shiftDelete(Map<?, ?> keyMap) {
-        return null;
+
+        EntityResult result;
+        Integer shiftID = (Integer) keyMap.get(ShiftDAO.ID);
+
+        try {
+
+            if (this.daoHelper.query(shiftDAO, keyMap, List.of(ShiftDAO.ID)).isEmpty()) {
+                result = this.daoHelper.delete(shiftDAO, keyMap);
+                result.setMessage("No shifts with this id");
+                result.setCode(EntityResult.OPERATION_WRONG);
+                return result;
+            }
+
+            result = this.daoHelper.delete(shiftDAO, keyMap);
+            result.setMessage("Shift deleted successfully");
+            result.put("deleted_shift", shiftID);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+
+        } catch (Exception e){
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(e.getMessage());
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -664,7 +690,7 @@ public class ShiftService implements IShiftService {
         Map<String, Integer> usersInShiftFilter = new HashMap<>();
         usersInShiftFilter.put(UserDAO.SHIFT_ID, (Integer) keyMap.get(ShiftDAO.ID));
         usersInOriginalShiftResult = this.daoHelper.query(userDAO, usersInShiftFilter, queriedAtributeList);
-        originalEmployeesInShift.put(ShiftDAO.LOGIN_NAMES, (usersInOriginalShiftResult.get(UsersShiftsDAO.LOGIN_NAME)));
+        originalEmployeesInShift.put(ShiftDAO.LOGIN_NAMES, usersInOriginalShiftResult.get(UsersShiftsDAO.LOGIN_NAME));
 
         List<String> previousLoginNames = (List<String>) originalEmployeesInShift.get(ShiftDAO.LOGIN_NAMES);
         employeeLoginNames.addAll(previousLoginNames == null ? new HashSet<>() : previousLoginNames);
