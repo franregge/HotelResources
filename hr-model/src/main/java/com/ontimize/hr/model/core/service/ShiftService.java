@@ -3,6 +3,7 @@ package com.ontimize.hr.model.core.service;
 import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.hr.api.core.service.exception.EmployeeNotFoundException;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
+import com.ontimize.hr.model.core.RoleNames;
 import com.ontimize.hr.model.core.dao.*;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
@@ -11,6 +12,7 @@ import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
@@ -414,8 +416,32 @@ public class ShiftService implements IShiftService {
     }
 
     @Override
+    @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult shiftDelete(Map<?, ?> keyMap) {
-        return null;
+
+        EntityResult result = null;
+        Integer shiftID = (Integer) keyMap.get(ShiftDAO.ID);
+
+        try {
+
+            if (this.daoHelper.query(shiftDAO, keyMap, List.of(ShiftDAO.ID)).isEmpty()) {
+                result = this.daoHelper.delete(shiftDAO, keyMap);
+                result.setMessage("No shifts with this id");
+                result.setCode(EntityResult.OPERATION_WRONG);
+                return result;
+            }
+
+            result = this.daoHelper.delete(shiftDAO, keyMap);
+            result.setMessage("Shift deleted successfully");
+            result.put("deleted_shift", shiftID);
+            result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+
+        } catch (Exception e){
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(e.getMessage());
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
