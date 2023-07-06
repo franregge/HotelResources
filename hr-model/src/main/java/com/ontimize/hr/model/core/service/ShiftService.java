@@ -320,7 +320,26 @@ public class ShiftService implements IShiftService {
             validateUpdateShift(attrMap, keyMap);
             updateRoleMatcher(attrMap);
 
-            Set<String> shiftEmployees = (Set<String>) attrMap.get(ShiftDAO.LOGIN_NAMES);
+            for (Map.Entry<? super Object, ? super Object> entry : attrMap.entrySet()) {
+                if (originalAttrMap.containsKey(entry.getKey())) {
+                    switch ((String) entry.getKey()) {
+                        case ShiftDAO.MON:
+                        case ShiftDAO.TUE:
+                        case ShiftDAO.WED:
+                        case ShiftDAO.THU:
+                        case ShiftDAO.FRI:
+                        case ShiftDAO.SAT:
+                        case ShiftDAO.SUN:
+                            Map<String, String> hours = (Map<String, String>) entry.getValue();
+                            originalAttrMap.put(entry.getKey(), hours.get(WORK_DAY_START) + "-" + hours.get(WORK_DAY_END));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            Set<String> shiftEmployees = (Set<String>) originalAttrMap.get(ShiftDAO.LOGIN_NAMES);
 
             if (shiftEmployees != null) {
                 Map<String, String> roleEmployeesFilter = new HashMap<>();
@@ -351,7 +370,7 @@ public class ShiftService implements IShiftService {
                 result = new EntityResultMapImpl();
             }
             result.put(ShiftDAO.ID, keyMap.get(ShiftDAO.ID));
-            List<String> deleteShiftEmployees = (List<String>) attrMap.get(ShiftDAO.DELETE_SHIFT_EMPLOYEES);
+            List<String> deleteShiftEmployees = (List<String>) originalAttrMap.get(ShiftDAO.DELETE_SHIFT_EMPLOYEES);
             boolean shiftEmployeesIsNull = shiftEmployees == null;
             boolean deleteShiftEmployeesIsNull = deleteShiftEmployees == null;
 
@@ -389,10 +408,10 @@ public class ShiftService implements IShiftService {
         }
 
         for (String loginName : shiftDeleteEmployees) {
-            employeesShiftsFilter.put(UsersShiftsDAO.LOGIN_NAME, loginName);
+            employeesShiftsFilter.put(UserDAO.LOGIN_NAME, loginName);
             Map<String, ?> attrsValuesToUpdate = new HashMap<>();
             attrsValuesToUpdate.put(UserDAO.SHIFT_ID, null);
-            daoHelper.update(usersShiftsDAO, attrsValuesToUpdate, employeesShiftsFilter);
+            daoHelper.update(userDAO, attrsValuesToUpdate, employeesShiftsFilter);
         }
     }
 
