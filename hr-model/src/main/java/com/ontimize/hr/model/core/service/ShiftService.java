@@ -65,7 +65,6 @@ public class ShiftService implements IShiftService {
                 if (employeeFilter != null) {
                     List<String> employeeAttrList = (List<String>) employeeFilter.remove(EMPLOYEE_COLUMNS);
                     employeeFilter.put(UserDAO.SHIFT_ID, filter.get(ShiftDAO.ID));
-
                     EntityResult employeeResult = userService.userQuery(employeeFilter, employeeAttrList);
 
                     List<Object> employeeList = new ArrayList<>();

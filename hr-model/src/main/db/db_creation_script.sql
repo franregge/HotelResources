@@ -127,7 +127,7 @@ create table public.users_days_off
 	id serial not null primary key,
 	login_name varchar(255) not null,
 	day varchar(9) not null,
-	foreign key(login_name) references public.users(login_name) ON DELETE RESTRICT ON UPDATE CASCADE
+	foreign key(login_name) references public.users(login_name) ON DELETE CASCADE ON UPDATE CASCADE
 	);
 
 CREATE UNIQUE INDEX CONCURRENTLY u_login_name_day
