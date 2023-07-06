@@ -18,10 +18,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Lazy
 @Service("EmployeeService")
@@ -52,35 +49,11 @@ public class EmployeeService implements IEmployeeService {
 
         attrMap.put(UserDAO.ROLE_NAME, RoleNames.EMPLOYEE);
 
-        List<String> daysOff = (List<String>) attrMap.get(UserDAO.DAYS_OFF);
+        Set<String> daysOff = attrMap.get(UserDAO.DAYS_OFF) == null ? null : new HashSet<>((List<String>) attrMap.get(UserDAO.DAYS_OFF));
 
-        List<String> days = List.of(
+        Set<String> days = new HashSet<>(List.of(
                 "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-        );
-
-        if (daysOff != null) {
-
-            if (daysOff.isEmpty()) {
-                throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
-            }
-
-            if (new HashSet<>(daysOff).containsAll(days)) {
-                throw new InvalidShiftException(IShiftService.ALL_DAYS_OFF);
-            }
-
-            Map<String, String> daysOffToInsert = new HashMap<>();
-
-            for (String dayOff : daysOff) {
-
-                if (!days.contains(dayOff)) {
-                    throw new InvalidShiftException(IShiftService.INVALID_DAY_OFF);
-                }
-                daysOffToInsert.put(UserDAO.LOGIN_NAME, dayOff);
-                daoHelper.insert(this.usersDaysOffDAO, daysOffToInsert);
-            }
-        } else {
-            throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
-        }
+        ));
 
         try {
             Map<String, String> filter = new HashMap<>();
@@ -91,6 +64,35 @@ public class EmployeeService implements IEmployeeService {
             attrMap.put(UserDAO.ROLE_ID, roleId);
 
             result = userService.userInsert(attrMap);
+
+            if (result.getCode() == EntityResult.OPERATION_WRONG) {
+                return result;
+            }
+
+            if (daysOff != null) {
+                if (daysOff.isEmpty()) {
+                    throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
+                }
+
+                if (!days.containsAll(daysOff)) {
+                    throw new InvalidShiftException(IShiftService.INVALID_DAY_OFF);
+                }
+
+                if (daysOff.containsAll(days)) {
+                    throw new InvalidShiftException(IShiftService.ALL_DAYS_OFF);
+                }
+
+                Map<String, String> daysOffToInsert = new HashMap<>();
+                daysOffToInsert.put(UsersDaysOffDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));
+
+                for (String dayOff : daysOff) {
+                    daysOffToInsert.put(UsersDaysOffDAO.DAY, dayOff);
+                    daoHelper.insert(this.usersDaysOffDAO, daysOffToInsert);
+                }
+            } else {
+                throw new InvalidShiftException(IShiftService.NO_DAYS_OFF);
+            }
+
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
             result.setMessage(IUserService.USER_INSERT_SUCCESS);
         } catch (Exception e) {

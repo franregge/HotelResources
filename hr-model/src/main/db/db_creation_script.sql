@@ -126,7 +126,7 @@ create table public.users_days_off
 (
 	id serial not null primary key,
 	login_name varchar(255) not null,
-	day day not null,
+	day varchar(9) not null,
 	foreign key(login_name) references public.users(login_name) ON DELETE RESTRICT ON UPDATE CASCADE
 	);
 
