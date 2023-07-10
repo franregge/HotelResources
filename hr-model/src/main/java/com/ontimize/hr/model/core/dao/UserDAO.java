@@ -31,4 +31,6 @@ public class UserDAO extends OntimizeJdbcDaoSupport {
     public static final String ROLE_IDS = "role_ids";
 
     public static final String EMPLOYEE_ROLE = "role_name";
+
+    public static final String HOTEL_ID = "hotel_id";
 }

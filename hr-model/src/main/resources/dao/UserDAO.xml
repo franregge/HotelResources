@@ -24,6 +24,7 @@
                 <Column>email</Column>
                 <Column>user_password</Column>
                 <Column>shift_id</Column>
+                <Column>hotel_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -47,6 +48,7 @@
                 <Column>email</Column>
                 <Column>user_password</Column>
                 <Column>shift_id</Column>
+                <Column>hotel_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[

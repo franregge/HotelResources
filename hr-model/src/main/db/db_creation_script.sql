@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS public.countries;
 DROP TABLE IF EXISTS public.roles_users;
 DROP TABLE IF EXISTS public.shifts;
 DROP TABLE IF EXISTS public.users_days_off;
+DROP TABLE IF EXISTS public.hotel_employees;
 
 
 CREATE TABLE public.hotels
@@ -48,11 +49,15 @@ CREATE TABLE public.users
     email         VARCHAR(255) NOT NULL UNIQUE,
     user_password VARCHAR(255) NOT NULL,
     shift_id INT,
+    hotel_id INT not null,
     foreign key (country_id) references public.countries (id)
         on delete restrict
         on update cascade,
     foreign key(shift_id) references public.shifts(id)
         on delete set null
+        on update cascade,
+    foreign key(hotel_id) references public.hotels(id)
+        on delete restrict
         on update cascade
 );
 
@@ -136,4 +141,13 @@ CREATE UNIQUE INDEX CONCURRENTLY u_login_name_day
 ALTER TABLE users_days_off
     ADD CONSTRAINT u_login_name_day
         UNIQUE USING INDEX u_login_name_day;
+
+CREATE TABLE public.hotel_employees
+(
+	id SERIAL primary key,
+	hotel_id    INT,
+    login_name varchar(255),
+    FOREIGN KEY (hotel_id) references public.hotels (id) ON DELETE CASCADE ON UPDATE cascade,
+    FOREIGN KEY (login_name) references public.users (login_name) ON DELETE CASCADE ON UPDATE CASCADE
+);
 

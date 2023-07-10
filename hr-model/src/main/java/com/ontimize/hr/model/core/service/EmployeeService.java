@@ -5,6 +5,7 @@ import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
+import com.ontimize.hr.model.core.dao.HotelsEmployeesDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UsersDaysOffDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
@@ -33,6 +34,9 @@ public class EmployeeService implements IEmployeeService {
 
     @Autowired
     private UsersDaysOffDAO usersDaysOffDAO;
+
+    @Autowired
+    private HotelsEmployeesDAO hotelsEmployeesDAO;
 
 
     @Secured({PermissionsProviderSecured.SECURED})
@@ -83,6 +87,12 @@ public class EmployeeService implements IEmployeeService {
             validateDaysOff(daysOff, days);
 
             result = userService.userInsert(attrMap);
+
+            Map<String,String>employeeHotel=new HashMap<>();
+            employeeHotel.put(HotelsEmployeesDAO.HOTEL_ID, String.valueOf(attrMap.get(UserDAO.HOTEL_ID)) );
+            employeeHotel.put(HotelsEmployeesDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));
+            daoHelper.insert(this.hotelsEmployeesDAO,employeeHotel);
+
 
             Map<String, String> daysOffToInsert = new HashMap<>();
             daysOffToInsert.put(UsersDaysOffDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));
