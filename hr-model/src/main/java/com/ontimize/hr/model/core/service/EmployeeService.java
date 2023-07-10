@@ -5,6 +5,7 @@ import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
+import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UsersDaysOffDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
@@ -18,6 +19,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Lazy
@@ -33,6 +36,8 @@ public class EmployeeService implements IEmployeeService {
 
     @Autowired
     private UsersDaysOffDAO usersDaysOffDAO;
+    @Autowired
+    private EmployeesEntryDepartureDAO employeesEntryDepartureDAO;
 
 
     @Secured({PermissionsProviderSecured.SECURED})
@@ -102,9 +107,43 @@ public class EmployeeService implements IEmployeeService {
             result = new EntityResultMapImpl();
             result.setMessage(e.getMessage());
             result.setCode(EntityResult.OPERATION_WRONG);
-            e.printStackTrace();
+
         }
 
+        return result;
+    }
+
+    @Secured({PermissionsProviderSecured.SECURED})
+    public EntityResult clockingInsert(String employeeLoginName) throws Exception {
+
+        EntityResult result;
+        try {
+
+            LocalDate entry = LocalDate.now();
+            Map<String, ? super Object> entryMap = new HashMap<>();
+            entryMap.put(EmployeesEntryDepartureDAO.ENTRY, entry);
+
+            Map<String, ? super Object> filter = new HashMap<>();
+            filter.put(UserDAO.LOGIN_NAME, employeeLoginName);
+            filter.put(EmployeesEntryDepartureDAO.WORKING_DAY,Date.from(entry.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+            List<String> queriedAttrs = List.of(EmployeesEntryDepartureDAO.WORKING_DAY);
+            EntityResult userEntryEntityResult = daoHelper.query(employeesEntryDepartureDAO, filter, queriedAttrs);
+
+            if (userEntryEntityResult.isEmpty()) {
+                entryMap.put(EmployeesEntryDepartureDAO.WORKING_DAY,Date.from(entry.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+                result = daoHelper.insert(employeesEntryDepartureDAO, entryMap);
+                result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+                result.setMessage(EmployeesEntryDepartureDAO.OPERATION_SUCCESS);
+            } else {
+                throw new Exception(EmployeesEntryDepartureDAO.E_ENTRY_SAVED);
+            }
+        } catch (Exception e) {
+            result = new EntityResultMapImpl();
+            result.setMessage(e.getMessage());
+            result.setCode(EntityResult.OPERATION_WRONG);
+        }
         return result;
     }
 
