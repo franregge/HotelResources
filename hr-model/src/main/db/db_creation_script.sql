@@ -47,11 +47,11 @@ CREATE TABLE public.users
     phone_number  VARCHAR(255) NOT NULL,
     email         VARCHAR(255) NOT NULL UNIQUE,
     user_password VARCHAR(255) NOT NULL,
-    shift_id INT,
+    shift_id      INT,
     foreign key (country_id) references public.countries (id)
         on delete restrict
         on update cascade,
-    foreign key(shift_id) references public.shifts(id)
+    foreign key (shift_id) references public.shifts (id)
         on delete set null
         on update cascade
 );
@@ -107,28 +107,41 @@ CREATE TABLE public.roles_users
 
 create TABLE public.shifts
 (
-	id SERIAL primary key,
-	role_id int,
-	mon varchar(23),
-	tue varchar(23),
-	wed varchar(23),
-	thu varchar(23),
-	fri varchar(23),
-	sat varchar(23),
-	sun varchar(23),
+    id      SERIAL primary key,
+    role_id int,
+    mon     varchar(23),
+    tue     varchar(23),
+    wed     varchar(23),
+    thu     varchar(23),
+    fri     varchar(23),
+    sat     varchar(23),
+    sun     varchar(23),
 
-	foreign key (role_id) references public.roles(role_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    foreign key (role_id) references public.roles (role_id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 create type day as enum ('monday','tuesday','wednesday','thursday','friday','saturday','sunday');
 
 create table public.users_days_off
 (
-	id serial not null primary key,
-	login_name varchar(255) not null,
-	day varchar(9) not null,
-	foreign key(login_name) references public.users(login_name) ON DELETE CASCADE ON UPDATE CASCADE
-	);
+    id         serial       not null primary key,
+    login_name varchar(255) not null,
+    day        varchar(9)   not null,
+    foreign key (login_name) references public.users (login_name) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+create table public.employees_entry_departure
+(
+    id          serial primary key,
+    login_name  varchar not null,
+    working_day Date    not null,
+    entry       Time    not null,
+    departure   Time    null,
+    foreign key (login_name)
+        references users (login_name)
+        on delete cascade on update cascade
+);
+
 
 CREATE UNIQUE INDEX CONCURRENTLY u_login_name_day
     ON users_days_off (login_name, day);
@@ -137,3 +150,9 @@ ALTER TABLE users_days_off
     ADD CONSTRAINT u_login_name_day
         UNIQUE USING INDEX u_login_name_day;
 
+CREATE UNIQUE INDEX CONCURRENTLY u_employee_work_day
+    ON employees_entry_departure (login_name, working_day);
+
+ALTER TABLE employees_entry_departure
+    ADD CONSTRAINT u_employee_work_day
+        UNIQUE USING INDEX u_employee_work_day;
