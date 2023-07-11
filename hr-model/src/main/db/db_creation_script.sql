@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS public.roles_users;
 DROP TABLE IF EXISTS public.shifts;
 DROP TABLE IF EXISTS public.users_days_off;
 DROP TABLE IF EXISTS public.hotel_employees;
+DROP TABLE IF EXISTS public.hotel_shifts;
 
 
 CREATE TABLE public.hotels
@@ -151,3 +152,11 @@ CREATE TABLE public.hotel_employees
     FOREIGN KEY (login_name) references public.users (login_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE public.hotel_shifts
+(
+	id SERIAL primary key,
+	shift_id INT,
+    hotel_id INT,
+    FOREIGN KEY (shift_id) references public.shifts (id) ON DELETE CASCADE ON UPDATE cascade,
+    FOREIGN KEY (hotel_id) references public.hotels (id) ON DELETE CASCADE ON UPDATE CASCADE
+);

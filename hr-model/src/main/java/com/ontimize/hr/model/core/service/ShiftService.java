@@ -39,6 +39,10 @@ public class ShiftService implements IShiftService {
     private UsersDaysOffDAO usersDaysOffDao;
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private HotelsShiftsDAO hotelsShiftsDAO;
+
     private static final String WORK_DAY_START = "start";
     private static final String WORK_DAY_END = "end";
     private static final int NO_SHIFT_ID_YET = -1;
@@ -188,6 +192,11 @@ public class ShiftService implements IShiftService {
                     );
                 }
             }
+            Map<? super Object, ? super Object> shiftHotel=new HashMap<>();
+            shiftHotel.put(HotelsShiftsDAO.SHIFT_ID, attrMap.get(ShiftDAO.ID)) ;
+            shiftHotel.put(HotelsShiftsDAO.HOTEL_ID, attrMap.get(ShiftDAO.HOTEL_ID));
+            daoHelper.insert(this.hotelsShiftsDAO,shiftHotel);
+
 
             Map<String, String> roleIdFilter = new HashMap<>();
             roleIdFilter.put(UserRoleDAO.NAME, (String) attrMap.get(ShiftDAO.ROLE_NAME));
