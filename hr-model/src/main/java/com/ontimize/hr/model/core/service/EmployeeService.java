@@ -254,7 +254,7 @@ public class EmployeeService implements IEmployeeService {
     }
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
-    public     EntityResult employeesPerShiftQuery(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap) throws Exception {
+    public EntityResult employeesPerShiftQuery(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap) throws Exception {
 
         LocalDate localDate = LocalDate.now();
         DayOfWeek dayOfWeek = localDate.getDayOfWeek();
