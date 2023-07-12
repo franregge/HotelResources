@@ -5,10 +5,7 @@ import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
-import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
-import com.ontimize.hr.model.core.dao.UserDAO;
-import com.ontimize.hr.model.core.dao.UsersDaysOffDAO;
-import com.ontimize.hr.model.core.dao.UserRoleDAO;
+import com.ontimize.hr.model.core.dao.*;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -40,7 +37,6 @@ public class EmployeeService implements IEmployeeService {
     private UsersDaysOffDAO usersDaysOffDAO;
     @Autowired
     private EmployeesEntryDepartureDAO employeesEntryDepartureDAO;
-
 
     @Secured({PermissionsProviderSecured.SECURED})
     @Override

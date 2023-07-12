@@ -24,6 +24,7 @@
                 <Column>friday</Column>
                 <Column>saturday</Column>
                 <Column>sunday</Column>
+                <Column>hotel_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
@@ -50,6 +51,7 @@
                 <Column>friday</Column>
                 <Column>saturday</Column>
                 <Column>sunday</Column>
+                <Column>hotel_id</Column>
             </ValidColumns>
             <Sentence>
                 <![CDATA[
