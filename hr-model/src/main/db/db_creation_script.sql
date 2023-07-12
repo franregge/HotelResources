@@ -10,8 +10,6 @@ DROP TABLE IF EXISTS public.countries;
 DROP TABLE IF EXISTS public.roles_users;
 DROP TABLE IF EXISTS public.shifts;
 DROP TABLE IF EXISTS public.users_days_off;
-DROP TABLE IF EXISTS public.hotel_employees;
-DROP TABLE IF EXISTS public.hotel_shifts;
 
 
 CREATE TABLE public.hotels
@@ -143,20 +141,3 @@ ALTER TABLE users_days_off
     ADD CONSTRAINT u_login_name_day
         UNIQUE USING INDEX u_login_name_day;
 
-CREATE TABLE public.hotel_employees
-(
-	id SERIAL primary key,
-	hotel_id    INT,
-    login_name varchar(255),
-    FOREIGN KEY (hotel_id) references public.hotels (id) ON DELETE CASCADE ON UPDATE cascade,
-    FOREIGN KEY (login_name) references public.users (login_name) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE public.hotel_shifts
-(
-	id SERIAL primary key,
-	shift_id INT,
-    hotel_id INT,
-    FOREIGN KEY (shift_id) references public.shifts (id) ON DELETE CASCADE ON UPDATE cascade,
-    FOREIGN KEY (hotel_id) references public.hotels (id) ON DELETE CASCADE ON UPDATE CASCADE
-);

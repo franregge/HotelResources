@@ -32,10 +32,6 @@ public class EmployeeService implements IEmployeeService {
     @Autowired
     private UsersDaysOffDAO usersDaysOffDAO;
 
-    @Autowired
-    private HotelsEmployeesDAO hotelsEmployeesDAO;
-
-
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeQuery(Map<?, ?> filter, List<?> attrList) {
@@ -84,17 +80,6 @@ public class EmployeeService implements IEmployeeService {
             validateDaysOff(daysOff, days);
 
             result = userService.userInsert(attrMap);
-
-
-            if (!ShiftDAO.HOTEL_ID.equals(HotelsEmployeesDAO.HOTEL_ID)){
-                result.setMessage("This shift is not in this hotel");
-                result.setCode(EntityResult.OPERATION_WRONG);
-            }
-
-            Map<String,String>employeeHotel=new HashMap<>();
-            employeeHotel.put(HotelsEmployeesDAO.HOTEL_ID, String.valueOf(attrMap.get(UserDAO.HOTEL_ID)) );
-            employeeHotel.put(HotelsEmployeesDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));
-            daoHelper.insert(this.hotelsEmployeesDAO,employeeHotel);
 
             Map<String, String> daysOffToInsert = new HashMap<>();
             daysOffToInsert.put(UsersDaysOffDAO.LOGIN_NAME, (String) attrMap.get(UserDAO.LOGIN_NAME));

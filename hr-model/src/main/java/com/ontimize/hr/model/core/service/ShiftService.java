@@ -40,9 +40,6 @@ public class ShiftService implements IShiftService {
     @Autowired
     private UserDAO userDAO;
 
-    @Autowired
-    private HotelsShiftsDAO hotelsShiftsDAO;
-
     private static final String WORK_DAY_START = "start";
     private static final String WORK_DAY_END = "end";
     private static final int NO_SHIFT_ID_YET = -1;
@@ -192,10 +189,7 @@ public class ShiftService implements IShiftService {
                     );
                 }
             }
-            Map<? super Object, ? super Object> shiftHotel=new HashMap<>();
-            shiftHotel.put(HotelsShiftsDAO.SHIFT_ID, attrMap.get(ShiftDAO.ID)) ;
-            shiftHotel.put(HotelsShiftsDAO.HOTEL_ID, attrMap.get(ShiftDAO.HOTEL_ID));
-            daoHelper.insert(this.hotelsShiftsDAO,shiftHotel);
+
 
 
             Map<String, String> roleIdFilter = new HashMap<>();
@@ -213,7 +207,7 @@ public class ShiftService implements IShiftService {
             result = this.daoHelper.insert(this.shiftDAO, attrMap);
 
             if (shiftEmployees != null) {
-                insertShiftEmployees(result, shiftEmployees);
+                insertShiftEmployees(result, shiftEmployees,attrMap);
             }
 
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
@@ -232,15 +226,27 @@ public class ShiftService implements IShiftService {
         return result;
     }
 
-    private void insertShiftEmployees(EntityResult result, List<String> shiftEmployees) {
+    private void insertShiftEmployees(EntityResult result, List<String> shiftEmployees, Map<? super Object, ? super Object> attrMap) throws InvalidShiftException {
         Map<String, Object> employeesShiftsRelationship = new HashMap<>();
         employeesShiftsRelationship.put(UserDAO.SHIFT_ID, result.get(ShiftDAO.ID));
 
+        for (String loginName : shiftEmployees) {
+            Map<String, String> filter2 = new HashMap<>();
+            filter2.put(UserDAO.LOGIN_NAME, loginName);
+            EntityResult hotelResult = userService.userQuery(filter2, Collections.singletonList(UserDAO.HOTEL_ID));
+
+            if(!(hotelResult.getRecordValues(0).get(UserDAO.HOTEL_ID)== attrMap.get(ShiftDAO.HOTEL_ID))){
+                throw new InvalidShiftException(IShiftService.SHIFT_NOT_IN_HOTEL);
+            }
+
+        }
         for (String loginName : shiftEmployees) {
             Map<String, String> filter = new HashMap<>();
             filter.put(UsersShiftsDAO.LOGIN_NAME, loginName);
             daoHelper.update(userDAO, employeesShiftsRelationship, filter);
         }
+
+
     }
 
     @SuppressWarnings("unchecked")
