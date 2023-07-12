@@ -24,4 +24,5 @@ public class EmployeesEntryDepartureDAO extends OntimizeJdbcDaoSupport {
     public static final String E_ALREADY_CLOCKED_OUT = "This employee has already clocked out for the day";
     public static final String E_NOT_EMPLOYEE = "This user is not an employee";
     public static final String E_CANNOT_CLOCK_IN_OTHERS = "You can not clock in another user";
+    public static final String Q_EMPLOYEES_ACTIVE_BY_SHIFT = "employeesActivePerShift";
 }

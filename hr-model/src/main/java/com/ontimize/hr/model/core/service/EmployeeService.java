@@ -5,13 +5,11 @@ import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
-import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
-import com.ontimize.hr.model.core.dao.UserDAO;
-import com.ontimize.hr.model.core.dao.UsersDaysOffDAO;
-import com.ontimize.hr.model.core.dao.UserRoleDAO;
+import com.ontimize.hr.model.core.dao.*;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
+import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,6 +18,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -253,4 +252,22 @@ public class EmployeeService implements IEmployeeService {
         }
         return result;
     }
+    @Override
+    @Secured({PermissionsProviderSecured.SECURED})
+    public     EntityResult employeesPerShiftQuery(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap) throws Exception {
+
+        LocalDate localDate = LocalDate.now();
+        DayOfWeek dayOfWeek = localDate.getDayOfWeek();
+        int dayOfWeekValue = dayOfWeek.getValue();
+        String dayOfWeekName = dayOfWeek.toString();
+
+
+    EntityResult result = daoHelper.query(employeesEntryDepartureDAO,filter, List.of(attrMap.get(EmployeesEntryDepartureDAO.LOGIN_NAME), ShiftDAO.ROLE_ID,dayOfWeekName.toLowerCase(),EmployeesEntryDepartureDAO.ENTRY),EmployeesEntryDepartureDAO.Q_EMPLOYEES_ACTIVE_BY_SHIFT);
+        result= EntityResultTools.doGroup(result, List.of(UserDAO.SHIFT_ID).toArray(new String[0]));
+
+        return result;
+    }
+
+
+
 }

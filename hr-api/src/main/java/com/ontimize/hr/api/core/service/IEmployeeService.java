@@ -2,6 +2,8 @@ package com.ontimize.hr.api.core.service;
 
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.jee.common.dto.EntityResult;
+import com.ontimize.jee.common.security.PermissionsProviderSecured;
+import org.springframework.security.access.annotation.Secured;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ public interface IEmployeeService {
     EntityResult clockInInsert(Map<? super Object, ? super Object> attrMap);
 
     EntityResult clockOutUpdate(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap);
+    EntityResult employeesPerShiftQuery(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap) throws Exception;
 
     String ERR_CANNOT_DELETE_USER = "Cannot delete this user";
 
