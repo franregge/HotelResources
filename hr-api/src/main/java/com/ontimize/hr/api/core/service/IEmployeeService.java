@@ -16,6 +16,10 @@ public interface IEmployeeService {
 
     EntityResult employeeUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> filter);
 
+    EntityResult clockInInsert(Map<? super Object, ? super Object> attrMap);
+
+    EntityResult clockOutUpdate(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap);
+
     String ERR_CANNOT_DELETE_USER = "Cannot delete this user";
 
 }
