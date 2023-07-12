@@ -191,7 +191,6 @@ public class ShiftService implements IShiftService {
             }
 
 
-
             Map<String, String> roleIdFilter = new HashMap<>();
             roleIdFilter.put(UserRoleDAO.NAME, (String) attrMap.get(ShiftDAO.ROLE_NAME));
             Integer roleId = (Integer) daoHelper
@@ -207,7 +206,7 @@ public class ShiftService implements IShiftService {
             result = this.daoHelper.insert(this.shiftDAO, attrMap);
 
             if (shiftEmployees != null) {
-                insertShiftEmployees(result, shiftEmployees,attrMap);
+                insertShiftEmployees(result, shiftEmployees, attrMap);
             }
 
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
@@ -235,8 +234,8 @@ public class ShiftService implements IShiftService {
             filter2.put(UserDAO.LOGIN_NAME, loginName);
             EntityResult hotelResult = userService.userQuery(filter2, Collections.singletonList(UserDAO.HOTEL_ID));
 
-            if(!(hotelResult.getRecordValues(0).get(UserDAO.HOTEL_ID)== attrMap.get(ShiftDAO.HOTEL_ID))){
-                throw new InvalidShiftException(IShiftService.SHIFT_NOT_IN_HOTEL);
+            if (hotelResult.getRecordValues(0).get(UserDAO.HOTEL_ID) != attrMap.get(ShiftDAO.HOTEL_ID)) {
+                throw new InvalidShiftException(IShiftService.E_EMPLOYEE_NOT_IN_HOTEL);
             }
 
         }
@@ -455,7 +454,7 @@ public class ShiftService implements IShiftService {
             result.put("deleted_shift", shiftID);
             result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
             result.setMessage(e.getMessage());

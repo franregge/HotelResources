@@ -30,7 +30,6 @@ public interface IShiftService {
     String EMPLOYEE_FILTER = "employee";
     String EMPLOYEE_COLUMNS = "columns";
     String SHIFT_EMPLOYEES = "employees";
-
-    String SHIFT_NOT_IN_HOTEL = "This shift is not in the employee's hotel";
+    String E_EMPLOYEE_NOT_IN_HOTEL = "This employee does not work at the specified hotel";
 
 }
