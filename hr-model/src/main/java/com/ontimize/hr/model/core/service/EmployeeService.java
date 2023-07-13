@@ -6,6 +6,7 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
 import com.ontimize.hr.model.core.dao.*;
+import com.ontimize.jee.common.db.SQLStatementBuilder;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
@@ -252,42 +253,65 @@ public class EmployeeService implements IEmployeeService {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult employeesPerShiftQuery(Map<? super Object, ? super Object> filter, final Map<? super Object, ? super Object> attrMap) {
-
         LocalDate localDate = LocalDate.now();
-        DayOfWeek dayOfWeek = localDate.getDayOfWeek();
-        int dayOfWeekValue = dayOfWeek.getValue();
-        String dayOfWeekName = dayOfWeek.toString();
-
-
-        filter.put(EmployeesEntryDepartureDAO.WORKING_DAY, localDate);
+        String dayOfWeekName = localDate.getDayOfWeek().toString().toLowerCase();
 
         EntityResult result;
         try {
-            Map<?super Object,?super Object>employeesInShiftFilter= new HashMap<>();
-            employeesInShiftFilter.put(ShiftDAO.ID,filter.get(ShiftDAO.ID));
-            //EntityResult employeesInShift = daoHelper.query(shiftDAO,filter,List.of(dayOfWeekName,ShiftDAO.ROLENAME,ShiftDAO.LOGIN_NAME),ShiftDAO.Q_SHIFT_WITH_USERS);
-            result = daoHelper.query(employeesEntryDepartureDAO, filter, List.of(EmployeesEntryDepartureDAO.LOGIN_NAME, ShiftDAO.ROLE_ID, dayOfWeekName.toLowerCase(), EmployeesEntryDepartureDAO.ENTRY), EmployeesEntryDepartureDAO.Q_EMPLOYEES_ACTIVE_BY_SHIFT);
+            Map<String, ? super Object> shiftAndCurrentEmployees = new HashMap<>();
 
-            for(int i =0;result.calculateRecordNumber()>i;i++){
-                if ((result.getRecordValues(i).get(EmployeesEntryDepartureDAO.ENTRY)==null)){
+            Map<String, Object> employeesInShiftFilter = new HashMap<>();
+            employeesInShiftFilter.put(UserDAO.SHIFT_ID, filter.get(ShiftDAO.ID));
+            Map<String, Object> employeesInShiftFilterFreeToday = new HashMap<>(employeesInShiftFilter);
+            employeesInShiftFilterFreeToday.put(UsersDaysOffDAO.DAY, dayOfWeekName);
+            List<String> employeesFreeToday = Optional.ofNullable((List<String>) daoHelper
+                    .query(usersDaysOffDAO, employeesInShiftFilterFreeToday, List.of(UsersDaysOffDAO.LOGIN_NAME))
+                    .get(UsersDaysOffDAO.LOGIN_NAME)).orElse(new ArrayList<>());
+            List<String> employeeLoginNames = (List<String>) userService.userQuery(employeesInShiftFilter, List.of(UserDAO.LOGIN_NAME)).get(UserDAO.LOGIN_NAME);
+            employeeLoginNames.removeAll(employeesFreeToday);
 
-                    result.addRecord((Map) result.getRecordValues(i).put(EmployeesEntryDepartureDAO.ENTRY,EmployeesEntryDepartureDAO.E_NO_CLOCK_IN),i);
+            List<Map<String, Object>> employeesInShift = new ArrayList<>();
+            Map<String, Object> employeeClockedInFilter = new HashMap<>();
+            for (String employeeLoginName : employeeLoginNames) {
+                employeeClockedInFilter.put(EmployeesEntryDepartureDAO.LOGIN_NAME, employeeLoginName);
+                employeeClockedInFilter.put(EmployeesEntryDepartureDAO.WORKING_DAY, Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                EntityResult employeeStatusResult = daoHelper
+                        .query(
+                                employeesEntryDepartureDAO,
+                                employeeClockedInFilter,
+                                List.of(EmployeesEntryDepartureDAO.ENTRY, EmployeesEntryDepartureDAO.DEPARTURE)
+                        );
 
-                }
-                if(result.getRecordValues(i).get(EmployeesEntryDepartureDAO.DEPARTURE)==null){
+                boolean isFinished = !employeeStatusResult
+                        .getRecordValues(0)
+                        .isEmpty() &&
+                        (employeeStatusResult
+                                .getRecordValues(0)
+                                .get(EmployeesEntryDepartureDAO.DEPARTURE)) != null;
 
-                    result.addRecord((Map) result.getRecordValues(i).put(EmployeesEntryDepartureDAO.DEPARTURE,EmployeesEntryDepartureDAO.E_NO_CLOCK_OUT),i);
+                boolean isPresent = !isFinished &&
+                        !employeeStatusResult
+                                .getRecordValues(0)
+                                .isEmpty() &&
+                        employeeStatusResult
+                                .getRecordValues(0)
+                                .get(EmployeesEntryDepartureDAO.ENTRY) != null;
 
-
-                }
-
+                Map<String, Object> employee = new HashMap<>();
+                employee.put("login_name", employeeLoginName);
+                employee.put("present", isPresent);
+                employee.put("shift_finished", isFinished);
+                employeesInShift.add(employee);
             }
 
-
-
+            shiftAndCurrentEmployees.put("employees", employeesInShift);
+            shiftAndCurrentEmployees.put(ShiftDAO.ID, filter.get(ShiftDAO.ID));
+            result = new EntityResultMapImpl();
+            result.addRecord(shiftAndCurrentEmployees);
         } catch (Exception e) {
             result = new EntityResultMapImpl();
             result.setCode(EntityResult.OPERATION_WRONG);
@@ -297,6 +321,4 @@ public class EmployeeService implements IEmployeeService {
 
         return result;
     }
-
-
 }
