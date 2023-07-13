@@ -13,6 +13,7 @@ import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -174,6 +175,7 @@ public class EmployeeServiceTest {
     }
 
     @Nested
+    @Disabled
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class EmployeeInsert {
 

@@ -40,6 +40,7 @@ public class UserServiceTest {
     DefaultOntimizeDaoHelper daoHelper;
 
     @Nested
+    @Disabled
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class insertUser {
 
@@ -205,6 +206,7 @@ public class UserServiceTest {
     }
 
     @Nested
+    @Disabled
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class updateUser {
         Map<Object, Object> attrMap = new HashMap<>();

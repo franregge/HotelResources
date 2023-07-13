@@ -18,6 +18,7 @@ public class EmployeesEntryDepartureDAO extends OntimizeJdbcDaoSupport {
     public static final String WORKING_DAY = "working_day";
     public static final String E_ENTRY_SAVED = "This employee has an entry saved for this day";
     public static final String E_NO_CLOCK_IN = "This employee has not clocked in for the day";
+    public static final String E_NO_CLOCK_OUT = "This employee has not clocked out for the day";
     public static final String OPERATION_SUCCESS = "Your entry has been saved";
 
     public static final String CLOCK_OUT_SUCCESS = "Clocked out successfully";

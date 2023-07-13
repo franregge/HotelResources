@@ -50,9 +50,9 @@ public class EmployeeController extends ORestController<IEmployeeService> {
         return employeeService.clockInInsert((Map<? super Object, ? super Object>) data.get("data"));
     }
     @PostMapping("/employeesPerShift")
-    public EntityResult employeesPerShiftQuery(@RequestBody Map<? super Object, ? super Object> data, Map<?super Object,? super Object>filter){
+    public EntityResult employeesPerShiftQuery(@RequestBody  Map<?super Object,? super Object>filter){
 
-        return employeesPerShiftQuery(data, filter);
+        return employeeService.employeesPerShiftQuery((Map<? super Object, ? super Object>) filter.get("filter"),new HashMap<>());
     }
 
 }
