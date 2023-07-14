@@ -37,8 +37,6 @@ public class EmployeeService implements IEmployeeService {
     private UsersDaysOffDAO usersDaysOffDAO;
     @Autowired
     private EmployeesEntryDepartureDAO employeesEntryDepartureDAO;
-    @Autowired
-    private ShiftDAO shiftDAO;
 
 
     @Secured({PermissionsProviderSecured.SECURED})
