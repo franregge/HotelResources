@@ -100,7 +100,25 @@
 						JOIN ${mainschema}.roles_users ru ON us.login_name = ru.login_name
 						JOIN ${mainschema}.roles r on r.role_id= ru.role_id
 					#WHERE#
-					]]>
+				]]>
+            </Sentence>
+        </Query>
+        <Query id="employeesDaysOff">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="login_name" prefix="u" />
+            </AmbiguousColumns>
+            <ValidColumns>
+                <Column>login_name</Column>
+            </ValidColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.users u
+                        JOIN ${mainschema}.users_days_off udo ON u.login_name = udo.login_name
+                    #WHERE#
+                ]]>
             </Sentence>
         </Query>
     </Queries>

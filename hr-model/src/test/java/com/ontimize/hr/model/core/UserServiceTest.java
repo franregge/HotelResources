@@ -2,6 +2,7 @@ package com.ontimize.hr.model.core;
 
 import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.UserDoesNotExistException;
+import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
@@ -38,6 +39,8 @@ public class UserServiceTest {
     UserService userService;
     @Mock
     DefaultOntimizeDaoHelper daoHelper;
+    @Mock
+    UserDAO userDAO;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,7 +50,7 @@ public class UserServiceTest {
 
         @Test
         void insertUser_validUser_operationSuccessful() {
-
+            attrMap.put(UserDAO.ROLE_IDS,List.of(6));
             attrMap.put(UserDAO.USER_NAME, "Manolo");
             attrMap.put(UserDAO.USER_PASSWORD, "Pass1234");
             attrMap.put(UserDAO.COUNTRY_ID, 1);
@@ -187,7 +190,6 @@ public class UserServiceTest {
     }
 
     @Nested
-    @Disabled // este test pertenece a una historia que aún no hemos realizado
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class deleteUser {
 
@@ -197,10 +199,19 @@ public class UserServiceTest {
         void deleteUser_validUser_userIsDeleted() {
             keyMap.put(UserDAO.LOGIN_NAME, "empleado1");
 
+            EntityResult deleteEntityResult = new EntityResultMapImpl();
+            deleteEntityResult.setMessage(IUserService.DELETION_SUCCESS);
+            deleteEntityResult.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
-            assertDoesNotThrow(() -> userService.userDelete(keyMap));
+            EntityResult queryEntityResult = new EntityResultMapImpl();
+            queryEntityResult.addRecord(keyMap);
 
+            when(daoHelper.query(any(), any(), any())).thenReturn(queryEntityResult);
+            when(daoHelper.delete(userDAO,keyMap)).thenReturn(deleteEntityResult);
 
+            EntityResult result=  userService.userDelete(keyMap);
+            //assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
+            assertEquals(IUserService.DELETION_SUCCESS, result.getMessage());
         }
     }
 

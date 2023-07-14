@@ -29,6 +29,8 @@ public class ShiftDAO extends OntimizeJdbcDaoSupport {
     public static final String ROLENAME = "rolename";
     public static final String E_EMPLOYEES_NOT_FOUND = "The following employees were not found: ";
     public static final String Q_SHIFT_WITH_ROLE = "shiftWithRole";
+    public static final String Q_SHIFT_WITH_USERS ="userShift";
+
 
     public static final String HOTEL_ID = "hotel_id";
 

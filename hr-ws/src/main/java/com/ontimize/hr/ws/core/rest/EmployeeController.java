@@ -12,11 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -50,6 +48,44 @@ public class EmployeeController extends ORestController<IEmployeeService> {
         }
 
         return employeeService.clockInInsert((Map<? super Object, ? super Object>) data.get("data"));
+    }
+    @PutMapping("/clockOut")
+    public EntityResult clockOut(@RequestBody Map<? super Object, ? super Object> data, Authentication authentication) {
+        EntityResult result;
+
+        if (authentication.getAuthorities().stream().noneMatch(auth -> auth.getAuthority().equals(RoleNames.EMPLOYEE))) {
+            result = new EntityResultMapImpl();
+            result.setMessage(EmployeesEntryDepartureDAO.E_NOT_EMPLOYEE);
+            result.setCode(EntityResult.OPERATION_WRONG);
+            return result;
+        }
+
+        if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(((Map<?, ?>) data.get("filter")).get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
+             result = new EntityResultMapImpl();
+             result.setCode(EntityResult.OPERATION_WRONG);
+             result.setMessage(EmployeesEntryDepartureDAO.E_CANNOT_CLOCK_OUT_OTHERS);
+             return result;
+        }
+
+        return employeeService.clockOutUpdate((Map<? super Object, ? super Object>) data.get("filter"),new HashMap<>());
+    }
+    @PostMapping("/employeesPerShift")
+    public EntityResult employeesPerShiftQuery(@RequestBody  Map<?super Object,? super Object>filter){
+
+        return employeeService.employeesPerShiftQuery((Map<? super Object, ? super Object>) filter.get("filter"),new HashMap<>());
+    }
+    @PutMapping("/update")
+    public EntityResult employeeUpdate(@RequestBody Map<? super Object, ? super Object> attrMap,Map<? super Object, ? super Object> keyMap,Authentication authentication) {
+        EntityResult result;
+
+        if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(keyMap.get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(EmployeesEntryDepartureDAO.E_CANNOT_CLOCK_OUT_OTHERS);
+            return result;
+        }
+
+        return employeeService.employeeUpdate(attrMap,keyMap);
     }
 
 }

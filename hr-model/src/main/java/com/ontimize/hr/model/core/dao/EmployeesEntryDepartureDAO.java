@@ -18,10 +18,13 @@ public class EmployeesEntryDepartureDAO extends OntimizeJdbcDaoSupport {
     public static final String WORKING_DAY = "working_day";
     public static final String E_ENTRY_SAVED = "This employee has an entry saved for this day";
     public static final String E_NO_CLOCK_IN = "This employee has not clocked in for the day";
+    public static final String E_NO_CLOCK_OUT = "This employee has not clocked out for the day";
     public static final String OPERATION_SUCCESS = "Your entry has been saved";
 
     public static final String CLOCK_OUT_SUCCESS = "Clocked out successfully";
     public static final String E_ALREADY_CLOCKED_OUT = "This employee has already clocked out for the day";
     public static final String E_NOT_EMPLOYEE = "This user is not an employee";
     public static final String E_CANNOT_CLOCK_IN_OTHERS = "You can not clock in another user";
+    public static final String E_CANNOT_CLOCK_OUT_OTHERS = "You can not clock out another user";
+    public static final String Q_EMPLOYEES_ACTIVE_BY_SHIFT = "employeesActivePerShift";
 }

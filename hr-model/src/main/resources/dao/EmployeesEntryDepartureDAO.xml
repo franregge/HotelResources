@@ -31,5 +31,23 @@
                 ]]>
             </Sentence>
         </Query>
+        <Query id="employeesActivePerShift">
+            <AmbiguousColumns>
+                <AmbiguousColumn name="login_name" prefix="u"/>
+                <AmbiguousColumn name="id" prefix="s"/>
+            </AmbiguousColumns>
+            <Sentence>
+                <![CDATA[
+                    SELECT
+                        #COLUMNS#
+                    FROM
+                        ${mainschema}.employees_entry_departure edp
+                        JOIN ${mainschema}.users u ON u.login_name =edp.login_name
+                        JOIN ${mainschema}.shifts s on s.id = u.shift_id
+                    #WHERE#
+                    #ORDER#
+                ]]>
+            </Sentence>
+        </Query>
     </Queries>
 </JdbcEntitySetup>

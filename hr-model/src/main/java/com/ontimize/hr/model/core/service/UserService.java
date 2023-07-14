@@ -4,6 +4,7 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidIdDocumentException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.api.core.service.exception.*;
+import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.hr.model.core.dao.UsersRolesDAO;
@@ -199,6 +200,7 @@ public class UserService implements IUserService {
             validateUser(attrMap);
 
             result = this.daoHelper.insert(this.userDAO, attrMap);
+
 
             List<Integer> roleIds = (List<Integer>) attrMap.get(UserDAO.ROLE_IDS);
             Map<String, ? super Object> roleInsertAttributes = new HashMap<>();

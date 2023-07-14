@@ -13,6 +13,7 @@ import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -73,7 +74,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(RoleNames.EMPLOYEE);
+            List<String> result = List.of(String.valueOf(RoleNames.EMPLOYEE));
             when(userService.getUserRoles(any())).thenReturn(result);
             when(userService.userUpdate(attrMap, keyMap)).thenReturn(er);
 
@@ -97,7 +98,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_WRONG);
-            List<String> result = List.of(RoleNames.MANAGER);
+            List<String> result = List.of(String.valueOf(RoleNames.MANAGER));
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -120,7 +121,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> result = List.of(RoleNames.EMPLOYEE);
+            List<String> result = List.of(String.valueOf(RoleNames.EMPLOYEE));
 
             when(userService.getUserRoles(any())).thenReturn(result);
 
@@ -135,7 +136,7 @@ public class EmployeeServiceTest {
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-            List<String> userRoles = List.of(RoleNames.CLIENT);
+            List<String> userRoles = List.of(String.valueOf(RoleNames.CLIENT));
 
             when(userService.getUserRoles(any())).thenReturn(userRoles);
 
@@ -181,6 +182,7 @@ public class EmployeeServiceTest {
 
         @Test
         void employeeInsert_validEmployee_operationSuccessful() throws InvalidShiftException {
+            attrMap.put(UserDAO.EMPLOYEE_ROLE,RoleNames.RECEPTIONIST);
             attrMap.put(UserDAO.LOGIN_NAME, "test");
             attrMap.put(UserDAO.USER_NAME, "test");
             attrMap.put(UserDAO.EMAIL, "test@example.org");
