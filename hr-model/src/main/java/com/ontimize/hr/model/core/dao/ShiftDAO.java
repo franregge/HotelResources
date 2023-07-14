@@ -32,4 +32,6 @@ public class ShiftDAO extends OntimizeJdbcDaoSupport {
     public static final String Q_SHIFT_WITH_USERS ="userShift";
 
 
+    public static final String HOTEL_ID = "hotel_id";
+
 }

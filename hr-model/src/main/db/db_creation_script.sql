@@ -47,12 +47,16 @@ CREATE TABLE public.users
     phone_number  VARCHAR(255) NOT NULL,
     email         VARCHAR(255) NOT NULL UNIQUE,
     user_password VARCHAR(255) NOT NULL,
-    shift_id      INT,
+    hotel_id      INT          NULL,
+    shift_id      INT          NULL,
     foreign key (country_id) references public.countries (id)
         on delete restrict
         on update cascade,
     foreign key (shift_id) references public.shifts (id)
         on delete set null
+        on update cascade,
+    foreign key(hotel_id) references public.hotels(id)
+        on delete restrict
         on update cascade
 );
 

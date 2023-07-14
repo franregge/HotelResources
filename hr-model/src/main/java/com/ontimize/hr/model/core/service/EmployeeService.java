@@ -38,7 +38,6 @@ public class EmployeeService implements IEmployeeService {
     @Autowired
     private EmployeesEntryDepartureDAO employeesEntryDepartureDAO;
 
-
     @Secured({PermissionsProviderSecured.SECURED})
     @Override
     public EntityResult employeeQuery(Map<?, ?> filter, List<?> attrList) {
