@@ -6,19 +6,17 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 
+@Lazy
+@Repository(value = "UsersShiftsDAO")
+@ConfigurationFile(
+        configurationFile = "dao/UsersShiftsDAO.xml",
+        configurationFilePlaceholder = "dao/placeholders.properties")
 
-    @Lazy
-    @Repository(value = "UsersShiftsDAO")
-    @ConfigurationFile(
-            configurationFile = "dao/UsersShiftsDAO.xml",
-            configurationFilePlaceholder = "dao/placeholders.properties")
+public class UsersShiftsDAO extends OntimizeJdbcDaoSupport {
 
-    public class UsersShiftsDAO extends OntimizeJdbcDaoSupport {
+    public static final String SHIFT_ID = "shift_id";
+    public static final String LOGIN_NAME = "login_name";
 
-        public static final String SHIFT_ID = "shift_id";
-        public static final String LOGIN_NAME = "login_name";
+    public static final String Q_USERS_SHIFTS = "userShift";
 
-        public static final String Q_USERS_SHIFTS = "userShift";
-
-
-    }
+}

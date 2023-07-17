@@ -9,9 +9,13 @@ import java.util.Map;
 public interface IBookingService {
 
     EntityResult bookingQuery(Map<?, ?> keymap, List<?> attrList);
+
     EntityResult bookingInsert(Map<?, ?> attrMap) throws InvalidBookingDateException, InvalidIdDocumentException;
+
     EntityResult bookingDelete(Map<?, ?> keyMap);
+
     EntityResult bookingUpdate(Map<?, ?> attrMap, Map<?, ?> keyMap) throws InvalidBookingDateException, InvalidIdDocumentException, BookingDoesNotExistException, BookingNotModifiableException, RoomDoesNotExistException, InvalidBookingRoomException;
+
     String DATE_BEFORE_NOW_MESSAGE = "The arrival date must be after now";
     String ARRIVAL_DATE_AFTER_DEPARTURE_DATE_MESSAGE = "The departure date must be after arrival date";
     String DATES_OVERLAP = "Occupied room in those dates";

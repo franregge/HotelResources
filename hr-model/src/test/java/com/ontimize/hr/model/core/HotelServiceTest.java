@@ -100,26 +100,26 @@ public class HotelServiceTest {
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class deleteHotel{
+    class deleteHotel {
 
         Map<Object, Object> keymap = new HashMap<>();
 
         @Test
-        void deleteHotel_validHotel_HotelIsDeleted(){
+        void deleteHotel_validHotel_HotelIsDeleted() {
 
             keymap.put(HotelDAO.ID, 1);
 
             EntityResult er = new EntityResultMapImpl();
             er.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
-            when(daoHelper.delete(any(),any())).thenReturn(er);
-            when(daoHelper.query(any(),any(),any())).thenReturn(new EntityResultMapImpl());
+            when(daoHelper.delete(any(), any())).thenReturn(er);
+            when(daoHelper.query(any(), any(), any())).thenReturn(new EntityResultMapImpl());
 
             assertDoesNotThrow(() -> hotelService.hotelDelete(keymap));
         }
 
         @Test
-        void deleteHotel_HotelIsNotDeleted(){
+        void deleteHotel_HotelIsNotDeleted() {
 
             keymap.put(HotelDAO.ID, 1);
 
@@ -128,8 +128,8 @@ public class HotelServiceTest {
             er.setMessage("No hotels with this id");
 
 
-            when(daoHelper.delete(any(),any())).thenReturn(er);
-            when(daoHelper.query(any(),any(),any())).thenReturn(new EntityResultMapImpl());
+            when(daoHelper.delete(any(), any())).thenReturn(er);
+            when(daoHelper.query(any(), any(), any())).thenReturn(new EntityResultMapImpl());
 
             EntityResult result = hotelService.hotelDelete(keymap);
             assertEquals(EntityResult.OPERATION_WRONG, result.getCode());

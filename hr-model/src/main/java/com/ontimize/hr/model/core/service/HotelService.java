@@ -161,7 +161,7 @@ public class HotelService implements IHotelService {
         result.setMessage("Hotel deleted successfully");
         result.put("deleted_id", hotelId);
         result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
-      
+
         return result;
     }
 

@@ -4,7 +4,6 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidIdDocumentException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.api.core.service.exception.*;
-import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.hr.model.core.dao.UsersRolesDAO;
@@ -92,7 +91,7 @@ public class UserService implements IUserService {
     }
 
     private void validateUser(Map<?, ?> attrMap) throws UserDataException {
-        if (invalidDNI((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
+        if (invalidDocument((String) attrMap.get(UserDAO.ID_DOCUMENT))) {
             throw new InvalidIdDocumentException(IUserService.ERR_INVALID_ID_DOCUMENT);
         }
 
@@ -138,7 +137,7 @@ public class UserService implements IUserService {
             validatePassword(attrMap);
         }
 
-        if (attrMap.get(UserDAO.ID_DOCUMENT) != null && (invalidDNI((String) attrMap.get(UserDAO.ID_DOCUMENT)))) {
+        if (attrMap.get(UserDAO.ID_DOCUMENT) != null && (invalidDocument((String) attrMap.get(UserDAO.ID_DOCUMENT)))) {
             throw new InvalidIdDocumentException(IUserService.ERR_INVALID_ID_DOCUMENT);
 
         }
@@ -155,7 +154,7 @@ public class UserService implements IUserService {
     }
 
 
-    private boolean invalidDNI(String dni) {
+    private boolean invalidDocument(String dni) {
         List<Character> letters = List.of(
                 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H',
                 'L', 'C', 'K', 'E'
@@ -167,8 +166,16 @@ public class UserService implements IUserService {
 
         dni = dni.toUpperCase();
 
-        if (!dni.matches("\\d{8}[A-HJ-NP-TV-Z]")) {
+        if (!dni.matches("[XYZ\\d]?\\d{7}[A-HJ-NP-TV-Z]")) {
             return true;
+        }
+
+        if (dni.startsWith("X")) {
+            dni = "0" + dni.substring(1);
+        } else if (dni.startsWith("Y")) {
+            dni = "1" + dni.substring(1);
+        } else if (dni.startsWith("Z")) {
+            dni = "2" + dni.substring(1);
         }
 
         int numberSegment = Integer.parseInt(dni.substring(0, 8));
@@ -176,6 +183,7 @@ public class UserService implements IUserService {
 
         return letters.get(numberSegment % 23) != letter;
     }
+
 
     @SuppressWarnings("unchecked")
     public List<String> getUserRoles(String loginName) throws UserDoesNotExistException {

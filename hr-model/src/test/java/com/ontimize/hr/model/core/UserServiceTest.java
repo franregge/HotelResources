@@ -48,14 +48,15 @@ public class UserServiceTest {
 
         Map<Object, Object> attrMap = new HashMap<>();
 
-        @Test
-        void insertUser_validUser_operationSuccessful() {
-            attrMap.put(UserDAO.ROLE_IDS,List.of(6));
+        @ParameterizedTest
+        @ValueSource(strings = {"X0488209B", "66955662V", "Z1197337P", "Y3924252Y"})
+        void insertUser_validUser_operationSuccessful(String idDocument) {
+            attrMap.put(UserDAO.ROLE_IDS, List.of(6));
             attrMap.put(UserDAO.USER_NAME, "Manolo");
             attrMap.put(UserDAO.USER_PASSWORD, "Pass1234");
             attrMap.put(UserDAO.COUNTRY_ID, 1);
             attrMap.put(UserDAO.SURNAME1, "Garcia");
-            attrMap.put(UserDAO.ID_DOCUMENT, "66955662V");
+            attrMap.put(UserDAO.ID_DOCUMENT, idDocument);
             attrMap.put(UserDAO.PHONE_NUMBER, "666666666");
             attrMap.put(UserDAO.SURNAME2, "Martinez");
             attrMap.put(UserDAO.EMAIL, "manolo.martinez@mymail.com");
@@ -207,9 +208,9 @@ public class UserServiceTest {
             queryEntityResult.addRecord(keyMap);
 
             when(daoHelper.query(any(), any(), any())).thenReturn(queryEntityResult);
-            when(daoHelper.delete(userDAO,keyMap)).thenReturn(deleteEntityResult);
+            when(daoHelper.delete(userDAO, keyMap)).thenReturn(deleteEntityResult);
 
-            EntityResult result=  userService.userDelete(keyMap);
+            EntityResult result = userService.userDelete(keyMap);
             //assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
             assertEquals(IUserService.DELETION_SUCCESS, result.getMessage());
         }
@@ -228,7 +229,7 @@ public class UserServiceTest {
             keyMap.put(UserDAO.LOGIN_NAME, "manager");
             attrMap.put(UserDAO.USER_PASSWORD, "Pass123");
             attrMap.put(UserDAO.SURNAME1, "Garcia");
-            attrMap.put(UserDAO.ID_DOCUMENT, "66955662V");
+            attrMap.put(UserDAO.ID_DOCUMENT, "X0488209B");
             attrMap.put(UserDAO.LOGIN_NAME, "manager");
 
             userEntityResult.put(UserDAO.USER_PASSWORD, "Pass1234");

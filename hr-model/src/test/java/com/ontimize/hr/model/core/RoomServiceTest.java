@@ -32,8 +32,6 @@ public class RoomServiceTest {
     @Mock
     DefaultOntimizeDaoHelper daoHelper;
     @Mock
-    RoomDAO roomDAO;
-    @Mock
     HotelService hotelService;
     @Mock
     RoomUtils roomUtilsMock;

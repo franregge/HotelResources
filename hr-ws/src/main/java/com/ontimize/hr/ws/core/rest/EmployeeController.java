@@ -8,9 +8,6 @@ import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.services.user.UserInformation;
 import com.ontimize.jee.server.rest.ORestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +26,9 @@ public class EmployeeController extends ORestController<IEmployeeService> {
         return employeeService;
     }
 
+    private static final String FILTER = "filter";
+
+    @SuppressWarnings("unchecked")
     @PostMapping("/clockIn")
     public EntityResult clockIn(@RequestBody Map<? super Object, ? super Object> data, Authentication authentication) {
         EntityResult result;
@@ -41,14 +41,16 @@ public class EmployeeController extends ORestController<IEmployeeService> {
         }
 
         if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(((Map<?, ?>) data.get("data")).get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
-             result = new EntityResultMapImpl();
-             result.setCode(EntityResult.OPERATION_WRONG);
-             result.setMessage(EmployeesEntryDepartureDAO.E_CANNOT_CLOCK_IN_OTHERS);
-             return result;
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(EmployeesEntryDepartureDAO.E_CANNOT_CLOCK_IN_OTHERS);
+            return result;
         }
 
         return employeeService.clockInInsert((Map<? super Object, ? super Object>) data.get("data"));
     }
+
+    @SuppressWarnings("unchecked")
     @PutMapping("/clockOut")
     public EntityResult clockOut(@RequestBody Map<? super Object, ? super Object> data, Authentication authentication) {
         EntityResult result;
@@ -60,22 +62,25 @@ public class EmployeeController extends ORestController<IEmployeeService> {
             return result;
         }
 
-        if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(((Map<?, ?>) data.get("filter")).get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
-             result = new EntityResultMapImpl();
-             result.setCode(EntityResult.OPERATION_WRONG);
-             result.setMessage(EmployeesEntryDepartureDAO.E_CANNOT_CLOCK_OUT_OTHERS);
-             return result;
+        if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(((Map<?, ?>) data.get(FILTER)).get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
+            result = new EntityResultMapImpl();
+            result.setCode(EntityResult.OPERATION_WRONG);
+            result.setMessage(EmployeesEntryDepartureDAO.E_CANNOT_CLOCK_OUT_OTHERS);
+            return result;
         }
 
-        return employeeService.clockOutUpdate((Map<? super Object, ? super Object>) data.get("filter"),new HashMap<>());
+        return employeeService.clockOutUpdate((Map<? super Object, ? super Object>) data.get(FILTER), new HashMap<>());
     }
-    @PostMapping("/employeesPerShift")
-    public EntityResult employeesPerShiftQuery(@RequestBody  Map<?super Object,? super Object>filter){
 
-        return employeeService.employeesPerShiftQuery((Map<? super Object, ? super Object>) filter.get("filter"),new HashMap<>());
+    @SuppressWarnings("unchecked")
+    @PostMapping("/employeesPerShift")
+    public EntityResult employeesPerShiftQuery(@RequestBody Map<? super Object, ? super Object> filter) {
+
+        return employeeService.employeesPerShiftQuery((Map<? super Object, ? super Object>) filter.get(FILTER), new HashMap<>());
     }
+
     @PutMapping("/update")
-    public EntityResult employeeUpdate(@RequestBody Map<? super Object, ? super Object> attrMap,Map<? super Object, ? super Object> keyMap,Authentication authentication) {
+    public EntityResult employeeUpdate(@RequestBody Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> keyMap, Authentication authentication) {
         EntityResult result;
 
         if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(keyMap.get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
@@ -85,7 +90,7 @@ public class EmployeeController extends ORestController<IEmployeeService> {
             return result;
         }
 
-        return employeeService.employeeUpdate(attrMap,keyMap);
+        return employeeService.employeeUpdate(attrMap, keyMap);
     }
 
 }

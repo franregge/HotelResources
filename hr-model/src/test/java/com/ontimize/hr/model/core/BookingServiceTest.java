@@ -2,7 +2,6 @@ package com.ontimize.hr.model.core;
 
 import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.model.core.dao.BookingDAO;
-import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.service.BookingService;
 import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
@@ -36,9 +35,6 @@ public class BookingServiceTest {
 
     @Mock
     DefaultOntimizeDaoHelper daoHelper;
-
-    @Mock
-    BookingDAO bookingDAO;
     @Mock
     UserService userService;
 
