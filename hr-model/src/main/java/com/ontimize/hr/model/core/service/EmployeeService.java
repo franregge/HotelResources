@@ -3,14 +3,13 @@ package com.ontimize.hr.model.core.service;
 import com.ontimize.hr.api.core.service.IEmployeeService;
 import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.hr.api.core.service.IUserService;
+import com.ontimize.hr.api.core.service.exception.EmployeeException;
 import com.ontimize.hr.api.core.service.exception.InvalidShiftException;
 import com.ontimize.hr.model.core.RoleNames;
 import com.ontimize.hr.model.core.dao.*;
-import com.ontimize.jee.common.db.SQLStatementBuilder;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.security.PermissionsProviderSecured;
-import com.ontimize.jee.common.tools.EntityResultTools;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -66,14 +65,13 @@ public class EmployeeService implements IEmployeeService {
             Integer employeeRoleId = (Integer) roleQueryEntityResult.getRecordValues(0).get(UserRoleDAO.ID);
             String specificRoleName = (String) attrMap.get(UserDAO.EMPLOYEE_ROLE);
 
-            // TODO: ufffffffffff.... quitar isto pronto, uso de enums
             if (
                     specificRoleName.equals(RoleNames.CLIENT)
                             || specificRoleName.equals(RoleNames.MANAGER)
                             || specificRoleName.equals(RoleNames.GUEST)
                             || specificRoleName.equals(RoleNames.ROOT)
             ) {
-                throw new Exception("Invalid employee type");
+                throw new EmployeeException("Invalid employee type");
             }
 
             filter.put(UserRoleDAO.NAME, specificRoleName);
@@ -137,7 +135,7 @@ public class EmployeeService implements IEmployeeService {
                 result.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
                 result.setMessage(EmployeesEntryDepartureDAO.OPERATION_SUCCESS);
             } else {
-                throw new Exception(EmployeesEntryDepartureDAO.E_ENTRY_SAVED);
+                throw new EmployeeException(EmployeesEntryDepartureDAO.E_ENTRY_SAVED);
             }
         } catch (Exception e) {
             result = new EntityResultMapImpl();
@@ -164,11 +162,11 @@ public class EmployeeService implements IEmployeeService {
             EntityResult userEntryEntityResult = daoHelper.query(employeesEntryDepartureDAO, existingRecordFilter, queriedAttrs);
 
             if (userEntryEntityResult.isEmpty()) {
-                throw new Exception(EmployeesEntryDepartureDAO.E_NO_CLOCK_IN);
+                throw new EmployeeException(EmployeesEntryDepartureDAO.E_NO_CLOCK_IN);
             }
 
             if (userEntryEntityResult.getRecordValues(0).get(EmployeesEntryDepartureDAO.DEPARTURE) != null) {
-                throw new Exception(EmployeesEntryDepartureDAO.E_ALREADY_CLOCKED_OUT);
+                throw new EmployeeException(EmployeesEntryDepartureDAO.E_ALREADY_CLOCKED_OUT);
             }
 
             attrMap.put(EmployeesEntryDepartureDAO.DEPARTURE, Time.valueOf(clockOut.toLocalTime()));

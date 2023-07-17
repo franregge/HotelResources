@@ -1,7 +1,6 @@
 package com.ontimize.hr.ws.core.rest;
 
 
-import com.ontimize.hr.model.core.RoleNames;
 import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.services.user.UserInformation;
@@ -16,7 +15,6 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.rest.ORestController;
 
-import java.util.HashMap;
 import java.util.Map;
 
 

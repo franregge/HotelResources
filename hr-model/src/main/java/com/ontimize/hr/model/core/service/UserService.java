@@ -4,7 +4,6 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.hr.api.core.service.exception.InvalidIdDocumentException;
 import com.ontimize.hr.api.core.service.exception.InvalidPasswordException;
 import com.ontimize.hr.api.core.service.exception.*;
-import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
 import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.hr.model.core.dao.UserRoleDAO;
 import com.ontimize.hr.model.core.dao.UsersRolesDAO;

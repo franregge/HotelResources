@@ -1,6 +1,5 @@
 package com.ontimize.hr.ws.core.rest;
 
-import com.ontimize.hr.api.core.service.IBookingService;
 import com.ontimize.hr.api.core.service.IShiftService;
 import com.ontimize.jee.server.rest.ORestController;
 import org.springframework.beans.factory.annotation.Autowired;
