@@ -74,6 +74,31 @@ public class UserServiceTest {
         }
 
         @Test
+        void insertUser_validNIE_operationSuccessful() {
+            attrMap.put(UserDAO.ROLE_IDS,List.of(6));
+            attrMap.put(UserDAO.USER_NAME, "Manolo");
+            attrMap.put(UserDAO.USER_PASSWORD, "Pass1234");
+            attrMap.put(UserDAO.COUNTRY_ID, 1);
+            attrMap.put(UserDAO.SURNAME1, "Garcia");
+            attrMap.put(UserDAO.ID_DOCUMENT, "X0488209B");
+            attrMap.put(UserDAO.PHONE_NUMBER, "666666666");
+            attrMap.put(UserDAO.SURNAME2, "Martinez");
+            attrMap.put(UserDAO.EMAIL, "manolo.martinez@mymail.com");
+            attrMap.put(UserDAO.LOGIN_NAME, "SoyManolo");
+
+            EntityResult insertResult = new EntityResultMapImpl();
+            insertResult.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
+            insertResult.setMessage(IUserService.USER_INSERT_SUCCESS);
+
+            when(daoHelper.insert(any(), any())).thenReturn(insertResult);
+
+            EntityResult result = userService.userInsert(attrMap);
+
+            assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
+            assertEquals(IUserService.USER_INSERT_SUCCESS, result.getMessage());
+        }
+
+        @Test
         void insertUser_invalidIdDocument_operationFailure() {
 
             attrMap.put(UserDAO.USER_NAME, "Manolo");
@@ -228,7 +253,7 @@ public class UserServiceTest {
             keyMap.put(UserDAO.LOGIN_NAME, "manager");
             attrMap.put(UserDAO.USER_PASSWORD, "Pass123");
             attrMap.put(UserDAO.SURNAME1, "Garcia");
-            attrMap.put(UserDAO.ID_DOCUMENT, "66955662V");
+            attrMap.put(UserDAO.ID_DOCUMENT, "X0488209B");
             attrMap.put(UserDAO.LOGIN_NAME, "manager");
 
             userEntityResult.put(UserDAO.USER_PASSWORD, "Pass1234");
