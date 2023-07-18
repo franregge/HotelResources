@@ -13,7 +13,6 @@ import com.ontimize.hr.model.core.service.UserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.server.dao.DefaultOntimizeDaoHelper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -24,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.sql.Time;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,8 +44,6 @@ public class EmployeeServiceTest {
     UserService userService;
     @Mock
     DefaultOntimizeDaoHelper daoHelper;
-    @InjectMocks
-    EmployeesEntryDepartureDAO employeesEntryDepartureDAO;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -182,7 +178,7 @@ public class EmployeeServiceTest {
 
         @Test
         void employeeInsert_validEmployee_operationSuccessful() throws InvalidShiftException {
-            attrMap.put(UserDAO.EMPLOYEE_ROLE,RoleNames.RECEPTIONIST);
+            attrMap.put(UserDAO.EMPLOYEE_ROLE, RoleNames.RECEPTIONIST);
             attrMap.put(UserDAO.LOGIN_NAME, "test");
             attrMap.put(UserDAO.USER_NAME, "test");
             attrMap.put(UserDAO.EMAIL, "test@example.org");
@@ -263,7 +259,7 @@ public class EmployeeServiceTest {
         @Test
         void clockOutUpdate_OperationSuccess() {
 
-            filter.put(EmployeesEntryDepartureDAO.LOGIN_NAME,"ClockOutUpdateTest");
+            filter.put(EmployeesEntryDepartureDAO.LOGIN_NAME, "ClockOutUpdateTest");
 
             EntityResult queryEntityResult = new EntityResultMapImpl();
             queryEntityResult.put(EmployeesEntryDepartureDAO.LOGIN_NAME, List.of(filter.get(EmployeesEntryDepartureDAO.LOGIN_NAME)));
@@ -275,9 +271,9 @@ public class EmployeeServiceTest {
             clockOutUpdateEntityResult.setCode(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE);
 
             when(daoHelper.query(any(), any(), any())).thenReturn(queryEntityResult);
-            when(daoHelper.update(any(),any(),any())).thenReturn(clockOutUpdateEntityResult);
+            when(daoHelper.update(any(), any(), any())).thenReturn(clockOutUpdateEntityResult);
 
-            EntityResult result= employeeService.clockOutUpdate(attrMap,filter);
+            EntityResult result = employeeService.clockOutUpdate(attrMap, filter);
 
             assertEquals(EntityResult.OPERATION_SUCCESSFUL_SHOW_MESSAGE, result.getCode());
             assertEquals(EmployeesEntryDepartureDAO.CLOCK_OUT_SUCCESS, result.getMessage());

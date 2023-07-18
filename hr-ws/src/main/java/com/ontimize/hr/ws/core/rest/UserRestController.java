@@ -44,7 +44,7 @@ public class UserRestController extends ORestController<IUserService> {
     }
 
     @PutMapping("/update")
-    public EntityResult userUpdate(@RequestBody Map<? super Object, ? super Object> attrMap,Map<? super Object, ? super Object> keyMap,Authentication authentication) {
+    public EntityResult userUpdate(@RequestBody Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> keyMap, Authentication authentication) {
         EntityResult result;
 
         if (!((UserInformation) authentication.getPrincipal()).getUsername().equals(keyMap.get(EmployeesEntryDepartureDAO.LOGIN_NAME))) {
@@ -54,7 +54,7 @@ public class UserRestController extends ORestController<IUserService> {
             return result;
         }
 
-        return userSrv.userUpdate(attrMap,keyMap);
+        return userSrv.userUpdate(attrMap, keyMap);
     }
 
 }

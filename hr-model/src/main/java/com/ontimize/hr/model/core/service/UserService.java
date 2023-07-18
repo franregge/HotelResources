@@ -184,8 +184,6 @@ public class UserService implements IUserService {
         return letters.get(numberSegment % 23) != letter;
     }
 
-
-
     @SuppressWarnings("unchecked")
     public List<String> getUserRoles(String loginName) throws UserDoesNotExistException {
         Map<String, String> filter = new HashMap<>();
@@ -200,6 +198,7 @@ public class UserService implements IUserService {
         return (List<String>) result.get(UserRoleDAO.NAME);
     }
 
+    @SuppressWarnings("unchecked")
     @Secured({})
     @Override
     public EntityResult userInsert(Map<? super Object, ? super Object> attrMap) {

@@ -12,7 +12,7 @@ public interface IShiftService {
 
     EntityResult shiftInsert(Map<? super Object, ? super Object> attrMap);
 
-    EntityResult shiftUpdate(Map<? super Object, ? super  Object> attrMap, Map<? super Object, ? super Object> keyMap) throws UserDoesNotExistException;
+    EntityResult shiftUpdate(Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> keyMap) throws UserDoesNotExistException;
 
     EntityResult shiftDelete(Map<?, ?> keyMap);
 
