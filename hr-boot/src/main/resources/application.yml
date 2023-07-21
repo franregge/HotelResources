@@ -27,7 +27,7 @@ ontimize:
          upper-like: false
    security:
       mode: default
-      ignore-paths: /users/signup
+      ignore-paths: /users/signup, /rooms/room/search
       role-information-service:
          role-repository: UserRoleDAO
          role-name-column: rolename

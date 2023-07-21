@@ -35,7 +35,7 @@ public class RoomService implements IRoomService {
     @Autowired
     private RoomUtils roomUtils;
     private static final int FIRST_ROOM_NUMBER = 101;
-
+    @Secured({})
     @Override
     public EntityResult roomQuery(Map<?, ?> keymap, List<?> attrList) {
         return this.daoHelper.query(this.roomDAO, keymap, attrList);

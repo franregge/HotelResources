@@ -2,6 +2,7 @@ package com.ontimize.hr.ws.core.rest;
 
 
 import com.ontimize.hr.model.core.dao.EmployeesEntryDepartureDAO;
+import com.ontimize.hr.model.core.dao.UserDAO;
 import com.ontimize.jee.common.dto.EntityResultMapImpl;
 import com.ontimize.jee.common.services.user.UserInformation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.ontimize.hr.api.core.service.IUserService;
 import com.ontimize.jee.common.dto.EntityResult;
 import com.ontimize.jee.server.rest.ORestController;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,6 +42,10 @@ public class UserRestController extends ORestController<IUserService> {
 
     @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityResult> addUser(@RequestBody Map<? super Object, ? super Object> attrMap) {
+        attrMap= (Map<? super Object, ? super Object>) attrMap.get("data");
+        if (attrMap.get(UserDAO.ROLE_IDS)==null){
+            attrMap.put(UserDAO.ROLE_IDS, List.of(IUserService.CLIENT_ROLE_ID));
+        }
         return new ResponseEntity<>(userSrv.userInsert(attrMap), HttpStatus.OK);
     }
 
