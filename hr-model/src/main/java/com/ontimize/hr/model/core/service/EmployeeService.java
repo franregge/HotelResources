@@ -147,7 +147,7 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult clockOutUpdate(final Map<? super Object, ? super Object> attrMap, Map<? super Object, ? super Object> filter) {
+    public EntityResult clockOutUpdate(final Map<? super Object, ? super Object> filter, Map<? super Object, ? super Object> attrMap) {
         EntityResult result;
         String employeeLoginName = (String) filter.get(UserDAO.LOGIN_NAME);
 

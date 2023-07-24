@@ -39,11 +39,10 @@ public class UserRestController extends ORestController<IUserService> {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EntityResult> addUser(@RequestBody Map<? super Object, ? super Object> attrMap) {
-        attrMap= (Map<? super Object, ? super Object>) attrMap.get("data");
-        if (attrMap.get(UserDAO.ROLE_IDS)==null){
+        attrMap = (Map<? super Object, ? super Object>) attrMap.get("data");
+        if (attrMap.get(UserDAO.ROLE_IDS) == null) {
             attrMap.put(UserDAO.ROLE_IDS, List.of(IUserService.CLIENT_ROLE_ID));
         }
         return new ResponseEntity<>(userSrv.userInsert(attrMap), HttpStatus.OK);

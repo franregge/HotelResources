@@ -114,6 +114,10 @@ public class ShiftService implements IShiftService {
     public EntityResult shiftInsert(Map<? super Object, ? super Object> attrMap) {
         EntityResult result;
         try {
+            if (attrMap.get(ShiftDAO.HOTEL_ID) == null) {
+                throw new ShiftException("This shift must be associated with a hotel");
+            }
+
             validateWeeklyHours(attrMap);
 
             Map<?, ?> monday = (Map<?, ?>) attrMap.get(ShiftDAO.MON);
@@ -131,7 +135,7 @@ public class ShiftService implements IShiftService {
             }
 
             Map<?, ?> wednesday = (Map<?, ?>) attrMap.get(ShiftDAO.WED);
-            if (tuesday != null) {
+            if (wednesday != null) {
                 String wednesdayStart = (String) wednesday.get(WORK_DAY_START);
                 String wednesdayEnd = (String) wednesday.get(WORK_DAY_END);
                 attrMap.put(ShiftDAO.WED, wednesdayStart + "-" + wednesdayEnd);

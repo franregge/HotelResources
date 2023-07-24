@@ -47,5 +47,5 @@ public interface IUserService {
     String ERR_INVALID_PHONE_NUMBER = "You must provide a valid phone number";
 
     String ERR_INVALID_COUNTRY_ID = "You must provide a valid country id";
-    Integer CLIENT_ROLE_ID=4;
+    Integer CLIENT_ROLE_ID = 4;
 }

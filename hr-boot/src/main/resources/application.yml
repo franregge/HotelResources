@@ -1,74 +1,74 @@
 endpoints:
-   api:
-      enabled: true
+  api:
+    enabled: true
 logging:
-   level:
-      root: info
+  level:
+    root: info
 ontimize:
-   corsfilter:
-      enabled: true
-   globalcors:
-      cors-configurations:
-         '[/**]':
-            allowed-origins: "*"
-            allowed-headers: "*"
-            exposed-headers: ["X-Auth-Token","Content-disposition","X-Requested-With"]
-            allowed-methods:
-            - GET
-            - POST
-            - PUT
-            - OPTIONS
-            - DELETE
-   jdbc:
-      name-convention: lower
-      sqlhandler: postgresql
-      sql-condition-processor:
-         uppper-string: false
-         upper-like: false
-   security:
-      mode: default
-      ignore-paths: /users/signup, /rooms/room/search
-      role-information-service:
-         role-repository: UserRoleDAO
-         role-name-column: rolename
-         server-permission-query-id: serverPermissions
-         server-permission-name-column: method
-         client-permission-query-id: clientPermissions
-         client-permission-column: xml_client_permission
-      user-information-service:
-         user-repository: UserDAO
-         user-login-column: login_name
-         user-password-column: user_password
-         query-id: login
-         other-data:
-            - user_name
-            - surname1
-            - email
-            - id_document
-      user-role-information-service:
-         user-role-repository: UsersRolesDAO
-         query-id: userRole
-         role-login-column: login_name
-         role-name-column: rolename
+  corsfilter:
+    enabled: true
+  globalcors:
+    cors-configurations:
+      '[/**]':
+        allowed-origins: "*"
+        allowed-headers: "*"
+        exposed-headers: [ "X-Auth-Token","Content-disposition","X-Requested-With" ]
+        allowed-methods:
+          - GET
+          - POST
+          - PUT
+          - OPTIONS
+          - DELETE
+  jdbc:
+    name-convention: lower
+    sqlhandler: postgresql
+    sql-condition-processor:
+      uppper-string: false
+      upper-like: false
+  security:
+    mode: default
+    ignore-paths: /users/signup, /rooms/room/search
+    role-information-service:
+      role-repository: UserRoleDAO
+      role-name-column: rolename
+      server-permission-query-id: serverPermissions
+      server-permission-name-column: method
+      client-permission-query-id: clientPermissions
+      client-permission-column: xml_client_permission
+    user-information-service:
+      user-repository: UserDAO
+      user-login-column: login_name
+      user-password-column: user_password
+      query-id: login
+      other-data:
+        - user_name
+        - surname1
+        - email
+        - id_document
+    user-role-information-service:
+      user-role-repository: UsersRolesDAO
+      query-id: userRole
+      role-login-column: login_name
+      role-name-column: rolename
 server:
-   port: 30030
-   tomcat:
-      uri-encoding: UTF-8
-   compression:
-      enabled: true
-      mime-types: application/json, application/xml
+  port: 30030
+  tomcat:
+    uri-encoding: UTF-8
+  compression:
+    enabled: true
+    mime-types: application/json, application/xml
 spring:
-   datasource:
-      driver-class-name: org.postgresql.Driver
-      jdbc-url: jdbc:postgresql://45.84.210.174:65432/2023-BBE-1-G1
-      username: Backend_2023_G1
-      password: 1qaz2wsx
-      initial-size: 10
-      test-on-borrow: true
-   main:
-      banner-mode: 'off'
-   session:
-      store-type: none
-   autoconfigure:
-      exclude: |
-         org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration, org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.FallbackWebSecurityAutoConfiguration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://45.84.210.174:65432/2023-BBE-1-G1
+    username: Backend_2023_G1
+    password: 1qaz2wsx
+    initial-size: 10
+    test-on-borrow: true
+  main:
+    banner-mode: 'off'
+  session:
+    store-type: none
+  autoconfigure:
+    exclude: |
+      org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration, org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration, org.springframework.boot.autoconfigure.security.FallbackWebSecurityAutoConfiguration

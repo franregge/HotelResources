@@ -1,0 +1,30 @@
+TRUNCATE TABLE public.bookings;
+TRUNCATE TABLE public.rooms;
+TRUNCATE TABLE public.hotels;
+TRUNCATE TABLE public.users CASCADE;
+TRUNCATE TABLE public.roles_users;
+TRUNCATE TABLE public.shifts;
+TRUNCATE TABLE public.users_days_off;
+
+INSERT INTO hotels (name, number_of_floors) VALUES ('Grand Palace Hotel', 15);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Sunset View Resort', 8);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Ocean Breeze Inn', 10);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Mountain Retreat Lodge', 5);
+INSERT INTO hotels (name, number_of_floors) VALUES ('City Lights Tower', 20);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Island Paradise Resort', 12);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Serenity Spa & Hotel', 6);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Riverside Lodge', 3);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Golden Sands Resort', 18);
+INSERT INTO hotels (name, number_of_floors) VALUES ('Forest Haven Retreat', 7);
+
+INSERT INTO users (login_name, user_name, surname1, id_document, country_id, phone_number, email, user_password) VALUES ('admin', 'admin', '', '73297774V', 1, '666555444', 'admin@example.org', 'Abc1234.');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('maria_gomez', 'María', 'Gómez', 'Sánchez', '25333197P', 1, '987654321', 'maria.gomez@example.com', 'SecurePass1');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('carlos_lopez', 'Carlos', 'López', 'Martínez', '29604935W', 1, '654321987', 'carlos.lopez@example.com', 'StrongPass2');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('ana_martin', 'Ana', 'Martín', 'Hernández', 'X7685720V', 1, '789654123', 'ana.martin@example.com', 'SafePass3');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('david_ruiz', 'David', 'Ruiz', 'González', 'Y3423862G', 1, '123987456', 'david.ruiz@example.com', 'Protected4');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('isabel_fernandez', 'Isabel', 'Fernández', 'Rodríguez', '66275968L', 1, '456123789', 'isabel.fernandez@example.com', 'Secure123');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('sergio_gonzalez', 'Sergio', 'González', 'Gómez', 'X2674289X', 1, '789456123', 'sergio.gonzalez@example.com', 'StrongPass2023');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('laura_perez', 'Laura', 'Pérez', 'Ramírez', '42622452W', 1, '321987654', 'laura.perez@example.com', 'ProtectedPass');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('javier_rodriguez', 'Javier', 'Rodríguez', 'García', '37883335N', 1, '654789321', 'javier.rodriguez@example.com', 'SafePassword');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('nuria_martinez', 'Nuria', 'Martínez', 'López', '15254033L', 1, '789321654', 'nuria.martinez@example.com', 'Strong1234');
+INSERT INTO users (login_name, user_name, surname1, surname2, id_document, country_id, phone_number, email, user_password) VALUES ('victor_sanchez', 'Víctor', 'Sánchez', 'Fernández', '94399622D', 1, '987321654', 'victor.sanchez@example.com', 'Protected2023');
