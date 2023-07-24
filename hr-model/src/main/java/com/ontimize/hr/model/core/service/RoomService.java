@@ -122,7 +122,7 @@ public class RoomService implements IRoomService {
     }
 
     @Secured({PermissionsProviderSecured.SECURED})
-    public EntityResult roomDelete(Map<?, ?> keyMap) {
+    public EntityResult roomDelete(Map<? super Object, ? super Object> keyMap) {
 
         EntityResult result;
 
