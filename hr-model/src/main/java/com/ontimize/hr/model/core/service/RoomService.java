@@ -4,6 +4,7 @@ import com.ontimize.hr.api.core.service.IRoomService;
 import com.ontimize.hr.api.core.service.exception.InvalidNumberOfBeds;
 import com.ontimize.hr.api.core.service.exception.InvalidPriceException;
 import com.ontimize.hr.api.core.service.exception.InvalidRoomNumberException;
+import com.ontimize.hr.api.core.service.exception.RoomDoesNotExistException;
 import com.ontimize.hr.model.core.dao.HotelDAO;
 import com.ontimize.hr.model.core.dao.RoomDAO;
 import com.ontimize.hr.model.core.util.RoomUtils;
@@ -123,7 +124,6 @@ public class RoomService implements IRoomService {
 
     @Secured({PermissionsProviderSecured.SECURED})
     public EntityResult roomDelete(Map<? super Object, ? super Object> keyMap) {
-
         EntityResult result;
 
         Integer roomId = (Integer) keyMap.get(RoomDAO.ID);
@@ -151,6 +151,9 @@ public class RoomService implements IRoomService {
         try {
 
             EntityResult roomEntityResult = roomQuery(keyMap, List.of(RoomDAO.HOTEL_ID));
+            if (roomEntityResult.isEmpty()) {
+                throw new RoomDoesNotExistException("A room with the specified id could not be found");
+            }
             int assignedHotelId = ((List<Integer>) roomEntityResult.get(RoomDAO.HOTEL_ID)).get(0);
 
             Map<String, Integer> filter = new HashMap<>();
