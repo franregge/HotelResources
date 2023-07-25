@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "78f096f2-da48-4810-b5e1-cc31b98dc6ef",
+		"name": "Presentación Historia Cliente",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27513541",
+		"_collection_link": "https://universal-space-985402.postman.co/workspace/My-Workspace~6179a580-8bd5-40d0-808e-6347f9600cc0/collection/27513541-78f096f2-da48-4810-b5e1-cc31b98dc6ef?action=share&creator=27513541&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Post user",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "manager",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Manager1234",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"data\":{\r\n        \"login_name\":\"JuanasPerez66\",\r\n        \"role_id\":6,\r\n        \"id_document\":\"66955662V\",\r\n        \"user_name\":\"Juan\",\r\n        \"surname1\":\"Perez\",\r\n        \"country_id\":1,\r\n        \"phone_number\":\"666666666\",\r\n        \"email\":\"nojuanitas@micorreo.com\",\r\n        \"user_password\":\"Juana1234\"\r\n        \r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/users/user",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"users",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search room by hotel_id",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"@basic_expression\": {\r\n            \"lop\": \"number_of_beds\",\r\n            \"op\": \">=\",\r\n            \"rop\": 2\r\n        }\r\n    },\r\n    \"columns\": [\r\n        \"id\",\r\n        \"room_number\",\r\n        \"hotel_id\",\r\n        \"number_of_beds\",\r\n        \"base_price\"\r\n    ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/rooms/room/search",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"rooms",
+						"room",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search room by number of beds",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"@basic_expression\": {\r\n            \"lop\": \"number_of_beds\",\r\n            \"op\": \">=\",\r\n            \"rop\": 2\r\n        }\r\n    },\r\n    \"columns\": [\r\n        \"id\",\r\n        \"room_number\",\r\n        \"hotel_id\",\r\n        \"number_of_beds\",\r\n        \"base_price\"\r\n    ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/rooms/room/search",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"rooms",
+						"room",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Booking",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "manager",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "Manager1234",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"data\": {\r\n        \"room_id\": 19,\r\n        \"departure_date\":\"2023-12-17\",\r\n        \"arrival_date\": \"2023-12-13\",\r\n        \"user_id\":1\r\n    }\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/bookings/booking",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get booking by id",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\": {\r\n        \"id\": 4\r\n    },\r\n    \"columns\": [\"arrival_date\", \"departure_date\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/bookings/booking/search",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"bookings",
+						"booking",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update booking date",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"id\":53\r\n    },\r\n     \"data\": {\r\n        \"room_id\": 19,\r\n        \"departure_date\":\"2023-11-14\",\r\n        \"arrival_date\": \"2023-11-12\",\r\n        \"user_id\":1\r\n    }\r\n   \r\n}\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/bookings/booking",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete booking",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter\":{\r\n        \"id\":38\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:30030/bookings/booking",
+					"host": [
+						"localhost"
+					],
+					"port": "30030",
+					"path": [
+						"bookings",
+						"booking"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
